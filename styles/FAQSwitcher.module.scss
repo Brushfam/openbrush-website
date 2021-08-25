@@ -1,0 +1,37 @@
+@import './abstracts/variables';
+
+.faq{
+    &Container{
+        width: 100%;
+        margin-top: -2px;
+        border: $outline-width solid $outline-color;
+        display: flex;
+        min-height: 612px;
+        .questionsHolder{
+            width: 260px;
+            max-width: 260px;
+            min-width: 260px;
+            border-right: $outline-width solid $outline-color;
+            .questionBlock{
+                width: 100%;
+                padding: 50px 45px 42px 46px;
+                border-bottom: $outline-width solid $outline-color;
+                position: relative;
+                cursor: pointer;
+                .pointerArrow{
+                    position: absolute;
+                    right: 5px;
+                    bottom: 5px;
+                }
+            }
+        }
+        .answerContainer{
+            padding: 50px 20px 130px 20px;
+            display: flex;
+            .infoBlock{
+                max-width: 680px;
+            }
+        }
+        
+    }
+}

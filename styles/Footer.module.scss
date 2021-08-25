@@ -1,0 +1,45 @@
+@import './abstracts/variables';
+
+.footer{
+    &Container{
+        width: 100%;
+        border-left: $outline-width solid $outline-color;
+        border-right: $outline-width solid $outline-color;
+        border-top: $outline-width solid $outline-color;
+        display: flex;
+        justify-content: space-between;
+        margin-top: -2px;
+    }
+    &LogoContainer{
+        img{
+            margin: 24px 0 0 9px;
+            max-width: 206px;
+            height: auto;
+        }
+    }
+    &NavigationWrapper{
+        display: flex;
+        .navigationColumn{
+            padding: 0 45px;
+            height: 100%;
+            border-left: $outline-width solid $outline-color;
+            &Name{
+                margin-top: 21px;
+            }
+            &Links{
+                padding: 45px 0 30px;
+                max-width: 111px;
+                ul, li{
+                    margin: 0;
+                    padding: 0;
+                }
+                li{
+                    list-style: none;
+                    &:not(:first-child){
+                        margin-top: 21px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+@import './abstracts/variables';
+
+.partners{
+    &Container{
+        width: 100%;
+        padding: 75px 0 80px;
+        position: relative;
+        border: $outline-width solid $outline-color;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-top: -2px;
+    
+        .logoWrapper{
+            max-width: 1070px;
+            display: flex;
+            grid-column-gap: 24px;
+            grid-row-gap: 94px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 62px;
+            img{
+                max-width: 194px;
+                height: auto;
+            }
+        }
+
+        &Decor{
+            position: absolute;
+            left: -$outline-width;
+            top: -$outline-width;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: $decor-triangle-width $decor-triangle-width 0 0;
+            border-color: $primary-bg-color transparent transparent transparent;
+            line-height: 0px;
+            _border-color: $primary-bg-color;
+            _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+            z-index: 1;
+            &::after{
+                content: '';
+                position: absolute;
+                height: $outline-width;
+                background-color: $outline-color;
+                transform-origin: left bottom;
+                width: calc(#{$decor-triangle-width} * #{$sqrt-2});
+                left: 1px;
+                top: 0px;
+                transform: rotate(-45deg);
+            }
+        }
+    }
+}

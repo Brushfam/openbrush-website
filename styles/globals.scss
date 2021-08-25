@@ -1,0 +1,48 @@
+@import 'abstracts/variables';
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: $primary-bg-color;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper, .header, .footer{
+  width: 100%;
+  padding: 0 28px;
+}
+
+/* styles for syntax highlighter */
+pre{
+  margin: 0;
+}
+
+code{
+  font-size: 19px;
+  color: #C6C8C6;
+  font-family: 'Sometype Mono';
+  line-height: 140%;
+  .hljs-function.hljs-keyword{
+    color: #B294BB;
+  }
+  .hljs-function.hljs-title{
+    color: #8ABFB8;
+  }
+  span.hljs-built_in{
+    color: #DE935F !important;
+  }
+}
+
