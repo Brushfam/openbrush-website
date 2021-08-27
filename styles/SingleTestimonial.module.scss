@@ -7,8 +7,37 @@
     margin-top: -$outline-width;
     display: flex;
     justify-content: center;
+    @include md-down {
+        padding: 40px 13px 57px;
+    }
     &Container{
         width: 100%;
         max-width: 1065px;
+        .innerContainer{
+            max-width: 805px;
+            .codeQuote{
+                padding-left: 120px;
+                @include md-down {
+                    padding-left: 30px;
+                }
+            }
+            .authorBlock{
+                display: flex;
+                margin-top: 65px;
+                align-items: center;
+                @include md-down {
+                    margin-top: 37px;
+                }
+                img{
+                    width: 92px;
+                    max-width: 92px;
+                    margin-right: 25px;
+                    @include md-down {
+                        width: 51px;
+                        margin-right: 20px;
+                    }
+                }
+            }
+        }
     }
 }

@@ -10,6 +10,10 @@
         align-items: center;
         flex-direction: column;
         margin-top: -2px;
+        @include tablet-portrait-down {
+            padding: 70px 25px;
+            text-align: center;
+        }
     
         .logoWrapper{
             max-width: 1070px;
@@ -19,9 +23,18 @@
             justify-content: center;
             flex-wrap: wrap;
             margin-top: 62px;
+            @include md-down {
+                grid-column-gap: 15px;
+                margin-top: 45px;
+                grid-row-gap: 50px;
+            }
             img{
                 max-width: 194px;
                 height: auto;
+                @include md-down {
+                    width: 130px;
+                
+                }
             }
         }
 
@@ -38,6 +51,9 @@
             _border-color: $primary-bg-color;
             _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
             z-index: 1;
+            @include md-down {
+              border-width: $decor-triangle-width-mobile $decor-triangle-width-mobile 0 0;
+            }
             &::after{
                 content: '';
                 position: absolute;
@@ -45,6 +61,9 @@
                 background-color: $outline-color;
                 transform-origin: left bottom;
                 width: calc(#{$decor-triangle-width} * #{$sqrt-2});
+                @include md-down {
+                    width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
+                }
                 left: 1px;
                 top: 0px;
                 transform: rotate(-45deg);

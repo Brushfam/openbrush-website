@@ -7,6 +7,9 @@
     top: 0;
     background: $primary-bg-color;
     z-index: 99;
+    @include md-down {
+      height: 52px;
+    }
     &Container{
         border-bottom: $outline-width solid $outline-color;
         width: 100%;
@@ -20,6 +23,10 @@
             border-top: $outline-width solid $outline-color;
             position: relative;
             max-height: 51px;
+            @include md-down {
+                padding-top: 7px;
+                max-height: unset;
+              }
             &::after{
                 content: '';
                 position: absolute;
@@ -29,10 +36,19 @@
                 transform: rotate(37.28deg) translateX(-1px);
                 transform-origin: left bottom;
                 top: -$outline-width;
+                @include md-down {
+                  width: 60px;
+                  transform: rotate(40deg) translateX(-1px);
+                }
             }
             img{
                 margin-left: 11px;
-                max-height: inherit;
+                width: 146px;
+                height: auto;
+                @include md-down {
+                  width: 75px;
+                  margin-left: 8;
+                }
             }
         }
     }
@@ -45,6 +61,9 @@
             border-bottom: $outline-width solid $outline-color;
             margin-bottom: 3px;
             position: relative;
+            @include tablet-portrait-down{
+                display: none;
+            }
             &::after{
                 content: '';
                 position: absolute;

@@ -1,6 +1,8 @@
 @import './abstracts/variables';
+@import 'abstracts/mediaQueries';
 
 $decor-ray-width: 90px;
+$decor-ray-width-mobile: 35px;
 
 .banner{
     &Container{
@@ -13,7 +15,13 @@ $decor-ray-width: 90px;
         border: $outline-width solid $outline-color;
         position: relative;
         min-height: 500px;
-
+        @include tablet-portrait-down {
+           margin-top: 50px;
+           height: auto;
+           min-height: unset;
+           padding: 105px 15px;
+        }
+    
         &DecorWrapper{
             position: absolute;
             width: 100%;
@@ -24,6 +32,7 @@ $decor-ray-width: 90px;
                 width: 0;
                 height: 0;
                 bottom: -$outline-width;
+                z-index: 1;
             }
 
             .leftBottom{
@@ -34,6 +43,9 @@ $decor-ray-width: 90px;
                 line-height: 0px;
                 _border-color: $primary-bg-color;
                 _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+                @include md-down {
+                    border-width: $decor-triangle-width-mobile 0 0 $decor-triangle-width-mobile;
+                 }
                 &::after, &::before{
                     content: '';
                     position: absolute;
@@ -47,6 +59,11 @@ $decor-ray-width: 90px;
                     left: -$decor-triangle-width;
                     top: -$decor-triangle-width - $outline-width;
                     transform: rotate(45deg);
+                    @include md-down {
+                        width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
+                        left: -$decor-triangle-width-mobile;
+                        top: -$decor-triangle-width-mobile - $outline-width;
+                     }
                 }
 
                 &::before{
@@ -55,6 +72,11 @@ $decor-ray-width: 90px;
                     transform: rotate(-45deg);
                     left: 0px;
                     top: -$decor-triangle-width;
+                    @include md-down {
+                        top: -$decor-triangle-width-mobile;
+                        width: $decor-ray-width-mobile;
+                    }
+                    
                 }
             }
 
@@ -68,6 +90,9 @@ $decor-ray-width: 90px;
                         background-color: $outline-color;
                         transform-origin: right bottom;
                         transform: rotate(135deg);
+                        @include md-down {
+                            transform: rotate(135deg) scale(0.7);
+                        }
                     }
                     &::before{
                         width: 10px;
@@ -88,7 +113,12 @@ $decor-ray-width: 90px;
                     background-color: $outline-color;
                     transform: rotate(45deg);
                     right: calc(#{$decor-triangle-width}/2);
-                    top: calc(#{$decor-triangle-width}*-2);;
+                    top: calc(#{$decor-triangle-width}*-2);
+                    @include md-down {
+                        width: $decor-ray-width-mobile;
+                        right: calc(#{$decor-triangle-width-mobile}/1.45);
+                        top: calc(#{$decor-triangle-width-mobile}*-1.45);
+                    }
                 }
                     
             }
@@ -99,19 +129,28 @@ $decor-ray-width: 90px;
                 width: $decor-ray-width;
                 height: $outline-width;
                 background-color: $outline-color;
+                top: calc(#{$decor-triangle-width}/2);
+                @include md-down {
+                    top: calc(#{$decor-triangle-width-mobile}/2);
+                    width: $decor-ray-width-mobile;
+                }
             }
 
             &::before{
                 transform-origin: left bottom;
                 transform: rotate(45deg);
-                top: calc(#{$decor-triangle-width}/2);
                 left: calc(#{$decor-triangle-width}/2);
+                @include md-down {
+                    left: calc(#{$decor-triangle-width-mobile}/2);
+                }
             }
             &::after{
                 transform-origin: right bottom;
                 transform: rotate(-45deg);
-                top: calc(#{$decor-triangle-width}/2);
                 right: calc(#{$decor-triangle-width}/2);
+                @include md-down {
+                    right: calc(#{$decor-triangle-width-mobile}/2);
+                }
             }
         }
     }
@@ -125,6 +164,9 @@ $decor-ray-width: 90px;
             }
             .headlineBlock{
                 padding-bottom: 75px;
+                @include md-down {
+                    padding-bottom: 40px;
+                 }
             }
         }
         

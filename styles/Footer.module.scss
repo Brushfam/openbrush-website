@@ -9,26 +9,52 @@
         display: flex;
         justify-content: space-between;
         margin-top: -2px;
+        @include md-down {
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
     }
     &LogoContainer{
         img{
             margin: 24px 0 0 9px;
             max-width: 206px;
             height: auto;
+            @include md-down {
+                width: 120px;
+                margin: 20px 0 0 5px; 
+            }
         }
     }
     &NavigationWrapper{
         display: flex;
+        @include md-down {
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
         .navigationColumn{
             padding: 0 45px;
             height: 100%;
             border-left: $outline-width solid $outline-color;
+            @include md-down {
+                width: 50%;
+                border-left: none;
+                padding: 0 10px 0 6px;
+            }
             &Name{
                 margin-top: 21px;
+                font-weight: bold;
+                font-size: 21px;
+                line-height: 140%;
+                @include md-down {
+                    font-size: 15px;
+                }
             }
             &Links{
                 padding: 45px 0 30px;
                 max-width: 111px;
+                @include md-down {
+                    padding: 20px 0 20px 0;
+                }
                 ul, li{
                     margin: 0;
                     padding: 0;
@@ -37,6 +63,18 @@
                     list-style: none;
                     &:not(:first-child){
                         margin-top: 21px;
+                        @include md-down {
+                            margin-top: 20px;
+                        }
+                    }
+                    a{
+                        font-weight: normal;
+                        font-size: 19px;
+                        line-height: 140%;
+                        color: #98A3AD;
+                        @include md-down {
+                            font-size: 12.5px;
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 import header from './../styles/Header.module.scss';
 import Link from 'next/link';
+import BurgerMenu from './BurgerMenu/BurgerMenu';
 
 
 const Header = ({nav}) => {
@@ -17,16 +18,17 @@ const Header = ({nav}) => {
                     <ul className={header.headerNavList}>
                         {nav && nav.map((nav, i) => {
                             return(
-                                <li key={i}>
-                                    <Link href={nav.link}>
-                                        <a className='commonText'>{nav.label}</a>
-                                    </Link>
-                                </li>
+                              <li key={i}>
+                                  <Link href={nav.link}>
+                                      <a className='commonText'>{nav.label}</a>
+                                  </Link>
+                              </li>
                             )
                         })}                    
                     </ul>
                 </nav>
-            </div>
+                <BurgerMenu nav={nav}/>
+                </div>
         </header>
     )
 } 

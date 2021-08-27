@@ -1,4 +1,5 @@
 @import 'abstracts/variables';
+@import 'abstracts/mediaQueries';
 
 html,
 body {
@@ -7,8 +8,9 @@ body {
   padding: 0;
   margin: 0;
   background: $primary-bg-color;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  @include md-down{
+    overflow-x: hidden;
+  }
 }
 
 a {
@@ -23,18 +25,25 @@ a {
 .wrapper, .header, .footer{
   width: 100%;
   padding: 0 28px;
+  @include md-down {
+    padding: 0 20px;
+  }
 }
 
 /* styles for syntax highlighter */
 pre{
   margin: 0;
+  font-family: 'Sometype Mono';
 }
 
 code{
-  font-size: 19px;
+  font-size: 20px;
   color: #C6C8C6;
   font-family: 'Sometype Mono';
   line-height: 140%;
+    @include md-down {
+        font-size: 12.5px;
+    }
   .hljs-function.hljs-keyword{
     color: #B294BB;
   }
