@@ -1,0 +1,36 @@
+@import '../abstracts/variables';
+@import '../abstracts/mediaQueries';
+
+
+body {
+    font-family: 'Sometype Mono';
+    color: $primary-text-color;
+    font-size: 16px;
+}
+
+p, h1, h2{
+    margin: 0;
+}
+
+
+//TODO: maybe rewrite font-size with em's
+.primaryHeadline{
+     font-weight: bold;
+     font-size: 40px;
+     line-height: 46px;
+     @include md-down {
+        font-size: 20px;
+        line-height: 23px;
+     }
+}
+
+
+//Originnaly have font-size 25 from design. Need to clarify if the font-size isn't too large. Could be 18?
+.commonText{
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 140%;
+    @include md-down {
+        font-size: 12.5px;
+    }
+}

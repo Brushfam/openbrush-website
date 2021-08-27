@@ -1,0 +1,108 @@
+/* Media Queries */
+$xs-down:                   '(max-width: 360px)';
+$sm-down:                   '(max-width: 576px)';
+$md-down:                   '(max-width: 768px)';
+$tablet-portrait-down:      '(max-width: 992px)';
+$tablet-landscape-down:     '(max-width: 1200px)';
+$desktop-down:              '(max-width: 1440px)';
+$retina-down:               '(max-width: 1680px)';
+
+$xs-up:                     '(min-width: 360px)';
+$sm-up:                     '(min-width: 576px)';
+$md-up:                     '(min-width: 768px)';
+$tablet-portrait-up:        '(min-width: 992px)';
+$tablet-landscape-up:       '(min-width: 1200px)';
+$desktop-up:                '(min-width: 1440px)';
+$retina-up:                 '(min-width: 1920px)';
+
+
+
+// $desktop-only: '(min-width: 990.99px)';
+// $laptop-only: '(min-width: 990.99px) and (max-width: 1366px)';
+// $tablet-only: '(min-width: 576.99px) and (max-width: 990px)';
+
+@mixin xs-down {
+  @media screen and #{$xs-down} {
+    @content;
+  }
+}
+
+@mixin xs-up {
+  @media screen and #{$xs-up} {
+    @content;
+  }
+}
+
+@mixin sm-down {
+  @media screen and #{$sm-down} {
+    @content;
+  }
+}
+
+@mixin sm-up {
+  @media screen and #{$sm-up} {
+    @content;
+  }
+}
+
+@mixin md-down {
+  @media screen and #{$md-down} {
+    @content;
+  }
+}
+
+@mixin md-up {
+  @media screen and #{$md-up} {
+    @content;
+  }
+}
+
+@mixin tablet-portrait-down {
+  @media screen and #{$tablet-portrait-down} {
+    @content;
+  }
+}
+
+@mixin tablet-portrait-up {
+  @media screen and #{$tablet-portrait-up}{
+    @content;
+  }
+}
+
+@mixin tablet-landscape-down {
+  @media screen and #{$tablet-landscape-down}{
+    @content;
+  }
+}
+
+@mixin tablet-landscape-up {
+  @media screen and #{$tablet-landscape-up}{
+    @content;
+  }
+}
+
+@mixin desktop-down {
+  @media screen and #{$desktop-down} {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media screen and #{$desktop-up}{
+    @content;
+  }
+}
+
+@mixin retina-down {
+  @media screen and #{$retina-down} {
+    @content;
+  }
+}
+
+@mixin retina-up {
+  @media screen and #{$retina-up}{
+    @content;
+  }
+}
+
+

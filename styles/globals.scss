@@ -1,0 +1,57 @@
+@import 'abstracts/variables';
+@import 'abstracts/mediaQueries';
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: $primary-bg-color;
+  @include md-down{
+    overflow-x: hidden;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper, .header, .footer{
+  width: 100%;
+  padding: 0 28px;
+  @include md-down {
+    padding: 0 20px;
+  }
+}
+
+/* styles for syntax highlighter */
+pre{
+  margin: 0;
+  font-family: 'Sometype Mono';
+}
+
+code{
+  font-size: 20px;
+  color: #C6C8C6;
+  font-family: 'Sometype Mono';
+  line-height: 140%;
+    @include md-down {
+        font-size: 12.5px;
+    }
+  .hljs-function.hljs-keyword{
+    color: #B294BB;
+  }
+  .hljs-function.hljs-title{
+    color: #8ABFB8;
+  }
+  span.hljs-built_in{
+    color: #DE935F !important;
+  }
+}
+

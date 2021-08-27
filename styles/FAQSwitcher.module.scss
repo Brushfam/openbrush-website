@@ -1,0 +1,102 @@
+@import './abstracts/variables';
+
+.faq{
+    &Container{
+        width: 100%;
+        margin-top: -2px;
+        border: $outline-width solid $outline-color;
+        display: flex;
+        min-height: 612px;
+        @include md-down {
+          flex-direction: column;
+          min-height: unset;
+        }
+        .questionsHolder{
+            width: 260px;
+            max-width: 260px;
+            min-width: 260px;
+            border-right: $outline-width solid $outline-color;
+            @include md-down {
+              display: flex;
+              width: 100%;
+              flex-wrap: wrap;
+              max-width: unset;
+              min-width: unset;
+              border-right: none;
+              position: relative;
+              background: $primary-bg-color;
+              &::after{
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  left: calc(50% - #{$outline-width}/2);
+                  height: 100%;
+                  width: $outline-width;
+                  background: $outline-color;
+              }
+            }
+            .questionBlock{
+                width: 100%;
+                padding: 50px 45px 42px 46px;
+                border-bottom: $outline-width solid $outline-color;
+                position: relative;
+                cursor: pointer;
+                @include md-down {
+                  width: 50%;
+                  padding: 28px 20px 30px 20px;
+                  z-index: 1;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+                .pointerArrow{
+                    position: absolute;
+                    right: 5px;
+                    bottom: 5px;
+                    @include md-down {
+                      width: 15px;
+                    }
+                }
+            }
+        }
+        .answerContainer{
+            padding: 50px 20px 130px 20px;
+            display: flex;
+            position: relative;
+            width: 100%;
+            @include md-down {
+                padding: 35px 43px 80px 43px;
+            }
+            .infoBlock{
+                max-width: 680px;
+            }
+            .wizardLinkBox{
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                padding: 10px 35px 10px 15px;
+                border-top: $outline-width solid $outline-color;
+                border-left: $outline-width solid $outline-color;
+                @include md-down {
+                    padding-right: 20px;
+                }
+                p{
+                    font-weight: 500;
+                    font-size: 35px;
+                    line-height: 140%;
+                    @include md-down {
+                        font-size: 20px;
+                    }
+                    
+                }
+                img{
+                    width: 18px;
+                    height: auto;
+                    margin-left: 15px;
+                }
+            }
+        }
+        
+    }
+}
