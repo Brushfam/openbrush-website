@@ -1,4 +1,5 @@
 import partners from './../styles/Partners.module.scss';
+import Link from 'next/link';
 
 const Partners = ({title, data}) => {
     return (
@@ -7,13 +8,14 @@ const Partners = ({title, data}) => {
             <div className={partners.logoWrapper}>
                 {data && data.map((item, i) => {
                     return(
-                        <img key={i} src={item.src} alt={item.alt} />
+                        <Link href={item.link}>
+                            <a><img key={i} src={item.src} alt={item.alt} /></a>
+                        </Link>
                     )
                 })}
             </div>
 
             <div className={partners.partnersContainerDecor}>
-
             </div>
         </div>
     )

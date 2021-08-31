@@ -7,9 +7,15 @@ import SingleTestimonial from '../components/SingleTestimonial';
 
 import { partnersList } from './../data/partnersList';
 import { faq } from '../data/faq';
+import { testimonials } from '../data/testimonials';
 
 
 export default function Home() {
+  
+  const code = `fn what_is (open: Brush) {
+    "OpenBrush provides security products to build, automate, and operate decentralized applications. We also protect leading organizations by performing security audits on their systems and products."
+  }`;
+
   return (
     <div>
         {/* TODO: make reusable Head component */} 
@@ -18,34 +24,23 @@ export default function Home() {
           <meta name="keywords" content="openbrush"></meta>
         </Head>
 
-        <Banner 
-          title={['The standard for', 
+        <Banner title={['The standard for', 
                 <span style={{color: '#E6007A'}}> Polkadot </span>, 
                 'blockchain applications']}>
 
-            {/* TODO: customize syntax highlighter in appropriate way*/} 
-            <SyntaxHighlighter language="rust" wrapLongLines={true} useInlineStyles={false}>
-                {`fn what_is (open: Brush) {`}
-            </SyntaxHighlighter>
-            <SyntaxHighlighter customStyle={{marginLeft: '50px', padding: '25px 0 15px'}} language="rust" wrapLongLines={true} useInlineStyles={false}  lineProps={{style: {color: '#B4BE68', lineHeight: '140%'}}}>
-                {`“OpenBrush provides security products to build, automate, and operate decentralized applications. We also protect leading organizations by performing security audits on their systems and products.” `}
-            </SyntaxHighlighter>
-            <SyntaxHighlighter language="rust" wrapLongLines={true} useInlineStyles={false}>
-                {`}`}
-            </SyntaxHighlighter>
-
+              {/* TODO: customize syntax highlighter in appropriate way*/} 
+              <SyntaxHighlighter language="rust" wrapLongLines={true} useInlineStyles={false}>
+                {code}
+              </SyntaxHighlighter>
+    
         </Banner>
 
-        <Partners
-            title="The world’s leading projects trust OpenBrush"
-            data={partnersList}
-         />
+        <Partners title="The world’s leading projects trust OpenBrush"
+                  data={partnersList} />
 
-         <FAQSwitcher 
-          data={faq}
-         />
+        <FAQSwitcher data={faq} />
 
-         <SingleTestimonial />
+        <SingleTestimonial testimonial={testimonials[0]} />
         
     </div>
   )
