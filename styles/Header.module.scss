@@ -77,6 +77,12 @@
             li{
                 list-style: none;
                 position: relative;
+                a{  
+                    transition: all .2s ease-in-out;
+                    &:hover{
+                        color: #ffffff;
+                    }
+                }
                 &:not(:last-child){
                     margin-right: 32px;
                     &::after{

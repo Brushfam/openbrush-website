@@ -8,8 +8,8 @@ export const headerNavigation = [
         link: '/'
     },
     {
-        label: 'Lorem',
-        link: '/'
+        label: 'Docs',
+        link: 'https://supercolony-net.github.io/openbrush-contracts/'
     },
     {
         label: 'Contact us',

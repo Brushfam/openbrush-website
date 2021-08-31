@@ -31,9 +31,13 @@
             img{
                 max-width: 194px;
                 height: auto;
+                opacity: 0.56;
+                transition: all 0.25s ease-in-out;
+                &:hover{
+                    opacity: 0.9;
+                }
                 @include md-down {
                     width: 130px;
-                
                 }
             }
         }
