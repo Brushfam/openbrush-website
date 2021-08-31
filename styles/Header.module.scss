@@ -1,0 +1,103 @@
+@import './abstracts/variables';
+
+.header{
+    height: 84px;
+    max-height: 84px;
+    position: fixed;
+    top: 0;
+    background: $primary-bg-color;
+    z-index: 99;
+    @include md-down {
+      height: 52px;
+    }
+    &Container{
+        border-bottom: $outline-width solid $outline-color;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        
+        .logoContainer{
+            border-left: $outline-width solid $outline-color;
+            border-top: $outline-width solid $outline-color;
+            position: relative;
+            max-height: 51px;
+            @include md-down {
+                padding-top: 7px;
+                max-height: unset;
+              }
+            &::after{
+                content: '';
+                position: absolute;
+                width: 84px;
+                height: $outline-width;
+                background: $outline-color;
+                transform: rotate(37.28deg) translateX(-1px);
+                transform-origin: left bottom;
+                top: -$outline-width;
+                @include md-down {
+                  width: 60px;
+                  transform: rotate(40deg) translateX(-1px);
+                }
+            }
+            img{
+                margin-left: 11px;
+                width: 146px;
+                height: auto;
+                @include md-down {
+                  width: 75px;
+                  margin-left: 8;
+                }
+            }
+        }
+    }
+    &Nav{
+        &List{
+            margin: 0;
+            display: flex;
+            padding-bottom: 2px;
+            padding-left: 6px;
+            border-bottom: $outline-width solid $outline-color;
+            margin-bottom: 3px;
+            position: relative;
+            @include tablet-portrait-down{
+                display: none;
+            }
+            &::after{
+                content: '';
+                position: absolute;
+                width: 21px;
+                background: $outline-color;
+                height: $outline-width;
+                transform: rotate(57deg);
+                left: -16px;
+                bottom: 7px;
+            }
+            li{
+                list-style: none;
+                position: relative;
+                a{  
+                    transition: all .2s ease-in-out;
+                    &:hover{
+                        color: #ffffff;
+                    }
+                }
+                &:not(:last-child){
+                    margin-right: 32px;
+                    &::after{
+                        content: '';
+                        position: absolute;
+                        width: 23px;
+                        height: $outline-width;
+                        background: $outline-color;
+                        transform: rotate(135deg);
+                        top: 50%;
+                        right: -28px;
+                    }
+                }
+            
+            }
+        }
+    }
+}

@@ -1,0 +1,175 @@
+@import './abstracts/variables';
+@import 'abstracts/mediaQueries';
+
+$decor-ray-width: 90px;
+$decor-ray-width-mobile: 35px;
+
+.banner{
+    &Container{
+        margin-top: 80px;
+        width: 100%;
+        height: calc(100vh - 85px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: $outline-width solid $outline-color;
+        position: relative;
+        min-height: 500px;
+        @include tablet-portrait-down {
+           margin-top: 50px;
+           height: auto;
+           min-height: unset;
+           padding: 105px 15px;
+        }
+    
+        &DecorWrapper{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+
+            .leftBottom, .rightBottom{
+                position: absolute;
+                width: 0;
+                height: 0;
+                bottom: -$outline-width;
+                z-index: 1;
+            }
+
+            .leftBottom{
+                left: -$outline-width;
+                border-style: solid;
+                border-width: $decor-triangle-width 0 0 $decor-triangle-width;
+                border-color: transparent transparent transparent $primary-bg-color;
+                line-height: 0px;
+                _border-color: $primary-bg-color;
+                _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+                @include md-down {
+                    border-width: $decor-triangle-width-mobile 0 0 $decor-triangle-width-mobile;
+                 }
+                &::after, &::before{
+                    content: '';
+                    position: absolute;
+                    height: $outline-width;
+                    background-color: $outline-color;
+                    transform-origin: left bottom;
+                }
+
+                &::after{
+                    width: calc(#{$decor-triangle-width} * #{$sqrt-2});
+                    left: -$decor-triangle-width;
+                    top: -$decor-triangle-width - $outline-width;
+                    transform: rotate(45deg);
+                    @include md-down {
+                        width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
+                        left: -$decor-triangle-width-mobile;
+                        top: -$decor-triangle-width-mobile - $outline-width;
+                     }
+                }
+
+                &::before{
+                    width: $decor-ray-width;
+                    background-color: $outline-color;
+                    transform: rotate(-45deg);
+                    left: 0px;
+                    top: -$decor-triangle-width;
+                    @include md-down {
+                        top: -$decor-triangle-width-mobile;
+                        width: $decor-ray-width-mobile;
+                    }
+                    
+                }
+            }
+
+            .rightBottom{
+                right: -$outline-width;
+                div{
+                    &::before, &::after{
+                        content: '';
+                        position: absolute;
+                        height: $outline-width;
+                        background-color: $outline-color;
+                        transform-origin: right bottom;
+                        transform: rotate(135deg);
+                        @include md-down {
+                            transform: rotate(135deg) scale(0.7);
+                        }
+                    }
+                    &::before{
+                        width: 10px;
+                        bottom: 8px;
+                        left: -25px;
+                    }
+                    &::after{
+                        width: 23px;
+                        bottom: 8px;
+                        left: -47px;
+                    }
+                }
+                &::before{
+                    content: '';
+                    position: absolute;
+                    width: $decor-ray-width;
+                    height: $outline-width;
+                    background-color: $outline-color;
+                    transform: rotate(45deg);
+                    right: calc(#{$decor-triangle-width}/2);
+                    top: calc(#{$decor-triangle-width}*-2);
+                    @include md-down {
+                        width: $decor-ray-width-mobile;
+                        right: calc(#{$decor-triangle-width-mobile}/1.45);
+                        top: calc(#{$decor-triangle-width-mobile}*-1.45);
+                    }
+                }
+                    
+            }
+
+            &::before, &::after{
+                content: '';
+                position: absolute;
+                width: $decor-ray-width;
+                height: $outline-width;
+                background-color: $outline-color;
+                top: calc(#{$decor-triangle-width}/2);
+                @include md-down {
+                    top: calc(#{$decor-triangle-width-mobile}/2);
+                    width: $decor-ray-width-mobile;
+                }
+            }
+
+            &::before{
+                transform-origin: left bottom;
+                transform: rotate(45deg);
+                left: calc(#{$decor-triangle-width}/2);
+                @include md-down {
+                    left: calc(#{$decor-triangle-width-mobile}/2);
+                }
+            }
+            &::after{
+                transform-origin: right bottom;
+                transform: rotate(-45deg);
+                right: calc(#{$decor-triangle-width}/2);
+                @include md-down {
+                    right: calc(#{$decor-triangle-width-mobile}/2);
+                }
+            }
+        }
+    }
+    &InnerContentHolder{
+        width: 900px;
+        max-width: 900px;
+        div{
+            width: 100%;
+            > div{
+                max-width: 672px;
+            }
+            .headlineBlock{
+                padding-bottom: 75px;
+                @include md-down {
+                    padding-bottom: 40px;
+                 }
+            }
+        }
+        
+    }
+    
+}

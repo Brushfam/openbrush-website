@@ -1,0 +1,124 @@
+@import './abstracts/variables';
+
+.faq{
+    &Container{
+        width: 100%;
+        margin-top: -2px;
+        border: $outline-width solid $outline-color;
+        .questionsHolder{
+            .questionBlock{
+                width: 100%;
+                border-bottom: $outline-width solid $outline-color;
+                position: relative;
+                cursor: pointer;
+                z-index: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                .pointerArrow{
+                    position: absolute;
+                    right: 5px;
+                    bottom: 5px;
+                }
+            }
+        }
+        .answerContainer{
+            padding: 50px 20px 130px 20px;
+            display: flex;
+            position: relative;
+            width: 100%;
+            
+            .infoBlock{
+                max-width: 680px;
+            }
+        }
+
+        .wizardLinkBox{
+            display: flex;
+            border-top: $outline-width solid $outline-color;
+            p{
+                font-weight: 500;
+                line-height: 140%;                        
+            }
+            img{
+                width: 18px;
+                height: auto;
+                margin-left: 15px;
+            }
+        }
+
+        .desktop{
+            display: flex;
+            min-height: 612px;
+            @include md-down {
+              display: none;
+            }
+            .questionsHolder{
+                width: 260px;
+                max-width: 260px;
+                min-width: 260px;
+                border-right: $outline-width solid $outline-color;
+
+                .questionBlock{
+                    padding: 50px 45px 42px 46px;
+                }
+            }
+            .answerContainer{
+                padding: 50px 20px 130px 20px;
+                display: flex;
+                position: relative;                
+                .infoBlock{
+                    max-width: 680px;
+                }
+                .wizardLinkBox{
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    padding: 10px 35px 10px 15px;
+                    border-top: $outline-width solid $outline-color;
+                    border-left: $outline-width solid $outline-color;
+                    
+                    p{
+                        font-size: 35px;
+                    }
+                    
+                }
+            }
+        }
+        .mobile{
+            display: none;
+            @include md-down {
+                display: block;
+            }
+            .questionBlock{
+                padding: 28px 20px 30px 20px;
+                
+                &::after{
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 2px;
+                    background: $outline-color;
+                    top: -$outline-width;
+                    left: 0;
+                }
+            }
+            .answerContainer{  
+                padding: 30px 25px 30px 25px;
+               
+            }
+            .wizardLinkBox{
+                width: 100%;
+                justify-content: center;
+                border-top: $outline-width solid $outline-color;
+                padding: 10px 0;
+                p{
+                    font-size: 20px;
+                }
+                
+            }
+        }
+        
+    }
+}
