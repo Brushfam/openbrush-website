@@ -1,6 +1,7 @@
 import Layout from '../components/Layout'
 import '../styles/globals.scss'
 import '../styles/base/typography.scss'
+import Prism from 'prismjs'
 import 'prismjs/components/prism-rust'
 import './prism-vsDark.css'
 import Head from 'next/head'
