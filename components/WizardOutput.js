@@ -1,5 +1,5 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { coldarkDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 
 const WizardOutput = ({data}) => {
@@ -15,7 +15,7 @@ const WizardOutput = ({data}) => {
         case 'psp22':
             return (
                 <>
-                <SyntaxHighlighter language="rust" wrapLongLines={true} style={coldarkDark}>
+                <SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
                     {`#![cfg_attr(not(feature = "std"), no_std)]
 
 #[brush::contract]
@@ -105,7 +105,7 @@ pub mod my_psp22 {
             )        
         case 'psp1155':
             return (<>
-                <SyntaxHighlighter language="rust" wrapLongLines={true} style={coldarkDark}>
+                <SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
                     {`#![cfg_attr(not(feature = "std"), no_std)]
 
 #[brush::contract]
@@ -174,7 +174,7 @@ pub mod my_psp1155 {
                 </>)
         case 'psp721':
             return (<>
-                <SyntaxHighlighter language='rust' wrapLongLines={true} style={coldarkDark}>
+                <SyntaxHighlighter language='rust' wrapLongLines={true} style={vscDarkPlus}>
                     {`#![cfg_attr(not(feature = "std"), no_std)]
 
 #[brush::contract]
