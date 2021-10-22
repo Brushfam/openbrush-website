@@ -10,11 +10,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <Layout>
       <Head>
-<<<<<<< HEAD
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-=======
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
->>>>>>> e2f7731f45335cf428cf56554427860792a45fef
       </Head>
       <Component {...pageProps} />
     </Layout>
