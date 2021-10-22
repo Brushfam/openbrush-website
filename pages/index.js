@@ -8,6 +8,7 @@ import SingleTestimonial from '../components/SingleTestimonial';
 import { partnersList } from './../data/partnersList';
 import { faq } from '../data/faq';
 import { testimonials } from '../data/testimonials';
+import Wizard from "../components/Wizard";
 
 
 export default function Home() {
@@ -25,7 +26,7 @@ export default function Home() {
         </Head>
 
         <Banner title={['The standard for', 
-                <span style={{color: '#E6007A'}}> Polkadot </span>, 
+                <span key={''} style={{color: '#E6007A'}}> Polkadot </span>,
                 'blockchain applications']}>
 
               {/* TODO: customize syntax highlighter in appropriate way*/} 
@@ -35,12 +36,13 @@ export default function Home() {
     
         </Banner>
 
-        <Partners title="The world’s leading projects trust OpenBrush"
-                  data={partnersList} />
+        <Partners title="The world’s leading projects trust OpenBrush" data={partnersList} />
 
-        <FAQSwitcher data={faq} />
+        {/* <FAQSwitcher data={faq} /> */}
 
-        <SingleTestimonial testimonial={testimonials[0]} />
+        <Wizard />
+
+        {/* <SingleTestimonial testimonial={testimonials[0]} /> */}
         
     </div>
   )

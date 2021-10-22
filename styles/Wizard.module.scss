@@ -1,0 +1,210 @@
+@import './abstracts/variables';
+
+.componentContainer {
+  width: 100%;
+  padding: 75px 120px 75px 120px;
+  border: $outline-width solid $outline-color;
+  margin-top: -$outline-width;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  @include tablet-landscape-down {
+    padding: 50px 15px;
+}
+  @include md-down {
+    padding: 40px 0px 57px;
+  }
+  .scrollWrapper{
+    width: 100%;
+    overflow: scroll;
+  }
+  .wizardWrapper{
+    border: $outline-width solid $outline-color;
+    width: 100%;
+    margin-top: 20px;
+    @include md-down {
+      width: fit-content;
+      border-top: $outline-width solid $outline-color;
+      border-bottom: $outline-width solid $outline-color;
+      border-right: none;
+      border-left: none;
+    }
+    .header{
+      padding: 12px 8px 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: $outline-width solid $outline-color;
+      .tokenStandardRow{
+        display: flex;
+        .tokenStandard{
+          padding: 6px 8px;
+          margin-right: 8px;
+          cursor: pointer;
+          border-radius: 4px;
+          border: $outline-width solid transparent;
+          &.active{
+            background: $polka-primary-color;
+            color: #ffffff;
+          }
+          &:hover{
+            border: $outline-width solid $outline-color;
+          }
+        }
+      }
+      .actionsRow{
+        display: flex;
+        .copyToClipboard{
+          padding: 12px 10px;
+          margin-right: 8px;
+          cursor: pointer;
+          border-radius: 4px;
+          border: $outline-width solid $outline-color;
+          display: flex;
+          align-items: center;
+          transition: all .1s ease;
+          &:hover{
+            background: rgba(255, 255, 255, 0.06);
+          }
+          .copyIcon{
+            width: 22px;
+            height: auto;
+            margin-right: 5px;
+          }
+        }
+      }
+
+    }
+    .body {
+      display: flex;
+
+      .contractControls {
+        width: 23%;
+        min-width: 230px;
+        padding: 8px;
+        border-right: $outline-width solid $outline-color;
+
+        .inputSection{
+          padding: 7px 0;
+          &:not(:last-child){
+            border-bottom: $outline-width solid $outline-color;
+          }
+        }
+
+        .settingsInputs {
+          display: flex;
+          flex-wrap: wrap;
+          //.tokenNamingInputs{
+          //  display: flex;
+          //  margin-bottom: 15px;
+          //  &__Name{
+          //    margin-right: 10px;
+          //  }
+          //  input{
+          //    margin-top: 4px;
+          //  }
+          //}
+          .textInput{
+            display: flex;
+            justify-content: space-between;
+            margin-left: 6px;
+            width: 100%;
+            label{
+              min-width: 30%;
+            }
+          }
+          input[type="text"] {
+            //border: none;
+            padding: 3px 3px 0px 3px;
+            //border-radius: 4px;
+            //width: max-content;
+            background: $primary-bg-color;
+            border: none;
+            border-bottom: 1px solid rgba(256, 256, 256, 0.6);
+
+            color:rgba(256, 256, 256, 0.95);
+            margin: 10px;
+            width: 70px;
+
+            &:focus {
+              outline: none;
+            }
+          }
+          input[type="checkbox"] {
+            margin-right: 10px;
+          }
+        }
+
+        .controlsSectionName{
+          color: $code-string-color;
+          margin: 6px 0 6px 6px;
+          font-size: 20px;
+        }
+
+        .checkboxContainer{
+          padding: 10px 5px;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          > * {
+            font-size: 18px;
+          }
+          &:hover{
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 4px;
+            cursor: pointer;
+          }
+        }
+
+        .tooltipContainer{
+          position: relative;
+          display: flex;
+          justify-content: center;
+          margin-left: 5px;
+          &:hover > .tooltipInfo {
+            visibility: visible;
+            opacity: 1;
+          }
+          .tooltipInfo{
+            position: absolute;
+            padding: 4px;
+            bottom: 30px;
+            //left: -50%;
+            background: $outline-color;
+            max-width: 150px;
+            width: max-content;
+            border-radius: 3px;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+            font-size: 12px;
+            z-index: 100;
+          }
+          .infoIcon{
+            margin-right: 5px;
+            width: 15px;
+            opacity: 0.8;
+            transition: all .3s ease;
+            &:hover{
+              opacity: 1;
+            }
+          }
+        }
+      }
+
+      .contractOutput{
+        width: 100%;
+        padding: 25px;
+        min-width: 325px;
+        pre{
+          background: transparent !important;
+        }
+        code{
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}

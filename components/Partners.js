@@ -8,7 +8,7 @@ const Partners = ({title, data}) => {
             <div className={partners.logoWrapper}>
                 {data && data.map((item, i) => {
                     return(
-                        <Link href={item.link}>
+                        <Link key={i.toString()} href={item.link}>
                             <a><img key={i} src={item.src} alt={item.alt} /></a>
                         </Link>
                     )
