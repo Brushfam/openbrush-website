@@ -51,7 +51,7 @@
         .desktop{
             display: flex;
             min-height: 612px;
-            @include md-down {
+            @include tablet-portrait-down {
               display: none;
             }
             .questionsHolder{
@@ -88,7 +88,7 @@
         }
         .mobile{
             display: none;
-            @include md-down {
+            @include tablet-portrait-down {
                 display: block;
             }
             .questionBlock{
