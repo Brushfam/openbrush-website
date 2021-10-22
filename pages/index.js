@@ -37,7 +37,7 @@ export default function Home() {
                 'blockchain applications']}>
 
               {/* TODO: customize syntax highlighter in appropriate way*/} 
-              <SyntaxHighlighter language="rust" wrapLongLines={true} useInlineStyles={false}>
+              <SyntaxHighlighter language="rust" wrapLongLines={true}>
                 {code}
               </SyntaxHighlighter>
     
