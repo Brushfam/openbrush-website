@@ -29,7 +29,7 @@ const Wizard = () => {
 
   return (
     <div className={wizard.componentContainer}>
-      <h2 className='primaryHeadline'>Wizard</h2>
+      <h2 className='primaryHeadline'>How to use: </h2>
       <div className={wizard.scrollWrapper}>
         <div className={wizard.wizardWrapper}>
           <div className={wizard.header}>
@@ -90,7 +90,7 @@ const Wizard = () => {
                                     key={count.toString()}
                                     className={wizard.textInput}
                                   >
-                                    <div>
+                                    <div className={wizard.checkboxContainerNested}>
                                       <label
                                         htmlFor={option.name.split(" ").join("_")}
                                       >
@@ -100,6 +100,7 @@ const Wizard = () => {
                                         type={option.type}
                                         id={option.name.split(" ").join("_")}
                                         name={option.name.split(" ").join("_")}
+                                        value={ controlsState[token_i]?.currentControlsState[controlsState[token_i]?.currentControlsState.map(function (e) { return e.name; }).indexOf(option.name)].state}
                                         onChange={e => {
                                             let tmp_state = [...controlsState];
                                             let pos = tmp_state[token_i].currentControlsState.map(function (e) { return e.name; }).indexOf(option.name);
@@ -130,7 +131,7 @@ const Wizard = () => {
                                     key={count.toString()}
                                     className={wizard.checkboxContainer}
                                   >
-                                    <div>
+                                    <div className={wizard.checkboxContainerNested}>
                                       <input
                                         type={option.type}
                                         id={option.name.split(" ").join("_")}
@@ -143,7 +144,7 @@ const Wizard = () => {
                                               setControlsState(tmp_state);
                                         }}
                                       />
-                                      {option.name}
+                                      <span>{option.name}</span>
                                     </div>
                                     {option.tooltip &&
                                     option.tooltip.length > 1 ? (

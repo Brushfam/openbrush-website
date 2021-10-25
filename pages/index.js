@@ -29,14 +29,14 @@ export default function Home() {
         {/* TODO: make reusable Head component */} 
         <Head>
           <title>Openbrush</title>
-          <meta name="keywords" content="openbrush"></meta>
+          <meta name="keywords" content="openbrush"/>
+          <meta name="description" content="openbrush"/>
         </Head>
 
-        <Banner title={['The standard for', 
+        <Banner title={['Smart contract library on',
                 <span key={''} style={{color: '#E6007A'}}> Polkadot </span>,
-                'blockchain applications']}>
+                'on Rust']}>
 
-              {/* TODO: customize syntax highlighter in appropriate way*/} 
               <SyntaxHighlighter language="rust" wrapLongLines={true}>
                 {code}
               </SyntaxHighlighter>

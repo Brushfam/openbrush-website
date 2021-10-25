@@ -112,29 +112,78 @@
             margin-left: 6px;
             width: 100%;
             label{
-              min-width: 30%;
+             // min-width: 30%;
+              margin-top: 8px;
             }
           }
+          .checkboxContainerNested{
+            display: flex;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            column-gap: 2px;
           input[type="text"] {
             //border: none;
             padding: 3px 3px 0px 3px;
+            font-family: inherit;
+            font-size: 16px;
+            color: $primary-text-color;
             //border-radius: 4px;
             //width: max-content;
             background: $primary-bg-color;
             border: none;
             border-bottom: 1px solid rgba(256, 256, 256, 0.6);
 
-            color:rgba(256, 256, 256, 0.95);
             margin: 10px;
-            width: 70px;
+            width: 100%;
 
             &:focus {
               outline: none;
             }
           }
-          input[type="checkbox"] {
-            margin-right: 10px;
+
+            input[type="checkbox"] {
+              margin: 2px 10px 5px 5px;
+              position: relative;
+
+              height: 15px;
+              width: 15px;
+              -webkit-appearance: none;
+              -moz-appearance: none;
+              -o-appearance: none;
+              appearance: none;
+              border: 1px solid $outline-color;
+              border-radius: 2px;
+              outline: none;
+              transition-duration: 0.07s;
+              background-color: transparent;
+              cursor: pointer;
+              &:checked{
+                background-color: $polka-primary-color;
+              }
+              &:checked+span::before {
+                position: absolute;
+                content: '';
+                left: 0;
+                display: inline-block;
+                height: 15px;
+                width: 15px;
+                margin: 1px 2px 3px 4px;
+                flex-shrink: 0;
+                flex-grow: 0;
+                border-radius: 2px;
+                //margin-right: 0.5em;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: 50% 50%;
+
+                border-color: #0b76ef;
+                background-color: transparent;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+              }
+            }
           }
+
         }
 
         .controlsSectionName{
@@ -169,11 +218,11 @@
           }
           .tooltipInfo{
             position: absolute;
-            padding: 4px;
+            padding: 10px;
             bottom: 30px;
             //left: -50%;
             background: $outline-color;
-            max-width: 150px;
+            max-width: 160px;
             width: max-content;
             border-radius: 3px;
             visibility: hidden;

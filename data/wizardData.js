@@ -3,7 +3,7 @@ export const wizardConfig = [
         name: 'psp22',
         controls: [
             {
-                sectionName: 'Settings',
+                sectionName: 'Constructor',
                 optionList: [
                     {
                         name: 'Name',
@@ -26,7 +26,7 @@ export const wizardConfig = [
                 ]
             },
             {
-                sectionName: 'Features',
+                sectionName: 'Extensions',
                 optionList: [
                     {
                         name: 'Burnable',
@@ -54,7 +54,7 @@ export const wizardConfig = [
         name: 'psp1155',
         controls: [
             {
-                sectionName: 'Settings',
+                sectionName: 'Constructor',
                 optionList: [
                     {
                         name: 'Name',
@@ -65,7 +65,7 @@ export const wizardConfig = [
                 ]
             },
             {
-                sectionName: 'Features',
+                sectionName: 'Extensions',
                 optionList: [
                     {
                         name: 'Burnable',
@@ -93,7 +93,7 @@ export const wizardConfig = [
         name: 'psp721',
         controls: [
             {
-                sectionName: 'Settings',
+                sectionName: 'Constructor',
                 optionList: [
                     {
                         name: 'Name',
@@ -110,7 +110,7 @@ export const wizardConfig = [
                 ]
             },
             {
-                sectionName: 'Features',
+                sectionName: 'Extensions',
                 optionList: [
                     {
                         name: 'Burnable',
