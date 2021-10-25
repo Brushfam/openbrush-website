@@ -10,9 +10,9 @@
         align-items: center;
         flex-direction: column;
         margin-top: -2px;
+        text-align: center;
         @include tablet-portrait-down {
             padding: 70px 25px;
-            text-align: center;
         }
     
         .logoWrapper{
