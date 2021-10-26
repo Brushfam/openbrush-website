@@ -9,7 +9,7 @@ const WizardOutput = ({data}) => {
         setOutPut(data);
     }, [data, output])
 
-    //Totally unreadable.
+    //Totally unreadable and unoptimized approach. TODO: Make three separate modules with placeholders
     if (output)
      switch (output.type) {
         case 'psp22':
@@ -154,44 +154,48 @@ pub mod my_psp1155 {
             return (<>
                 <SyntaxHighlighter language='rust' wrapLongLines={true} style={vscDarkPlus}>
                     {`#![cfg_attr(not(feature = "std"), no_std)]
-
+                    
 #[brush::contract]
 pub mod my_psp721 {
     use ink_prelude::{
         string::String,
         vec::Vec,
     };
-    use psp721::{
+    use psp721::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state || output.currentControlsState.find(x => x.name === 'Mintable').state || output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         extensions::{${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             burnable::*,` : ''}${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-            mintable::*,` : ''}
-            metadata::*,
-        },
+            mintable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+            metadata::*,` : ''}
+        }, ` : '' }
         traits::*,
-    };
+    }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    use ownable::traits::*;` : ``}
 
-    #[derive(Default, PSP721Storage, PSP721MetadataStorage)]
+    #[derive(Default, PSP721Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP721MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
     #[ink(storage)]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state}{
         #[PSP721StorageField]
-        psp721: PSP721Data,
+        psp721: PSP721Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         #[PSP721MetadataStorageField]
-        metadata: PSP721MetadataData,
+        metadata: PSP721MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[OwnableStorageField]
+        ownable: OwnableData,` : ``}
         next_id: u8,
     }
 
     impl PSP721 for ${output.currentControlsState.find(x => x.name === 'Name').state} {}${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     impl PSP721Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    impl PSP721Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
-    impl PSP721Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}
+    impl PSP721Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    impl PSP721Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
 
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         /// A constructor which mints the first token to the owner
         #[ink(constructor)]
         pub fn new() -> Self {
-            let mut instance = Self::default();
+            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
             instance.metadata.name = '${output.currentControlsState.find(x => x.name === 'Name').state}';
-            instance.metadata.symbol = '${output.currentControlsState.find(x => x.name === 'Symbol').state}'; ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+            instance.metadata.symbol = '${output.currentControlsState.find(x => x.name === 'Symbol').state}'; ` : ''}  ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             instance.mint_token();` : `
             instance._mint([instance.next_id; 32]);
             instance.next_id += 1;`}

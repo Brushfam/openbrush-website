@@ -32,7 +32,7 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Metadata'
+                        tooltip: '[`PSP22`] Metadata'
                     },
                     {
                         name: 'Burnable',
@@ -83,7 +83,7 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Metadata'
+                        tooltip: '[`PSP1155`] Metadata'
                     },
                     {
                         name: 'Burnable',
@@ -131,6 +131,12 @@ export const wizardConfig = [
                 sectionName: 'Extensions',
                 optionList: [
                     {
+                        name: 'Metadata',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: '[`PSP721`] Metadata'
+                    },
+                    {
                         name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
@@ -138,6 +144,12 @@ export const wizardConfig = [
                     },
                     {
                         name: 'Mintable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP721`] that exposes the mint function'
+                    },
+                    {
+                        name: 'Ownable',
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP721`] that exposes the mint function'
