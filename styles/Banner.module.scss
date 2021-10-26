@@ -180,7 +180,7 @@ $decor-ray-width-mobile: 35px;
             }
             img{
                 max-width: 825px;
-                @include md-down {
+                @include tablet-portrait-down {
                     width: 80%;
                 }
             }
