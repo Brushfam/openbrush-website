@@ -11,6 +11,10 @@
         align-items: center;
         padding: 30px 0;
         margin-top: -2px;
+        @include md-down{
+            text-align: center;
+            font-size: 14px;
+        }
 
         //@include md-down {
         //    flex-direction: column;
