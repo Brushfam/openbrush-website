@@ -6,6 +6,7 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <link href="/fonts/fonts.css" rel="stylesheet" />
+          <link rel="shortcut icon" href="favicons/icon.svg" />
         </Head>
         <body>
           <Main />
