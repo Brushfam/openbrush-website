@@ -3,7 +3,7 @@ export const wizardConfig = [
         name: 'psp22',
         controls: [
             {
-                sectionName: 'Settings',
+                sectionName: 'Constructor',
                 optionList: [
                     {
                         name: 'Name',
@@ -26,8 +26,14 @@ export const wizardConfig = [
                 ]
             },
             {
-                sectionName: 'Features',
+                sectionName: 'Extensions',
                 optionList: [
+                    {
+                        name: 'Metadata',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: '[`PSP22`] Metadata'
+                    },
                     {
                         name: 'Burnable',
                         type: 'checkbox',
@@ -54,7 +60,7 @@ export const wizardConfig = [
         name: 'psp1155',
         controls: [
             {
-                sectionName: 'Settings',
+                sectionName: 'Constructor',
                 optionList: [
                     {
                         name: 'Name',
@@ -62,11 +68,23 @@ export const wizardConfig = [
                         initState: 'MyPSP1155',
                         tooltip: ''
                     },
+                    {
+                        name: 'URI',
+                        type: 'text',
+                        initState: 'https://...',
+                        tooltip: ''
+                    },
                 ]
             },
             {
-                sectionName: 'Features',
+                sectionName: 'Extensions',
                 optionList: [
+                    {
+                        name: 'Metadata',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: '[`PSP1155`] Metadata'
+                    },
                     {
                         name: 'Burnable',
                         type: 'checkbox',
@@ -93,7 +111,7 @@ export const wizardConfig = [
         name: 'psp721',
         controls: [
             {
-                sectionName: 'Settings',
+                sectionName: 'Constructor',
                 optionList: [
                     {
                         name: 'Name',
@@ -110,8 +128,14 @@ export const wizardConfig = [
                 ]
             },
             {
-                sectionName: 'Features',
+                sectionName: 'Extensions',
                 optionList: [
+                    {
+                        name: 'Metadata',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: '[`PSP721`] Metadata'
+                    },
                     {
                         name: 'Burnable',
                         type: 'checkbox',
@@ -120,6 +144,12 @@ export const wizardConfig = [
                     },
                     {
                         name: 'Mintable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP721`] that exposes the mint function'
+                    },
+                    {
+                        name: 'Ownable',
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP721`] that exposes the mint function'

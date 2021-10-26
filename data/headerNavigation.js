@@ -1,15 +1,9 @@
+export const docsLink = 'https://docs.openbrush.io/';
+
 export const headerNavigation = [
   {
-    label: 'About us',
-    link: '/'
-  },
-  {
-    label: 'Partners',
-    link: '/'
-  },
-  {
     label: 'Docs',
-    link: 'https://supercolony-net.github.io/openbrush-contracts/'
+    link: docsLink
   },
   {
     label: 'Contact us',

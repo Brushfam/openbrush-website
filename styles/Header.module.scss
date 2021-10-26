@@ -47,32 +47,35 @@
                 height: auto;
                 @include md-down {
                   width: 75px;
-                  margin-left: 8;
+                  margin-left: 8px;
                 }
             }
         }
     }
     &Nav{
         &List{
-            margin: 0;
             display: flex;
             padding-bottom: 2px;
             padding-left: 6px;
             border-bottom: $outline-width solid $outline-color;
-            margin-bottom: 3px;
+            margin: 0 0 10px 0;
             position: relative;
             @include tablet-portrait-down{
                 display: none;
             }
             &::after{
-                content: '';
+                content: "";
                 position: absolute;
-                width: 21px;
-                background: $outline-color;
-                height: $outline-width;
-                transform: rotate(57deg);
-                left: -16px;
-                bottom: 7px;
+                width: 33px;
+                background: #43494D;
+                height: 2px;
+                -webkit-transform: rotate(
+                                57deg);
+                -moz-transform: rotate(57deg);
+                transform: rotate(
+                                40deg);
+                left: -29px;
+                bottom: 8px;
             }
             li{
                 list-style: none;

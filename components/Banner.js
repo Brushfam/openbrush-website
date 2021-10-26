@@ -1,15 +1,15 @@
 import banner from './../styles/Banner.module.scss'
 
-const Banner = ({ title, children }) => {
+const Banner = ({ title, illustration }) => {
   return (
     <div className={banner.bannerContainer}>
       <div className={banner.bannerInnerContentHolder}>
         <div>
           <div>
             <div className={banner.headlineBlock}>
-              <h1 className="primaryHeadline">{title}</h1>
+              <h1>{title}</h1>
             </div>
-            {children}
+              <img src={illustration} alt='illustration' />
           </div>
         </div>
       </div>
