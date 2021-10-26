@@ -19,11 +19,9 @@ const WizardOutput = ({data}) => {
                     {`
 #![cfg_attr(not(feature = "std"), no_std)]
 #[brush::contract]
-pub mod my_psp22 {
-    use ink_prelude::{
-        string::String,
-        vec::Vec,
-    }; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+pub mod my_psp22 { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+     use ink_prelude::vec::Vec;` : ''}
+     ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
     use ink_storage::Lazy;` : ''}
     use psp22::{
         traits::*, ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
@@ -44,8 +42,7 @@ pub mod my_psp22 {
         ownable: OwnableData,` : ``}
     }
     
-    impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    impl PSP22Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     impl PSP22Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
     impl PSP22Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
     impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
@@ -91,60 +88,64 @@ pub mod my_psp1155 {
         modifiers,` : ``}
         traits::InkStorage,
     };
-    use ink_prelude::vec::Vec; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    use ink_storage::collections::HashMap as StorageHashMap; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
     use ownable::traits::*;` : ``}
-    use psp1155::{
+    use psp1155::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state || output.currentControlsState.find(x => x.name === 'Mintable').state || output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         extensions::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             burnable::*,` : ``} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             mintable::*,` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
             metadata::*, ` : ``} 
-        },
+        }, ` : ''}
         traits::*,
     };
 
     #[ink(storage)]
-    #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
+    #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``}${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP1155MetadataStorage` : ``})]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[PSP1155StorageField]
         psp1155: PSP1155Data, ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
         #[OwnableStorageField]
-        ownable: OwnableData,` : ``}
+        ownable: OwnableData,` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        #[PSP1155MetadataStorageField]
+        metadata: PSP1155MetadataData,` : ``}  
+        registered_ids: StorageHashMap<Id, bool>,    
     }
-
-    impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
-        #[ink(constructor)]
-        pub fn new() -> Self {
-            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-            let caller = instance.env().caller();
-            instance._init_with_owner(caller);` : ``}
-            instance
-        }
-    } 
-    ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    impl PSP1155Metadata for MyPSP1155 {}` : ``} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
     impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
-
-    impl PSP1155 for ${output.currentControlsState.find(x => x.name === 'Name').state} {}
-    ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {
-        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[modifiers(only_owner)]` : ``}
-        fn mint_to(&mut self, to: AccountId, id: Id, amount: Balance) {
-            self._mint(to, id, amount);
-        }
-
-        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[modifiers(only_owner)]` : ``}
-        fn mint(&mut self, id: Id, amount: Balance) {
-            self._mint(Self::env().caller(), id, amount);
-        }
-    }` : ``} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP1155 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Burnable').state && output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    
     impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {
-        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[modifiers(only_owner)]` : ``}
+        #[ink(message)] 
+        #[modifiers(only_owner)]
         fn burn(&mut self, id: Id, amount: Balance) {
             self._burn(Self::env().caller(), id, amount);
         }
-    }` : ``}
+    }
+    ` : output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
+    
+    impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
+        #[ink(constructor)]
+        pub fn new() -> Self {
+            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+            instance.metadata.uri = '${output.currentControlsState.find(x => x.name === 'URI')?.state}';` : ``} 
+            instance
+        }
+        
+        #[ink(message)]
+        pub fn add_type(&mut self, id: Id) {
+            self.registered_ids.insert(id, true);
+        }
+        ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[modifiers(only_owner)]` : ``}
+        pub fn mint_tokens(&mut self, id: Id, amount: Balance) {
+            assert!(*self.registered_ids.get(&id).unwrap_or(&false));
+            self.mint(id, amount);
+        }` : ''}
+    } 
 }
 `}
                 </SyntaxHighlighter>
