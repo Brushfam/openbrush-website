@@ -33,15 +33,11 @@ export default function Home() {
           <meta name="description" content="openbrush"/>
         </Head>
 
-        <Banner title={['Smart contract library on',
+        <Banner title={['Smart contract library for',
                 <span key={''} style={{color: '#E6007A'}}> Polkadot </span>,
-                'on Rust']}>
-
-              <SyntaxHighlighter language="rust" wrapLongLines={true}>
-                {code}
-              </SyntaxHighlighter>
-    
-        </Banner>
+                'on', <span key={''} style={{color: '#B4BE68'}}> Rust </span>,]}
+                illustration='/img/bannerIllustration.svg'
+        />
 
         <Partners title="The world’s leading projects trust OpenBrush" data={partnersList} />
 

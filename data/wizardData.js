@@ -29,6 +29,12 @@ export const wizardConfig = [
                 sectionName: 'Extensions',
                 optionList: [
                     {
+                        name: 'Metadata',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Metadata'
+                    },
+                    {
                         name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
@@ -62,11 +68,23 @@ export const wizardConfig = [
                         initState: 'MyPSP1155',
                         tooltip: ''
                     },
+                    {
+                        name: 'URI',
+                        type: 'text',
+                        initState: 'https://...',
+                        tooltip: ''
+                    },
                 ]
             },
             {
                 sectionName: 'Extensions',
                 optionList: [
+                    {
+                        name: 'Metadata',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Metadata'
+                    },
                     {
                         name: 'Burnable',
                         type: 'checkbox',

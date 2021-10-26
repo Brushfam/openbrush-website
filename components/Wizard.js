@@ -2,6 +2,8 @@ import wizard from "./../styles/Wizard.module.scss";
 import { useEffect, useState } from "react";
 import { wizardConfig } from "../data/wizardData";
 import WizardOutput from "./WizardOutput";
+import Link from "next/link";
+import {docsLink} from "../data/headerNavigation";
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
@@ -83,6 +85,14 @@ const Wizard = () => {
                         </div>
                         <div className={wizard.settingsInputs}>
                           {item.optionList.map((option, count) => {
+
+                            if (option.name === 'Symbol' || option.name === 'URI') {
+                              let pos = controlsState[token_i]?.currentControlsState.map(function (e) { return e.name; }).indexOf('Metadata');
+                              if (controlsState[token_i]?.currentControlsState[pos]?.state === false) {
+                                return ;
+                              }
+                            }
+
                             switch (option.type) {
                               case "text":
                                 return (
@@ -186,6 +196,11 @@ const Wizard = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className={wizard.docsLink}>
+        <Link href={docsLink}>
+          <a>Documentation</a>
+        </Link>
       </div>
     </div>
   );

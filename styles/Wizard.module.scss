@@ -256,4 +256,25 @@
       }
     }
   }
+
+  .docsLink{
+
+    border: $outline-width solid $outline-color;
+    margin-top: 40px;
+    border-radius: 6px;
+    padding: 25px 0px;
+    transition: all .2s ease;
+    &:hover{
+      border: $outline-width solid $code-string-color;
+      a{
+        color: $code-string-color;
+      }
+    }
+    a{
+      transition: all .2s ease;
+      padding: 25px 20px;
+      width: 100%;
+      font-size: 22px;
+    }
+  }
 }

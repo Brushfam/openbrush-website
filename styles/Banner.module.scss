@@ -21,10 +21,7 @@ $decor-ray-width-mobile: 35px;
            min-height: unset;
            padding: 105px 15px;
         }
-        code{
-            font-size: 18px !important;
-            text-shadow: none !important;
-        }
+
     
         &DecorWrapper{
             position: absolute;
@@ -164,13 +161,28 @@ $decor-ray-width-mobile: 35px;
         div{
             width: 100%;
             > div{
-                max-width: 672px;
+                max-width: 850px;
+                text-align: center;
             }
             .headlineBlock{
                 padding-bottom: 75px;
+                h1{
+                    font-size: 30px;
+                    white-space: normal;
+                    @include md-down {
+                        font-size: 20px;
+
+                    }
+                }
                 @include md-down {
                     padding-bottom: 40px;
                  }
+            }
+            img{
+                max-width: 825px;
+                @include md-down {
+                    width: 80%;
+                }
             }
         }
         
