@@ -245,13 +245,17 @@
 
       .contractOutput{
         width: 100%;
-        padding: 25px;
+        //padding: 25px;
         min-width: 355px;
-        @include tablet-portrait-down {
-          padding: 10px;
-        }
+        //@include tablet-portrait-down {
+        //  padding: 10px;
+        //}
         pre{
           background: transparent !important;
+          padding: 20px 0;
+          @include tablet-portrait-down {
+            padding: 0px;
+          }
         }
         code{
           font-size: 12px;

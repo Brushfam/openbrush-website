@@ -33,7 +33,7 @@ export default function Home() {
           <meta name="description" content="openbrush"/>
         </Head>
 
-        <Banner title={['Smart contract library for',
+        <Banner title={['Smart contracts library for',
                 <span key={''} style={{color: '#E6007A'}}> Polkadot </span>,
                 'on', <span key={''} style={{color: '#B4BE68'}}> Rust </span>,]}
                 illustration='/img/bannerIllustration.svg'
