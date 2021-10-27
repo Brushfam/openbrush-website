@@ -3,10 +3,10 @@
 .tabsSwitch{
   width: 100%;
   display: flex;
-  padding-bottom: 10px;
   border-bottom: $outline-width solid rgba(67, 73, 77, .6);
   div{
     width: 50%;
+    padding: 15px 0;
     text-align: center;
     cursor: pointer;
     &:first-of-type{
