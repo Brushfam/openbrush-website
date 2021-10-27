@@ -1,5 +1,5 @@
-import partners from './../styles/Partners.module.scss';
-import Link from 'next/link';
+import partners from './../styles/Partners.module.scss'
+import Link from 'next/link'
 
 const Partners = ({title, data}) => {
     return (
@@ -15,10 +15,9 @@ const Partners = ({title, data}) => {
                 })}
             </div>
 
-            <div className={partners.partnersContainerDecor}>
-            </div>
-        </div>
-    )
+      <div className={partners.partnersContainerDecor}></div>
+    </div>
+  )
 }
 
-export default Partners;
+export default Partners
