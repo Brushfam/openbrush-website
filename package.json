@@ -7,8 +7,7 @@
     "build": "next build",
     "export": "next export",
     "start": "next start",
-    "lint": "next lint",
-    "deploy": "next build && next export && git add out/ && git commit -m \"Update build for gh-pages\" && git fetch && git checkout gh-pages && git checkout development -- out && mv ./out/* ./ && git add . && git commit -m \"Deploy gh-pages\" && git push origin gh-pages"
+    "lint": "next lint"
   },
   "dependencies": {
     "next": "11.1.0",
