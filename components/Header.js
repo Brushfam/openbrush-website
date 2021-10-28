@@ -10,27 +10,23 @@ const Header = ({ nav }) => {
         <Link href="/">
           <a>
             <div className={header.logoContainer}>
-              <img src="/img/logo.png" alt="logo" />
+              <img src="/img/logo.png" alt="openbrush logo" />
             </div>
           </a>
         </Link>
         <div className={header.navigationContainer}>
-          <ul className={header.socialsList}>
-            {headerSocials.map((social, i) => (
-
-                  <Link href={social.link}>
-                    <li className={`${header[social.label]} header`} key={i}>
-                    </li>
-                  </Link>
-
-            ))}
-          </ul>
           <nav className={header.headerNav}>
             <ul className={header.headerNavList}>
+              {headerSocials.map((social, i) => (
+                  <Link key={i.toString()} href={social.link}>
+                    <li className={`${header['socialsNav']} ${header[social.label]} header`}>
+                    </li>
+                  </Link>
+              ))}
               {nav &&
                 nav.map((nav, i) => {
                   return (
-                    <li key={i}>
+                    <li key={i.toString()}>
                       <Link href={nav.link}>
                         <a className="commonText">{nav.label}</a>
                       </Link>

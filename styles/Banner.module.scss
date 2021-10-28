@@ -21,6 +21,9 @@ $decor-ray-width-mobile: 35px;
            min-height: unset;
            padding: 105px 15px;
         }
+        @include md-down {
+            padding: 70px 15px;
+        }
 
     
         &DecorWrapper{
@@ -160,8 +163,8 @@ $decor-ray-width-mobile: 35px;
         max-width: 900px;
         div{
             width: 100%;
-            > div{
-                max-width: 850px;
+            + div{
+                max-width: 840px;
                 text-align: center;
             }
             .headlineBlock{
@@ -171,12 +174,58 @@ $decor-ray-width-mobile: 35px;
                     white-space: normal;
                     @include md-down {
                         font-size: 20px;
-
+                        text-align: center;
                     }
                 }
                 @include md-down {
                     padding-bottom: 40px;
                  }
+            }
+            .illustrationConstructor{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                @include md-down {
+                    flex-direction: column;
+                    justify-content: center;
+                    row-gap: 30px;
+                    img{
+                        width: auto;
+                        max-width: 40px;
+                    }
+                }
+                @include md-down {
+                    & > img {
+                        max-width: 20px;
+                    }
+                }
+                .illustrationContainer{
+                    width: fit-content;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+                    span{
+                        font-style: normal;
+                        font-weight: bold;
+                        font-size: 25px;
+                        line-height: 140%;
+                        margin-top: 30px;
+                        @include md-down {
+                            font-size: 16px;
+                            margin-top: 15px;
+                        }
+                        &.ink{
+                            color: $polka-primary-color;
+                        }
+                        &.openbrush{
+                            color: $primary-text-color;
+                        }
+                        &.contracts{
+                            color: $code-string-color;
+                        }
+                    }
+                }
             }
             img{
                 max-width: 825px;

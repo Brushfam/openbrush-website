@@ -30,14 +30,13 @@ const WizardOutput = ({data}) => {
     #![cfg_attr(not(feature = "std"), no_std)]
     #[brush::contract]
     pub mod my_token { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-         use ink_prelude::vec::Vec;` : ''}
-         ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        use ink_prelude::vec::Vec;` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         use ink_storage::Lazy;` : ''}
         use psp22::{
             traits::*, ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             extensions::burnable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             extensions::mintable::*,` : ''} 
-            }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
         use ownable::traits::*;
         use brush::modifiers;` : ``}
     
