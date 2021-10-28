@@ -12,6 +12,9 @@
     &:first-of-type{
       border-right: $outline-width solid rgba(67, 73, 77, .6);
     }
+    &:hover{
+      color: $code-string-color;
+    }
     &.activeTab{
       color: $code-string-color;
     }

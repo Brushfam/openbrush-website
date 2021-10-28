@@ -32,7 +32,7 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: '[`PSP22`] Metadata'
+                        tooltip: 'Metadata for [`PSP22`] '
                     },
                     {
                         name: 'Burnable',
@@ -83,7 +83,7 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: '[`PSP1155`] Metadata'
+                        tooltip: 'Metadata for [`PSP1155`]'
                     },
                     {
                         name: 'Burnable',
@@ -134,7 +134,7 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: '[`PSP721`] Metadata'
+                        tooltip: 'Metadata for [`PSP721`]'
                     },
                     {
                         name: 'Burnable',
