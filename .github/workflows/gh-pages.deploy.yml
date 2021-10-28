@@ -9,9 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      NEXT_PUBLIC_BASE_PATH: /openbrush-website
-
     strategy:
       matrix:
         node-version: [14.x]
