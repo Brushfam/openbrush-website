@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'Sometype Mono';
+    src: url("sometype-mono.regular.otf") format("opentype");
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sometype Mono';
+    src: url("sometype-mono.regular-italic.otf") format("opentype");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Sometype Mono';
+    src: url("sometype-mono.medium.otf") format("opentype");
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'Sometype Mono';
+    src: url("sometype-mono.medium-italic.otf") format("opentype");
+    font-style: italic;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'Sometype Mono';
+    src: url("sometype-mono.bold.otf") format("opentype");
+    font-style: normal;
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: 'Sometype Mono';
+    src: url("sometype-mono.bold-italic.otf") format("opentype");
+    font-style: italic;
+    font-weight: 700;
+}
