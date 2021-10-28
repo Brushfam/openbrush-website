@@ -20,7 +20,7 @@ const WizardOutput = ({data}) => {
                 <div>
                     <div className={wizardOutput.tabsSwitch}>
                         <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
-                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>cargo.toml</div>
+                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
                     </div>
                     <div className={wizardOutput.mainContent}>
                         {
@@ -29,7 +29,7 @@ const WizardOutput = ({data}) => {
                                 {`
     #![cfg_attr(not(feature = "std"), no_std)]
     #[brush::contract]
-    pub mod my_psp22 { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    pub mod my_token { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
          use ink_prelude::vec::Vec;` : ''}
          ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         use ink_storage::Lazy;` : ''}
@@ -87,7 +87,7 @@ const WizardOutput = ({data}) => {
                             </SyntaxHighlighter>) :
                              (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
                                 {`[package]
-name = "my_psp22"
+name = "my_token"
 version = "1.0.0"
 edition = "2018"
 
@@ -143,7 +143,7 @@ ink-as-dependency = []`}
                 <div>
                     <div className={wizardOutput.tabsSwitch}>
                         <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
-                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>cargo.toml</div>
+                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
                     </div>
                     <div className={wizardOutput.mainContent}>
                         {
@@ -152,7 +152,7 @@ ink-as-dependency = []`}
                                     {`#![cfg_attr(not(feature = "std"), no_std)]
 
 #[brush::contract]
-pub mod my_psp1155 {
+pub mod my_nft_token {
     use brush::{ ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
         modifiers,` : ``}
         traits::InkStorage,
@@ -192,8 +192,22 @@ pub mod my_psp1155 {
         }
     }
     ` : output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
+    impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state && output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    
+    impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        fn mint_to(&mut self, to: AccountId, id: Id, amount: Balance) {
+            self._mint(to, id, amount);
+        }
+        #[ink(message)]
+        #[modifiers(only_owner)]
+        fn mint(&mut self, id: Id, amount: Balance) {
+            self._mint(Self::env().caller(), id, amount);
+        }
+    }
+    ` : output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
     
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[ink(constructor)]
@@ -220,7 +234,7 @@ pub mod my_psp1155 {
                                 </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
                                     {`[package]
-name = "my_psp1155"
+name = "my_nft_token"
 version = "1.0.0"
 edition = "2018"
 
@@ -272,14 +286,10 @@ ink-as-dependency = []`}
                 </div>)
         case 'psp721':
             return (<>
-
-
-
-
                 <div>
                     <div className={wizardOutput.tabsSwitch}>
                         <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
-                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>cargo.toml</div>
+                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
                     </div>
                     <div className={wizardOutput.mainContent}>
                         {
@@ -288,7 +298,7 @@ ink-as-dependency = []`}
                                         {`#![cfg_attr(not(feature = "std"), no_std)]
                     
 #[brush::contract]
-pub mod my_psp721 {
+pub mod my_nft_token {
     use ink_prelude::{
         string::String,
         vec::Vec,
@@ -345,7 +355,7 @@ pub mod my_psp721 {
                                     </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
                                     {`[package]
-name = "my_psp721"
+name = "my_nft_token"
 version = "1.0.0"
 edition = "2018"
 
@@ -395,16 +405,11 @@ ink-as-dependency = []`}
                         }
                     </div>
                 </div>
-
-
-
-
             </>)
         default:
           return (<></>)
     }
     return (<></>)
-    
 
 }
 

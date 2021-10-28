@@ -91,6 +91,9 @@
           &:not(:last-child){
             border-bottom: $outline-width solid $outline-color;
           }
+          &:not(:first-child){
+            padding-top: 18px;
+          }
         }
 
         .settingsInputs {
