@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NEXT_PUBLIC_BASE_PATH: /openbrush-website
+      NEXT_PUBLIC_BASE_PATH: /
 
     strategy:
       matrix:
