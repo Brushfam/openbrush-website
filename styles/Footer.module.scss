@@ -18,6 +18,9 @@
         }
         .socials{
             display: flex;
+            @include md-down{
+                flex-direction: column;
+            }
             .link{
                 position: relative;
                 padding: 0 15px 15px 45px;
