@@ -24,6 +24,11 @@ export const partnersList = [
     src: '/img/partners/logo6.svg',
     link: 'https://applicature.com/'
   },
+  {
+    alt: 'alliance',
+    src: '/img/partners/alliance.png',
+    link: 'https://allianceblock.io/'
+  },
   // {
   //   alt: 'logo',
   //   src: '/img/partners/logo7.svg',
