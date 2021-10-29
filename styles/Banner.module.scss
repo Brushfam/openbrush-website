@@ -191,14 +191,14 @@ $decor-ray-width-mobile: 35px;
                     &:after{
                         transform: scale(1.33);
                         top: 28px;
-                        background: url("../public/icons/arrowDownPolkaColor.svg") no-repeat;
+                        background: url("../public/icons/arrowDownColored.svg");
                     }
                 }
             }
             &:after{
                 content: '';
                 position: absolute;
-                right: 15px;
+                right: 20px;
                 top: 25px;
                 background: url("../public/icons/arrowDown.svg") no-repeat;
                 margin-left: 10px;
