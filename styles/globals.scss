@@ -26,35 +26,35 @@ a {
   width: 100%;
   padding: 0 28px;
   @include md-down {
-    padding: 0 20px;
+    padding: 0px;
   }
 }
 
 /* styles for syntax highlighter */
-pre{
-  margin: 0;
-  font-family: 'Sometype Mono';
-}
-
-code{
-  font-size: 20px;
-  color: #C6C8C6;
-  font-family: 'Sometype Mono';
-  line-height: 140%;
-    @include md-down {
-        font-size: 12.5px;
-    }
-  .hljs-function.hljs-keyword{
-    color: #B294BB;
-  }
-  .hljs-function.hljs-title{
-    color: #8ABFB8;
-  }
-  span.hljs-built_in{
-    color: #DE935F !important;
-  }
-  span.hljs-string{
-    color: #B4BE68;
-  }
-}
+//pre{
+//  margin: 0;
+//  font-family: 'Sometype Mono';
+//}
+//
+//code{
+//  font-size: 20px;
+//  color: #C6C8C6;
+//  font-family: 'Sometype Mono';
+//  line-height: 140%;
+//    @include md-down {
+//        font-size: 12.5px;
+//    }
+//  .hljs-function.hljs-keyword{
+//    color: #B294BB;
+//  }
+//  .hljs-function.hljs-title{
+//    color: #8ABFB8;
+//  }
+//  span.hljs-built_in{
+//    color: #DE935F !important;
+//  }
+//  span.hljs-string{
+//    color: #B4BE68;
+//  }
+//}
 

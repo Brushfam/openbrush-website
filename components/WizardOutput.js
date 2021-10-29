@@ -26,63 +26,61 @@ const WizardOutput = ({data}) => {
                         {
                             selectedTab === 'rust' ?
                              (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
-                                {`
-    #![cfg_attr(not(feature = "std"), no_std)]
-    #[brush::contract]
-    pub mod my_token { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-        use ink_prelude::vec::Vec;` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-        use ink_storage::Lazy;` : ''}
-        use psp22::{
-            traits::*, ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-            extensions::burnable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-            extensions::mintable::*,` : ''} 
+                                {`#![cfg_attr(not(feature = "std"), no_std)]
+                                
+#[brush::contract]
+pub mod my_token { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use ink_prelude::vec::Vec;` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use ink_storage::Lazy;` : ''}
+    use psp22::{
+        traits::*, ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+        extensions::burnable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+        extensions::mintable::*,` : ''}  
         }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        use ownable::traits::*;
-        use brush::modifiers;` : ``}
-    
-        #[ink(storage)]
-        #[derive(Default, PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
-        pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
-            #[PSP22StorageField]
-            psp22: PSP22Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-            #[PSP22MetadataStorageField]
-            metadata: PSP22MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-            #[OwnableStorageField]
-            ownable: OwnableData,` : ``}
-        }
-        
-        impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-        impl PSP22Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-        impl PSP22Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
-        
-        impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
-            #[ink(constructor)]
-            pub fn new(decimal: u8) -> Self {
-                let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-                Lazy::set(&mut instance.metadata.name, '${output.currentControlsState.find(x => x.name === 'Name').state}');
-                Lazy::set(&mut instance.metadata.symbol, '${output.currentControlsState.find(x => x.name === 'Symbol').state}');
-                Lazy::set(&mut instance.metadata.decimals, decimal); ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-                instance._init_with_owner(instance.env().caller());` : ''}` : ''}
-                instance._mint(instance.env().caller(), ${output.currentControlsState.find(x => x.name === 'Premint').state});
-                instance
-            }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-            
-            #[ink(message)]
-            pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) {
-                for account in accounts.iter() {
-                    self.burn_from(account.0, account.1);
-                }
-            }` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-            
-            #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-            #[modifiers(only_owner)]` : ''}
-            pub fn mint_to(&mut self, account: AccountId, amount: Balance) {
-                self.mint(account, amount);
-            }` : ''}
-        }
+    use ownable::traits::*;
+    use brush::modifiers;` : ``} 
+    #[ink(storage)]
+    #[derive(Default, PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
+    pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
+        #[PSP22StorageField]
+        psp22: PSP22Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        #[PSP22MetadataStorageField]
+        metadata: PSP22MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[OwnableStorageField]
+        ownable: OwnableData,` : ``}
     }
-    `}
+        
+    impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP22Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    impl PSP22Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
+        
+    impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
+        #[ink(constructor)]
+        pub fn new(decimal: u8) -> Self {
+            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+            Lazy::set(&mut instance.metadata.name, '${output.currentControlsState.find(x => x.name === 'Name').state}');
+            Lazy::set(&mut instance.metadata.symbol, '${output.currentControlsState.find(x => x.name === 'Symbol').state}');
+            Lazy::set(&mut instance.metadata.decimals, decimal); ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+            instance._init_with_owner(instance.env().caller());` : ''}` : ''}
+            instance._mint(instance.env().caller(), ${output.currentControlsState.find(x => x.name === 'Premint').state});
+            instance
+    }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+            
+        #[ink(message)]
+        pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) {
+            for account in accounts.iter() {
+                self.burn_from(account.0, account.1);
+            }
+        }` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+            
+        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[modifiers(only_owner)]` : ''}
+        pub fn mint_to(&mut self, account: AccountId, amount: Balance) {
+            self.mint(account, amount);
+        }` : ''}
+    }
+}`}
                             </SyntaxHighlighter>) :
                              (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
                                 {`[package]

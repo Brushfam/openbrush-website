@@ -34,4 +34,4 @@ const BurgerMenu = ({ nav }) => {
   )
 }
 
-export default BurgerMenu
+export default BurgerMenu;

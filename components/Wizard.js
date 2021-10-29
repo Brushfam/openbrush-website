@@ -4,11 +4,14 @@ import { wizardConfig } from "../data/wizardData";
 import WizardOutput from "./WizardOutput";
 import Link from "next/link";
 import {docsLink} from "../data/headerNavigation";
+import header from "../styles/Header.module.scss";
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [config, setConfig] = useState(wizardConfig);
   const [controlsState, setControlsState] = useState([]);
+
+  const [isControlsClosed, setControlsClosed] = useState(false)
 
   useEffect(() => {
     let currentState_tmp = [];
@@ -30,12 +33,13 @@ const Wizard = () => {
   }, [config]);
 
   return (
-    <div className={wizard.componentContainer}>
+    <div className={wizard.componentContainer} id='wizard'>
       <h2 className='primaryHeadline'>How to use: </h2>
       <div className={wizard.scrollWrapper}>
         <div className={wizard.wizardWrapper}>
           <div className={wizard.header}>
             <div className={wizard.tokenStandardRow}>
+              {/*<div onClick={() => setControlsClosed(!isControlsClosed)}><span>close</span></div>*/}
               {config.map((item, token_i) => {
                 return (
                   <div
@@ -69,7 +73,10 @@ const Wizard = () => {
             </div>
           </div>
           <div className={wizard.body}>
-            <div className={wizard.contractControls}>
+            <div className={
+              isControlsClosed
+                  ? `${wizard['contractControls']} ${wizard['closed']}`
+                  : `${wizard['contractControls']}` }>
               {config.map((token, token_i) => (
                 <div
                   key={token_i.toString()}
