@@ -1,4 +1,5 @@
 import banner from './../styles/Banner.module.scss'
+import Link from "next/link";
 
 const Banner = ({ title, illustration }) => {
   return (
@@ -9,17 +10,21 @@ const Banner = ({ title, illustration }) => {
             <div className={banner.headlineBlock}>
               <h1>{title}</h1>
             </div>
-              <div className={banner.illustrationConstructor}>
+            <div className={banner.illustrationConstructor}>
                   <div className={banner.illustrationContainer}>
                       <img src='/img/ink.svg' alt='ink' />
                       <span className={banner.ink}>ink!</span>
                   </div>
+
                   <img src='/img/plus.svg' alt='plus' />
+
                   <div className={banner.illustrationContainer}>
-                     <img src='/img/brush.svg' alt='brush' />
+                      <img className={banner.brushImg} src='/img/brush.svg' alt='brush' />
                       <span className={banner.openbrush}>OpenBrush</span>
                   </div>
+
                   <img src='/img/equals.svg' alt='equals' />
+
                   <div className={banner.illustrationContainer}>
                     <img src='/img/contract.svg' alt='ink' />
                     <span className={banner.contracts}>Smart Contracts</span>
@@ -28,6 +33,12 @@ const Banner = ({ title, illustration }) => {
           </div>
         </div>
       </div>
+
+        {/*<div className={banner.ctaContainer}>*/}
+        {/*    <Link href='/#wizard'>*/}
+        {/*        <a>TRY IT OUT</a>*/}
+        {/*    </Link>*/}
+        {/*</div>*/}
 
       <div className={banner.bannerContainerDecorWrapper}>
         <div className={banner.leftBottom}></div>

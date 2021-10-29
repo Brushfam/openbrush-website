@@ -10,19 +10,13 @@ const Header = ({ nav }) => {
         <Link href="/">
           <a>
             <div className={header.logoContainer}>
-              <img src="/img/logo.png" alt="openbrush logo" />
+              <img src="/icons/logo.svg" alt="openbrush logo" />
             </div>
           </a>
         </Link>
         <div className={header.navigationContainer}>
           <nav className={header.headerNav}>
             <ul className={header.headerNavList}>
-              {headerSocials.map((social, i) => (
-                  <Link key={i.toString()} href={social.link}>
-                    <li className={`${header['socialsNav']} ${header[social.label]} header`}>
-                    </li>
-                  </Link>
-              ))}
               {nav &&
                 nav.map((nav, i) => {
                   return (
@@ -33,6 +27,12 @@ const Header = ({ nav }) => {
                     </li>
                   )
                 })}
+              {headerSocials.map((social, i) => (
+                  <Link key={i.toString()} href={social.link}>
+                    <li className={`${header['socialsNav']} ${header[social.label]} header`}>
+                    </li>
+                  </Link>
+              ))}
             </ul>
           </nav>
         </div>

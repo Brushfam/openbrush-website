@@ -28,9 +28,14 @@
                 margin-top: 45px;
                 grid-row-gap: 50px;
             }
+            a {
+                display: flex;
+                align-items: center;
+            }
             img{
                 max-width: 194px;
                 height: auto;
+                margin: 0 10px;
                 opacity: 0.56;
                 transition: all 0.25s ease-in-out;
                 &:hover{

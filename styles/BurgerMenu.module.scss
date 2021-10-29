@@ -9,6 +9,8 @@
         width: 32px;
         height: 32px;
         padding: 8px 4px;
+        margin-bottom: 10px;
+        margin-right: 16px;
         background: transparent;
       
         display: flex;
@@ -43,7 +45,7 @@
               transition: all 0.3s linear;
               transform-origin: 4px;
       
-              background-color: $outline-color;
+              background-color: $primary-text-color;
       
               &:first-child {
                   transform: rotate(0);
@@ -63,7 +65,7 @@
         position: fixed;
         width: 100vw;
         height: calc(100vh - 50px);
-        top: 50px;
+        top: 59px;
         left: 100vw;
         background: $primary-bg-color;
         transition: all .3s ease-in-out;
@@ -127,7 +129,7 @@
                     position: relative;
                     a{
                         font-weight: 500;
-                        font-size: 12.5px;
+                        font-size: 18px;
                         line-height: 14px;
                     }
                     &::after{
@@ -155,5 +157,4 @@
             
         }
     }
-    
 }

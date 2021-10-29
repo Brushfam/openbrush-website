@@ -24,8 +24,6 @@ $decor-ray-width-mobile: 35px;
         @include md-down {
             padding: 70px 15px;
         }
-
-    
         &DecorWrapper{
             position: absolute;
             width: 100%;
@@ -157,16 +155,71 @@ $decor-ray-width-mobile: 35px;
                 }
             }
         }
+        .ctaContainer{
+            position: absolute;
+            bottom: 0px;
+            padding: 15px 45px 20px 15px;
+            border-top: $outline-width solid $outline-color;
+            border-right: $outline-width solid $outline-color;
+            border-left: $outline-width solid $outline-color;
+            width: fit-content;
+            cursor: pointer;
+            z-index: 60;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            transition: all .4s ease;
+            @include md-down {
+                padding: 10px 43px 15px 13px;
+            }
+            a{
+                font-size: 22px;
+                width: fit-content;
+                letter-spacing: 0.2em;
+                margin: 0;
+                @include md-down {
+                    font-size: 14px;
+                }
+            }
+            @include md-up {
+                &:hover{
+                    border-color: $code-string-color;
+                    a {
+                        color: $code-string-color;
+                        transition: all .8s ease;
+                    }
+                    &:after{
+                        transform: scale(1.33);
+                        top: 28px;
+                        background: url("../public/icons/arrowDownPolkaColor.svg") no-repeat;
+                    }
+                }
+            }
+            &:after{
+                content: '';
+                position: absolute;
+                right: 15px;
+                top: 25px;
+                background: url("../public/icons/arrowDown.svg") no-repeat;
+                margin-left: 10px;
+                width: 14px;
+                height: 8px;
+                transition: top .3s .2s ease, transform .3s ease, background .4s ease;
+                @include md-down {
+                    top: 15px;
+                }
+            }
+        }
     }
     &InnerContentHolder{
         width: 900px;
         max-width: 900px;
         div{
             width: 100%;
-            + div{
-                max-width: 840px;
-                text-align: center;
-            }
+            text-align: center;
+            //+ div{
+            //    max-width: 840px;
+            //    text-align: center;
+            //}
             .headlineBlock{
                 padding-bottom: 75px;
                 h1{
@@ -185,16 +238,31 @@ $decor-ray-width-mobile: 35px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                @include md-down {
-                    flex-direction: column;
-                    justify-content: center;
-                    row-gap: 30px;
-                    img{
-                        width: auto;
-                        max-width: 40px;
+                max-width: 825px;
+                margin: 0 auto;
+                & > div:first-of-type{
+                    margin-right: 20px;
+                    @include md-down {
+                        margin-right: 0px;
+                    }
+                }
+                @include sm-down {
+                    & > div:last-of-type{
+                        width: 100%;
                     }
                 }
                 @include md-down {
+                    row-gap: 30px;
+                    flex-wrap: wrap;
+                    justify-content: space-around;
+                    padding-bottom: 45px;
+                    img{
+                        width: 50px;
+                        &.brushImg{
+                            width: 65px;
+                        }
+                    }
+
                     & > img {
                         max-width: 20px;
                     }
@@ -204,6 +272,8 @@ $decor-ray-width-mobile: 35px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    height: 100%;
+                    justify-content: flex-end;
 
                     span{
                         font-style: normal;
@@ -227,14 +297,13 @@ $decor-ray-width-mobile: 35px;
                     }
                 }
             }
-            img{
-                max-width: 825px;
-                @include tablet-portrait-down {
-                    width: 80%;
-                }
-            }
+            //img{
+            //    max-width: 825px;
+            //    @include tablet-portrait-down {
+            //        width: 80%;
+            //    }
+            //}
         }
         
     }
-    
 }
