@@ -39,7 +39,11 @@ const Wizard = () => {
         <div className={wizard.wizardWrapper}>
           <div className={wizard.header}>
             <div className={wizard.tokenStandardRow}>
-              {/*<div onClick={() => setControlsClosed(!isControlsClosed)}><span>close</span></div>*/}
+
+              <div className={`${wizard['controlsDisplayingController']} ${isControlsClosed ? '' : wizard['open']}`} onClick={() => setControlsClosed(!isControlsClosed)}>
+                <img src='/icons/arrowDown.svg' alt='icon'/>
+              </div>
+
               {config.map((item, token_i) => {
                 return (
                   <div

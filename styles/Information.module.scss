@@ -1,0 +1,124 @@
+@import './abstracts/variables';
+
+
+.informationBlockWrapper {
+  width: 100%;
+  padding: 75px 0 80px;
+  position: relative;
+  border: $outline-width solid $outline-color;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: -2px;
+  text-align: center;
+  @include tablet-portrait-down {
+    padding: 70px 25px;
+  }
+
+  h2{
+    padding-bottom: 85px;
+    @include md-down {
+      padding-bottom: 30px;
+    }
+  }
+
+  .contentWrapper{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 84%;
+    margin: 0 auto;
+    @include tablet-landscape-down {
+      width: 90%;
+    }
+    @include md-down {
+      flex-direction: column;
+      width: 100%;
+    }
+    .contentUnit{
+      width: 33.33%;
+      padding: 0 25px;
+      @include tablet-landscape-down {
+        padding: 0 10px;
+      }
+      @include md-down {
+        width: 100%;
+        padding: 0;
+        &:not(:first-child){
+          margin-top: 15px;
+        }
+      }
+      h3{
+        font-weight: 500;
+        font-size: 25px;
+        line-height: 140%;
+        text-align: left;
+        @include md-down {
+          font-size: 16px;
+        }
+      }
+      img{
+        padding: 20px 0;
+        @include md-down {
+          padding: 10px 0;
+          max-height: 80px;
+        }
+      }
+      a{
+        color: $code-string-color;
+        text-decoration: underline;
+      }
+      ul{
+        text-align: left;
+        li{
+          margin-top: 26px;
+          list-style-type: square;
+          color: $code-string-color;
+          @include md-down {
+            margin-top: 15px;
+            font-size: 14px;
+          }
+          span{
+            color: $primary-text-color;
+          }
+        }
+      }
+    }
+  }
+
+
+
+  &Decor {
+    position: absolute;
+    left: -$outline-width;
+    top: -$outline-width;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: $decor-triangle-width $decor-triangle-width 0 0;
+    border-color: $primary-bg-color transparent transparent transparent;
+    line-height: 0px;
+    _border-color: $primary-bg-color;
+    _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+    z-index: 1;
+    @include md-down {
+      border-width: $decor-triangle-width-mobile $decor-triangle-width-mobile 0 0;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      height: $outline-width;
+      background-color: $outline-color;
+      transform-origin: left bottom;
+      width: calc(#{$decor-triangle-width} * #{$sqrt-2});
+      @include md-down {
+        width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
+      }
+      left: 1px;
+      top: 0px;
+      transform: rotate(-45deg);
+    }
+  }
+
+}

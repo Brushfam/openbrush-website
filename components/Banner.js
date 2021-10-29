@@ -1,8 +1,20 @@
 import banner from './../styles/Banner.module.scss'
 import Link from "next/link";
+import {useEffect, useState} from "react";
 
 const Banner = ({ title, illustration }) => {
-  return (
+    const [anchorTarget, setAnchorTarget] = useState(null);
+    useEffect(() => {
+        setAnchorTarget(document.getElementById('wizard'));
+    }, []);
+
+    const handleClick = event => {
+        event.preventDefault();
+        anchorTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+
+    return (
     <div className={banner.bannerContainer}>
       <div className={banner.bannerInnerContentHolder}>
         <div>
@@ -34,11 +46,11 @@ const Banner = ({ title, illustration }) => {
         </div>
       </div>
 
-        {/*<div className={banner.ctaContainer}>*/}
-        {/*    <Link href='/#wizard'>*/}
-        {/*        <a>TRY IT OUT</a>*/}
-        {/*    </Link>*/}
-        {/*</div>*/}
+        <div className={banner.ctaContainer} >
+            <Link href='/#wizard' >
+                <a onClick={handleClick}>TRY IT OUT</a>
+            </Link>
+        </div>
 
       <div className={banner.bannerContainerDecorWrapper}>
         <div className={banner.leftBottom}></div>

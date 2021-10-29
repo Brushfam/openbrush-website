@@ -2,7 +2,7 @@
 
 .componentContainer {
   width: 100%;
-  padding: 75px 120px 75px 120px;
+  padding: 95px 120px 75px 120px;
   border: $outline-width solid $outline-color;
   margin-top: -$outline-width;
   justify-content: center;
@@ -11,10 +11,10 @@
   align-items: center;
   overflow: hidden;
   @include tablet-landscape-down {
-    padding: 50px 15px;
-}
+    padding: 80px 15px 50px;
+  }
   @include md-down {
-    padding: 40px 0px 57px;
+    padding: 80px 0px 57px;
   }
   .scrollWrapper{
     width: 100%;
@@ -33,6 +33,7 @@
     }
     @include sm-down {
       width: fit-content;
+      margin-top: 40px;
     }
     .header{
       padding: 12px 8px 12px 15px;
@@ -45,6 +46,22 @@
       }
       .tokenStandardRow{
         display: flex;
+        .controlsDisplayingController{
+          padding: 5px 15px 5px 5px;
+
+          img{
+            transform: rotate(180deg);
+            transition: all .3s ease;
+          }
+          @include md-up {
+            display: none;
+          }
+          &.open{
+            img{
+              transform: rotate(0deg);
+            }
+          }
+        }
         .tokenStandard{
           padding: 6px 8px;
           margin-right: 8px;
@@ -288,13 +305,13 @@
       .contractOutput{
         width: 100%;
         //padding: 25px;
-        min-width: 355px;
+        min-width: 450px;
         //@include tablet-portrait-down {
         //  padding: 10px;
         //}
-        @include md-down {
-          min-width: 255px;
-        }
+        //@include md-down {
+        //  min-width: 255px;
+        //}
         pre{
           background: transparent !important;
           padding: 20px 0;
