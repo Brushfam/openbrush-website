@@ -13,6 +13,7 @@ import Prism from 'prismjs'
 import { useEffect } from 'react'
 import { WHAT_IS_OPEN_BRUSH } from '../data/code'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import Information from "../components/Information";
 
 
 export default function Home() {
@@ -38,6 +39,8 @@ export default function Home() {
                 'on', <span key={''} style={{color: '#B4BE68'}}> Rust </span>,]}
                 illustration='/img/bannerIllustration.svg'
         />
+
+        <Information />
 
         <Partners title="The world’s leading projects trust OpenBrush" data={partnersList} />
 

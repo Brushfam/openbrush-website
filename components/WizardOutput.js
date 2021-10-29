@@ -65,7 +65,7 @@ pub mod my_token { ${output.currentControlsState.find(x => x.name === 'Burnable'
             instance._init_with_owner(instance.env().caller());` : ''}` : ''}
             instance._mint(instance.env().caller(), ${output.currentControlsState.find(x => x.name === 'Premint').state});
             instance
-    }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+        }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             
         #[ink(message)]
         pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) {

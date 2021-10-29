@@ -15,7 +15,7 @@ const Partners = ({title, data}) => {
                 })}
             </div>
 
-      <div className={partners.partnersContainerDecor}></div>
+      {/*<div className={partners.partnersContainerDecor}></div>*/}
     </div>
   )
 }
