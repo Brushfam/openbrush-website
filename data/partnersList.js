@@ -32,7 +32,7 @@ export const partnersList = [
   {
     alt: 'web3',
     src: '/img/partners/web3.svg',
-    link: 'https://web3.foundation.io/'
+    link: 'https://web3.foundation/'
   },
   // {
   //   alt: 'logo',
