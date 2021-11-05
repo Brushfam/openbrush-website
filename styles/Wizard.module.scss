@@ -57,8 +57,10 @@
             display: none;
           }
           &.open{
+            @include md-down {
             img{
-              transform: rotate(0deg);
+                transform: rotate(0deg);
+              }
             }
           }
         }
@@ -118,7 +120,9 @@
           max-width: 230px;
         }
         &.closed{
-          margin-left: -230px;
+          @include md-down {
+            margin-left: -230px;
+          }
         }
 
         .inputSection{
@@ -321,6 +325,9 @@
         }
         code{
           font-size: 12px;
+          span{
+            white-space: pre;
+          }
         }
       }
     }
