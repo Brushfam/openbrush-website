@@ -23,43 +23,64 @@
   }
 
   .contentWrapper{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    //display: flex;
+    //flex-wrap: wrap;
+    //justify-content: flex-start;
     width: 84%;
     margin: 0 auto;
+    max-width: 1050px;
+    .grid{
+      width: 100%;
+      display: grid;
+      column-gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, auto);
+      @include md-down {
+        display: none;
+      }
+    }
     @include tablet-landscape-down {
-      width: 90%;
+      width: 95%;
     }
     @include md-down {
+      display: flex;
       flex-direction: column;
       width: 100%;
     }
-    .contentUnit{
-      width: 33.33%;
+    .contentUnit {
+      //width: 33.33%;
       padding: 0 25px;
+      display: none;
       @include tablet-landscape-down {
         padding: 0 10px;
       }
       @include md-down {
+        display: block;
         width: 100%;
         padding: 0;
-        &:not(:first-child){
+        &:not(:first-child) {
           margin-top: 15px;
         }
       }
+    }
       h3{
         font-weight: 500;
         font-size: 25px;
         line-height: 140%;
         text-align: left;
+        @include tablet-landscape-down {
+          text-align: center;
+          font-size: 22px;
+        }
         @include md-down {
           font-size: 16px;
         }
       }
       img{
         padding: 20px 0;
-        @include md-down {
+        align-self: center;
+        justify-self: center;
+        @include tablet-landscape-down {
           padding: 10px 0;
           max-height: 80px;
         }
@@ -70,7 +91,15 @@
       }
       ul{
         text-align: left;
+        @include tablet-landscape-down {
+          display: flex;
+          padding: 0;
+          flex-direction: column;
+          text-align: center;
+          align-items: center;
+        }
         li{
+          width: fit-content;
           margin-top: 26px;
           list-style-type: square;
           color: $code-string-color;
@@ -83,7 +112,7 @@
           }
         }
       }
-    }
+    //}
   }
 
 
