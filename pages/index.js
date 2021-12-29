@@ -32,6 +32,7 @@ export default function Home() {
           <title>Openbrush</title>
           <meta name="keywords" content="openbrush"/>
           <meta name="description" content="openbrush"/>
+            <meta name="google-site-verification" content="AniwPaa8GCsl_rUlPjd-Po35bxQNLuNPLFYbSohmrhc" />
         </Head>
 
         <Banner title={['Smart contracts library for',
