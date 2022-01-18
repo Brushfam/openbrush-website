@@ -1,5 +1,7 @@
 export const docsLink = 'https://docs.openbrush.io/';
+export const demoLink = 'https://www.crowdcast.io/e/substrate-seminar-2/10';
 export const githubLink = 'https://github.com/Supercolony-net/openbrush-contracts';
+export const elementLink = 'https://matrix.to/#/!utTuYglskDvqRRMQta:matrix.org?via=matrix.org';
 export const twitterLink = 'https://twitter.com/supercolony_net';
 export const linkedinLink ='https://www.linkedin.com/company/super-colony/';
 
@@ -22,6 +24,10 @@ export const headerNavigation = [
   {
     label: 'GitHub',
     link: githubLink
+  },
+  {
+    label: 'Element',
+    link: elementLink
   },
   {
     label: 'Contact us',

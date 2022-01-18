@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { wizardConfig } from "../data/wizardData";
 import WizardOutput from "./WizardOutput";
 import Link from "next/link";
-import {docsLink} from "../data/headerNavigation";
+import { docsLink, demoLink } from "../data/headerNavigation";
 import header from "../styles/Header.module.scss";
 
 const Wizard = () => {
@@ -66,7 +66,7 @@ const Wizard = () => {
               {/* <div className={wizard.copyToClipboard}
                   onClick={() => {navigator.clipboard.writeText('temporary placeholder')}}
               >
-              
+
                 <img
                   className={wizard.copyIcon}
                   src="/icons/copy.svg"
@@ -126,7 +126,7 @@ const Wizard = () => {
                                             let tmp_state = [...controlsState];
                                             let pos = tmp_state[token_i].currentControlsState.map(function (e) { return e.name; }).indexOf(option.name);
                                             tmp_state[token_i].currentControlsState[pos].state = e.target.value;
-                                        
+
                                             setControlsState(tmp_state);
                                       }}
                                       />
@@ -161,7 +161,7 @@ const Wizard = () => {
                                               let tmp_state = [...controlsState];
                                               let pos = tmp_state[token_i].currentControlsState.map(function (e) { return e.name; }).indexOf(option.name);
                                               tmp_state[token_i].currentControlsState[pos].state = e.target.checked;
-                                          
+
                                               setControlsState(tmp_state);
                                         }}
                                       />
@@ -208,10 +208,17 @@ const Wizard = () => {
           </div>
         </div>
       </div>
-      <div className={wizard.docsLink}>
-        <Link href={docsLink}>
-          <a>Documentation</a>
-        </Link>
+      <div className={wizard.bottomLinksButtons}>
+         <div className={wizard.bottomLinkBtn}>
+            <Link href={docsLink}>
+               <a>Documentation</a>
+            </Link>
+         </div>
+         <div className={wizard.bottomLinkBtn}>
+            <Link href={demoLink}>
+               <a>Demo</a>
+            </Link>
+         </div>
       </div>
     </div>
   );
