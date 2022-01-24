@@ -335,14 +335,16 @@
 
   .bottomLinksButtons {
 	  display: flex;
+	  justify-content: space-between;
 	  margin-top: 40px;
 	  column-gap: 40px;
   }
 
   .bottomLinkBtn {
+	  text-align: center;
+	  width: 13em;
 
     border: $outline-width solid $outline-color;
-   //  margin-top: 40px;
     border-radius: 6px;
     padding: 25px 0px;
     transition: all .2s ease;

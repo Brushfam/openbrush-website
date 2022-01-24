@@ -22,7 +22,10 @@ const Header = ({ nav }) => {
                   return (
                     <li key={i.toString()}>
                       <Link href={nav.link}>
-                        <a className="commonText">{nav.label}</a>
+                        <a
+									className = "commonText"
+									target = {nav.newTab ? '_blank' : undefined}
+								>{nav.label}</a>
                       </Link>
                     </li>
                   )

@@ -216,7 +216,7 @@ const Wizard = () => {
          </div>
          <div className={wizard.bottomLinkBtn}>
             <Link href={demoLink}>
-               <a>Demo</a>
+               <a target='_blank'>Demo</a>
             </Link>
          </div>
       </div>

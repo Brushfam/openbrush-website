@@ -23,11 +23,13 @@ export const headerNavigation = [
   },
   {
     label: 'GitHub',
-    link: githubLink
+    link: githubLink,
+	 newTab: true,
   },
   {
     label: 'Element',
-    link: elementLink
+    link: elementLink,
+	 newTab: true,
   },
   {
     label: 'Contact us',
