@@ -22,7 +22,7 @@ const Information = () => {
 
                     <ul>
                         <li><span>PSP22: Fungible Token</span></li>
-                        <li><span>PSP721: Non-Fungible Token</span></li>
+                        <li><span>PSP34: Non-Fungible Token</span></li>
                         <li><span>PSP1155: Multi-Token</span></li>
                     </ul>
 
@@ -48,7 +48,7 @@ const Information = () => {
                     <img src='/img/logo1.svg' alt='illustration'/>
                     <ul>
                         <li><span>PSP22: Fungible Token</span></li>
-                        <li><span>PSP721: Non-Fungible Token</span></li>
+                        <li><span>PSP34: Non-Fungible Token</span></li>
                         <li><span>PSP1155: Multi-Token</span></li>
                     </ul>
                 </div>

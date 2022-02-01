@@ -108,7 +108,7 @@ export const wizardConfig = [
         ],
     },
     {
-        name: 'psp721',
+        name: 'psp34',
         controls: [
             {
                 sectionName: 'Constructor',
@@ -116,7 +116,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP721',
+                        initState: 'MyPSP34',
                         tooltip: ''
                     },
                     {
@@ -134,25 +134,25 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Metadata for [`PSP721`]'
+                        tooltip: 'Metadata for [`PSP34`]'
                     },
                     {
                         name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP721`] that allows token holders to destroy their tokens'
+                        tooltip: 'Extension of [`PSP34`] that allows token holders to destroy their tokens'
                     },
                     {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP721`] that exposes the mint function'
+                        tooltip: 'Extension of [`PSP34`] that exposes the mint function'
                     },
                     {
                         name: 'Ownable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP721`] that exposes the mint function'
+                        tooltip: 'Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions.'
                     }
                 ]
             }

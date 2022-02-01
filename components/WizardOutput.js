@@ -281,7 +281,7 @@ ink-as-dependency = []`}
                         }
                     </div>
                 </div>)
-        case 'psp721':
+        case 'psp34':
             return (<>
                 <div>
                     <div className={wizardOutput.tabsSwitch}>
@@ -300,7 +300,7 @@ pub mod my_nft_token {
         string::String,
         vec::Vec,
     };
-    use psp721::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state || output.currentControlsState.find(x => x.name === 'Mintable').state || output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use psp34::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state || output.currentControlsState.find(x => x.name === 'Mintable').state || output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         extensions::{${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             burnable::*,` : ''}${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             mintable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
@@ -310,31 +310,31 @@ pub mod my_nft_token {
     }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
     use ownable::traits::*;` : ``}
 
-    #[derive(Default, PSP721Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP721MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
+    #[derive(Default, PSP34Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP34MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
     #[ink(storage)]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state}{
-        #[PSP721StorageField]
-        psp721: PSP721Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-        #[PSP721MetadataStorageField]
-        metadata: PSP721MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[PSP34StorageField]
+        psp34: PSP34Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        #[PSP34MetadataStorageField]
+        metadata: PSP34MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
         #[OwnableStorageField]
         ownable: OwnableData,` : ``}
         next_id: u8,
     }
 
-    impl PSP721 for ${output.currentControlsState.find(x => x.name === 'Name').state} {}${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    impl PSP721Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    impl PSP721Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    impl PSP34 for ${output.currentControlsState.find(x => x.name === 'Name').state} {}${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP34Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    impl PSP34Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
     impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    impl PSP721Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
+    impl PSP34Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
 
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         /// A constructor which mints the first token to the owner
         #[ink(constructor)]
-        pub fn new() -> Self {
+        pub fn new(id: Id) -> Self {
             let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-            instance.metadata.name = '${output.currentControlsState.find(x => x.name === 'Name').state}';
-            instance.metadata.symbol = '${output.currentControlsState.find(x => x.name === 'Symbol').state}'; ` : ''}  ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+            instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Name').state}").into_bytes());
+            instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes()); ` : ''}  ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             instance.mint_token();` : `
             instance._mint([instance.next_id; 32]);
             instance.next_id += 1;`}
@@ -368,12 +368,12 @@ scale = { package = "parity-scale-codec", version = "2.1", default-features = fa
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-psp721 = { path = "../../contracts/token/psp721", default-features = false } ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+psp34 = { path = "../../contracts/token/psp34", default-features = false } ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
 ownable = { path = "../../contracts/access/ownable", default-features = false }` : ``}
 brush = { path = "../../utils/brush", default-features = false }
 
 [lib]
-name = "my_psp721"
+name = "my_psp34"
 path = "lib.rs"
 crate-type = [
     # Used for normal contract Wasm blobs.
@@ -394,7 +394,7 @@ std = [
     "scale-info/std",
 
     # These dependencies
-    "psp721/std",
+    "psp34/std",
     "brush/std",
 ]
 ink-as-dependency = []`}
