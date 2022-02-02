@@ -89,12 +89,12 @@ version = "1.0.0"
 edition = "2018"
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
@@ -236,12 +236,12 @@ version = "1.0.0"
 edition = "2018"
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
@@ -357,12 +357,12 @@ version = "1.0.0"
 edition = "2018"
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc4", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
