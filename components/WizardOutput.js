@@ -303,56 +303,43 @@ ink-as-dependency = []`}
                                         {`#![cfg_attr(not(feature = "std"), no_std)]
                     
 #[brush::contract]
-pub mod my_nft_token {
-    use ink_prelude::{
-        string::String,
-        vec::Vec,
-    };
-    use psp34::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state || output.currentControlsState.find(x => x.name === 'Mintable').state || output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-        extensions::{${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-            burnable::*,` : ''}${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-            mintable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-            metadata::*,` : ''}
-        }, ` : '' }
-        traits::*,
-    }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    use ownable::traits::*;` : ``}
+pub mod my_psp34 {
+    use ink_prelude::string::String;
+    use brush::contracts::psp34::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use brush::contracts::psp34::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use brush::contracts::psp34::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    use brush::contracts::psp34::extensions::mintable::*;` : ''}
+    
 
-    #[derive(Default, PSP34Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP34MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
+    #[derive(Default, PSP34Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP34MetadataStorage` : ''})]
     #[ink(storage)]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state}{
         #[PSP34StorageField]
-        psp34: PSP34Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        psp34: PSP34Data,
+        next_id: u8, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         #[PSP34MetadataStorageField]
-        metadata: PSP34MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[OwnableStorageField]
-        ownable: OwnableData,` : ``}
-        next_id: u8,
+        metadata: PSP34MetadataData,` : ''}
     }
 
     impl PSP34 for ${output.currentControlsState.find(x => x.name === 'Name').state} {}${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     impl PSP34Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    impl PSP34Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    impl PSP34Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
+    impl PSP34Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    impl PSP34Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}
+    impl PSP34Internal for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
 
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
-        /// A constructor which mints the first token to the owner
         #[ink(constructor)]
         pub fn new(id: Id) -> Self {
-            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+            ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `let mut instance = Self::default();
             instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Name').state}").into_bytes());
-            instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes()); ` : ''}  ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-            instance.mint_token();` : `
-            instance._mint([instance.next_id; 32]);
-            instance.next_id += 1;`}
-            instance
-        }
-        ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+            instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+            instance.mint_token();` : ''}
+            instance` : 'Self::default()'}
+        } ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
         /// Mint method which mints a token and updates the id of next token
         #[ink(message)]
         pub fn mint_token(&mut self) {
-            self.mint([self.next_id; 32]);
+            self.mint(Id::U8(self.next_id));
             self.next_id += 1;
         }` : ''}
     }
@@ -360,7 +347,7 @@ pub mod my_nft_token {
                                     </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
                                     {`[package]
-name = "my_nft_token"
+name = "my_psp34"
 version = "1.0.0"
 edition = "2018"
 
@@ -376,9 +363,7 @@ scale = { package = "parity-scale-codec", version = "2.1", default-features = fa
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-psp34 = { path = "../../contracts/token/psp34", default-features = false } ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-ownable = { path = "../../contracts/access/ownable", default-features = false }` : ``}
-brush = { path = "../../utils/brush", default-features = false }
+brush = { tag = "v1.2.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
 
 [lib]
 name = "my_psp34"
@@ -402,7 +387,6 @@ std = [
     "scale-info/std",
 
     # These dependencies
-    "psp34/std",
     "brush/std",
 ]
 ink-as-dependency = []`}

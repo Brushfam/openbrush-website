@@ -149,22 +149,16 @@ export const wizardConfig = [
                         tooltip: 'Metadata for [`PSP34`]'
                     },
                     {
-                        name: 'Burnable',
-                        type: 'checkbox',
-                        initState: false,
-                        tooltip: 'Extension of [`PSP34`] that allows token holders to destroy their tokens'
-                    },
-                    {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP34`] that exposes the mint function'
                     },
                     {
-                        name: 'Ownable',
+                        name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions.'
+                        tooltip: 'Extension of [`PSP34`] that allows token holders to destroy their tokens'
                     }
                 ]
             }
