@@ -29,55 +29,96 @@ const WizardOutput = ({data}) => {
                                 {`#![cfg_attr(not(feature = "std"), no_std)]
                                 
 #[brush::contract]
-pub mod my_token { ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    use ink_prelude::vec::Vec;` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    use ink_storage::Lazy;` : ''}
-    use psp22::{
-        traits::*, ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-        extensions::burnable::*,` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-        extensions::mintable::*,` : ''}  
-        }; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    use ownable::traits::*;
-    use brush::modifiers;` : ``} 
+pub mod my_token {
+    use ink_prelude::string::String; 
+    use brush::contracts::psp22::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use brush::contracts::psp22::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use brush::contracts::psp22::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    use brush::contracts::psp22::extensions::mintable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
+    use brush::contracts::psp22::extensions::wrapper::*;` : ''} ${output.currentControlsState.find(x => x.name === 'FlashMint').state ? `
+    use brush::contracts::psp22::extensions::flashmint::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
+    use brush::{
+        contracts::pausable::*,
+        modifiers,
+    };`: ''}
+
     #[ink(storage)]
-    #[derive(Default, PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``})]
+    #[derive(Default, PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `, PSP22WrapperStorage` : ''}${output.currentControlsState.find(x => x.name == 'Pausable').state ? `, PausableStorage` : ''})]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[PSP22StorageField]
         psp22: PSP22Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         #[PSP22MetadataStorageField]
-        metadata: PSP22MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[OwnableStorageField]
-        ownable: OwnableData,` : ``}
+        metadata: PSP22MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
+        #[PSP22WrapperStorageField]
+        wrapper: PSP22WrapperData,` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
+        #[PausableStorageField]
+        pause: PausableData,` : ''} ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
+        cap: Balance,`: ''}
     }
         
-    impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    impl PSP22Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     impl PSP22Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    impl PSP22Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
+    impl PSP22Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
+    impl PSP22Wrapper for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'FlashMint').state ? `
+    impl FlashLender for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
+    impl Pausable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
         
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[ink(constructor)]
-        pub fn new(decimal: u8) -> Self {
-            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-            Lazy::set(&mut instance.metadata.name, '${output.currentControlsState.find(x => x.name === 'Name').state}');
-            Lazy::set(&mut instance.metadata.symbol, '${output.currentControlsState.find(x => x.name === 'Symbol').state}');
-            Lazy::set(&mut instance.metadata.decimals, decimal); ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-            instance._init_with_owner(instance.env().caller());` : ''}` : ''}
-            instance._mint(instance.env().caller(), ${output.currentControlsState.find(x => x.name === 'Premint').state});
+        pub fn new(initial_supply: Balance${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, name: Option<String>, symbol: Option<String>, decimal: u8` : ''}${output.currentControlsState.find(x => x.name === 'Capped').state ? `, cap: Balance` : ''}) -> Self {
+            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
+            assert!(instance.init_cap(cap).is_ok());` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+            instance.metadata.name = name;
+            instance.metadata.symbol = symbol;
+            instance.metadata.decimals = decimal;` : '' }
+            assert!(instance._mint(instance.env().caller(), initial_supply).is_ok());
             instance
         }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             
         #[ink(message)]
         pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) {
             for account in accounts.iter() {
-                self.burn_from(account.0, account.1);
+                self.burn(account.0, account.1);
             }
         }` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             
-        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[modifiers(only_owner)]` : ''}
+        #[ink(message)]
         pub fn mint_to(&mut self, account: AccountId, amount: Balance) {
             self.mint(account, amount);
+        }` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
+        
+        #[ink(message)]
+        pub fn change_state(&mut self) -> Result<(), PSP22Error> {
+            if self.paused() {
+                self._unpause()
+            } else {
+                self._pause()
+            }
+        }` : ''} ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
+        
+        /// Method to return token's cap
+        #[ink(message)]
+        pub fn cap(&self) -> Balance {
+            self.cap
+        }
+        
+        /// Overrides the \`_mint\` function to check for cap overflow before minting tokens
+        /// Performs \`PSP22::_mint\` after the check succeeds
+        fn _mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            if (self.total_supply() + amount) > self.cap() {
+                return Err(PSP22Error::Custom(String::from("Cap exceeded")))
+            }
+            PSP22::_mint(self, account, amount)
+        }
+
+        /// Initializes the token's cap
+        fn init_cap(&mut self, cap: Balance) -> Result<(), PSP22Error> {
+            if cap <= 0 {
+                return Err(PSP22Error::Custom(String::from("Cap must be above 0")))
+            }
+            self.cap = cap;
+            Ok(())
         }` : ''}
     }
 }`}
@@ -99,10 +140,8 @@ ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/in
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
 
-# These dependencies
-psp22 = { path = "../../contracts/token/psp22", default-features = false } ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-ownable = { path = "../../contracts/access/ownable", default-features = false }` : ``}
-brush = { path = "../../utils/brush", default-features = false }
+# Include brush as a dependency and enable default implementation for PSP22 via brush feature
+brush = { tag = "v1.2.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}] }
 
 [lib]
 name = "my_psp22"
@@ -125,11 +164,9 @@ std = [
     "scale-info",
     "scale-info/std",
 
-    # These dependencies
-    "psp22/std",
     "brush/std",
 ]
-ink-as-dependency = []`}
+`}
                             </SyntaxHighlighter>)
                         }
                     </div>
