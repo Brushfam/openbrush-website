@@ -186,78 +186,52 @@ std = [
                                     {`#![cfg_attr(not(feature = "std"), no_std)]
 
 #[brush::contract]
-pub mod my_nft_token {
-    use brush::{ ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        modifiers,` : ``}
-        traits::InkStorage,
+pub mod my_psp1155 {
+    use ink_prelude::{
+        string::String,
+        vec,
     };
-    use ink_storage::collections::HashMap as StorageHashMap; ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    use ownable::traits::*;` : ``}
-    use psp1155::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state || output.currentControlsState.find(x => x.name === 'Mintable').state || output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-        extensions::{ ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-            burnable::*,` : ``} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-            mintable::*,` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-            metadata::*, ` : ``} 
-        }, ` : ''}
-        traits::*,
-    };
+    use brush::contracts::psp1155::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use brush::contracts::psp1155::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use brush::contracts::psp1155::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    use brush::contracts::psp22::extensions::mintable::*;` : ''}
 
     #[ink(storage)]
-    #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, OwnableStorage` : ``}${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP1155MetadataStorage` : ``})]
+    #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP1155MetadataStorage` : ``})]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[PSP1155StorageField]
-        psp1155: PSP1155Data, ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[OwnableStorageField]
-        ownable: OwnableData,` : ``} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        psp1155: PSP1155Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         #[PSP1155MetadataStorageField]
         metadata: PSP1155MetadataData,` : ``}  
-        registered_ids: StorageHashMap<Id, bool>,    
     }
-    ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    impl PSP1155Metadata for MyPSP1155 {}` : ``} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ``}
-    impl PSP1155 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Burnable').state && output.currentControlsState.find(x => x.name === 'Ownable').state ? `
     
-    impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {
-        #[ink(message)] 
-        #[modifiers(only_owner)]
-        fn burn(&mut self, id: Id, amount: Balance) {
-            self._burn(Self::env().caller(), id, amount);
-        }
-    }
-    ` : output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state && output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-    
-    impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {
-        #[ink(message)]
-        #[modifiers(only_owner)]
-        fn mint_to(&mut self, to: AccountId, id: Id, amount: Balance) {
-            self._mint(to, id, amount);
-        }
-        #[ink(message)]
-        #[modifiers(only_owner)]
-        fn mint(&mut self, id: Id, amount: Balance) {
-            self._mint(Self::env().caller(), id, amount);
-        }
-    }
-    ` : output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    impl PSP1155 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    impl PSP1155Metadata for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    impl PSP1155Burnable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
     impl PSP1155Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
     
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[ink(constructor)]
-        pub fn new() -> Self {
-            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-            instance.metadata.uri = '${output.currentControlsState.find(x => x.name === 'URI')?.state}';` : ``} 
-            instance
+        pub fn new(${output.currentControlsState.find(x => x.name === 'Metadata').state ? `uri: Option<String>` : ''}) -> Self {
+            ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `let mut instance = Self::default();
+            instance.metadata.uri = uri;
+            instance` : `Self::default()`}
         }
-        
+
         #[ink(message)]
-        pub fn add_type(&mut self, id: Id) {
-            self.registered_ids.insert(id, true);
+        pub fn deny(&mut self, id: Id) {
+            self.denied_ids.insert(id, ());
+        }
+
+        #[ink(message)]
+        pub fn mint_tokens(&mut self, id: Id, amount: Balance) -> Result<(), PSP1155Error> {
+            if self.denied_ids.get(&id).is_some() {
+                return Err(PSP1155Error::Custom(String::from("Id is denied")))
+            }
+            self._mint_to(Self::env().caller(), vec![(id, amount)])
         }
         ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-        #[modifiers(only_owner)]` : ``}
+        #[ink(message)]
         pub fn mint_tokens(&mut self, id: Id, amount: Balance) {
             assert!(*self.registered_ids.get(&id).unwrap_or(&false));
             self.mint(id, amount);
@@ -268,7 +242,7 @@ pub mod my_nft_token {
                                 </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
                                     {`[package]
-name = "my_nft_token"
+name = "my_psp1155"
 version = "1.0.0"
 edition = "2018"
 
@@ -284,9 +258,7 @@ scale = { package = "parity-scale-codec", version = "2.1", default-features = fa
 scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-psp1155 = { path = "../../contracts/token/psp1155", default-features = false } ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
-ownable = { path = "../../contracts/access/ownable", default-features = false }` : ``}
-brush = { path = "../../utils/brush", default-features = false }
+brush = { tag = "v1.2.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp1155"] }
 
 [lib]
 name = "my_psp1155"
@@ -310,7 +282,6 @@ std = [
     "scale-info/std",
 
     # These dependencies
-    "psp1155/std",
     "brush/std",
 ]
 ink-as-dependency = []`}
