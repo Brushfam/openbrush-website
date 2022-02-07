@@ -42,7 +42,7 @@ export const headerNavigation = [
 	 newTab: true,
   },
   {
-    label: 'Polkadot Smart Contracts Bar',
+    label: 'Polkadot Smart Contracts Bar 🔥',
     link: telegramLink,
 	newTab: true,
   },
