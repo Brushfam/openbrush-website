@@ -27,10 +27,14 @@ const WizardOutput = ({data}) => {
                             selectedTab === 'rust' ?
                              (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
                                 {`#![cfg_attr(not(feature = "std"), no_std)]
+#![feature(min_specialization)]
                                 
 #[brush::contract]
 pub mod my_token {
-    use ink_prelude::string::String; 
+    use ink_prelude::{
+        string::String,
+        vec::Vec,
+    };
     use brush::contracts::psp22::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
     use brush::contracts::psp22::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     use brush::contracts::psp22::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
@@ -104,12 +108,12 @@ pub mod my_token {
         }
         
         /// Overrides the \`_mint\` function to check for cap overflow before minting tokens
-        /// Performs \`PSP22::_mint\` after the check succeeds
+        /// Performs \`PSP22Internal::_mint\` after the check succeeds
         fn _mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
             if (self.total_supply() + amount) > self.cap() {
                 return Err(PSP22Error::Custom(String::from("Cap exceeded")))
             }
-            PSP22::_mint(self, account, amount)
+            PSP22Internal::_mint(self, account, amount)
         }
 
         /// Initializes the token's cap
@@ -130,18 +134,18 @@ version = "1.0.0"
 edition = "2018"
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
+scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
 
 # Include brush as a dependency and enable default implementation for PSP22 via brush feature
-brush = { tag = "v1.2.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}] }
+brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}] }
 
 [lib]
 name = "my_psp22"
@@ -184,6 +188,7 @@ std = [
                             selectedTab === 'rust' ?
                                 (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
                                     {`#![cfg_attr(not(feature = "std"), no_std)]
+#![feature(min_specialization)]
 
 #[brush::contract]
 pub mod my_psp1155 {
@@ -191,16 +196,18 @@ pub mod my_psp1155 {
         string::String,
         vec,
     };
+    use ink_storage::collections::HashMap as StorageHashMap;
     use brush::contracts::psp1155::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
     use brush::contracts::psp1155::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     use brush::contracts::psp1155::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    use brush::contracts::psp22::extensions::mintable::*;` : ''}
+    use brush::contracts::psp1155::extensions::mintable::*;` : ''}
 
     #[ink(storage)]
     #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP1155MetadataStorage` : ``})]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[PSP1155StorageField]
-        psp1155: PSP1155Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        psp1155: PSP1155Data,
+        denied_ids: StorageHashMap<Id, ()>, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         #[PSP1155MetadataStorageField]
         metadata: PSP1155MetadataData,` : ``}  
     }
@@ -221,20 +228,13 @@ pub mod my_psp1155 {
         #[ink(message)]
         pub fn deny(&mut self, id: Id) {
             self.denied_ids.insert(id, ());
-        }
-
+        } ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
         #[ink(message)]
         pub fn mint_tokens(&mut self, id: Id, amount: Balance) -> Result<(), PSP1155Error> {
             if self.denied_ids.get(&id).is_some() {
                 return Err(PSP1155Error::Custom(String::from("Id is denied")))
             }
             self._mint_to(Self::env().caller(), vec![(id, amount)])
-        }
-        ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-        #[ink(message)]
-        pub fn mint_tokens(&mut self, id: Id, amount: Balance) {
-            assert!(*self.registered_ids.get(&id).unwrap_or(&false));
-            self.mint(id, amount);
         }` : ''}
     } 
 }
@@ -247,18 +247,18 @@ version = "1.0.0"
 edition = "2018"
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
+scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-brush = { tag = "v1.2.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp1155"] }
+brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp1155"] }
 
 [lib]
 name = "my_psp1155"
@@ -301,6 +301,7 @@ ink-as-dependency = []`}
                             selectedTab === 'rust' ?
                                 (<SyntaxHighlighter language='rust' wrapLongLines={true} style={vscDarkPlus}>
                                         {`#![cfg_attr(not(feature = "std"), no_std)]
+#![feature(min_specialization)]
                     
 #[brush::contract]
 pub mod my_psp34 {
@@ -339,7 +340,7 @@ pub mod my_psp34 {
         /// Mint method which mints a token and updates the id of next token
         #[ink(message)]
         pub fn mint_token(&mut self) {
-            self.mint(Id::U8(self.next_id));
+            self.mint(Self::env().account_id(), Id::U8(self.next_id));
             self.next_id += 1;
         }` : ''}
     }
@@ -352,18 +353,18 @@ version = "1.0.0"
 edition = "2018"
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/Supercolony-net/ink", default-features = false }
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "0.6.0", default-features = false, features = ["derive"], optional = true }
+scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
 
 # These dependencies
-brush = { tag = "v1.2.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
+brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
 
 [lib]
 name = "my_psp34"
