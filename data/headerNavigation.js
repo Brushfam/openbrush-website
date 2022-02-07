@@ -4,6 +4,8 @@ export const githubLink = 'https://github.com/Supercolony-net/openbrush-contract
 export const elementLink = 'https://matrix.to/#/!utTuYglskDvqRRMQta:matrix.org?via=matrix.org';
 export const twitterLink = 'https://twitter.com/supercolony_net';
 export const linkedinLink ='https://www.linkedin.com/company/super-colony/';
+export const discordLink = 'https://discord.com/channels/933724833630531585/933725040434892940';
+export const telegramLink = 'https://t.me/openbrush';
 
 export const headerSocials = [
   {
@@ -14,6 +16,14 @@ export const headerSocials = [
     label: 'LinkedIn',
     link: linkedinLink
   },
+  {
+    label: 'Discord',
+    link: discordLink
+  },
+  // {
+  //   label: 'Telegram',
+  //   link: linkedinLink
+  // },
 ]
 
 export const headerNavigation = [
@@ -30,6 +40,11 @@ export const headerNavigation = [
     label: 'Element',
     link: elementLink,
 	 newTab: true,
+  },
+  {
+    label: 'Polkadot Smart Contracts Bar 🔥',
+    link: telegramLink,
+	newTab: true,
   },
   {
     label: 'Contact us',
