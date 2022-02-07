@@ -6,8 +6,11 @@ export const twitterLink = 'https://twitter.com/supercolony_net';
 export const linkedinLink ='https://www.linkedin.com/company/super-colony/';
 export const discordLink = 'https://discord.com/channels/933724833630531585/933725040434892940';
 export const telegramLink = 'https://t.me/openbrush';
+export const polkadotBarLink = 'https://t.me/supercolony_polkadot';
+
 
 export const headerSocials = [
+  /*
   {
     label: 'Twitter',
     link: twitterLink
@@ -16,14 +19,19 @@ export const headerSocials = [
     label: 'LinkedIn',
     link: linkedinLink
   },
+  */
+  {
+    label: 'Element',
+    link: elementLink,
+  },
+  {
+    label: 'Telegram',
+    link: telegramLink
+  },
   {
     label: 'Discord',
     link: discordLink
   },
-  // {
-  //   label: 'Telegram',
-  //   link: linkedinLink
-  // },
 ]
 
 export const headerNavigation = [
@@ -34,20 +42,17 @@ export const headerNavigation = [
   {
     label: 'GitHub',
     link: githubLink,
-	 newTab: true,
+    newTab: true,
   },
   {
-    label: 'Element',
-    link: elementLink,
-	 newTab: true,
+    label: 'Polkadot Bar 🔥',
+    link: polkadotBarLink,
+    newTab: true,
   },
-  {
-    label: 'Polkadot Smart Contracts Bar 🔥',
-    link: telegramLink,
-	newTab: true,
-  },
+  /*
   {
     label: 'Contact us',
     link: 'mailto:...@supercolony.net'
   }
+  */
 ]

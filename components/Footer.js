@@ -17,7 +17,7 @@ const Footer = ({ nav }) => {
                   <a className={`${footer['link']} ${footer['GitHub']}`}>GitHub</a>
               </Link>
               <Link href={'https://www.supercolony.net/'}>
-                <a className={`${footer['link']} ${footer['Website']}`}>Website</a>
+                <a className={`${footer['link']} ${footer['Website']}`}>Supercolony</a>
               </Link>
           </div>
         <p>Copyright © 2021 OpenBrush, Supercolony.net</p>
