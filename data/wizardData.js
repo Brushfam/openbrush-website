@@ -35,22 +35,40 @@ export const wizardConfig = [
                         tooltip: 'Metadata for [`PSP22`] '
                     },
                     {
-                        name: 'Burnable',
-                        type: 'checkbox',
-                        initState: false,
-                        tooltip: 'Extension of [`PSP22`] that allows token holders to destroy both their own tokens and those that they have an allowance for.'
-                    },
-                    {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP22`] that allows create `amount` tokens and assigns them to `account`, increasing the total supply'
                     },
                     {
-                        name: 'Ownable',
+                        name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions.'
+                        tooltip: 'Extension of [`PSP22`] that allows token holders to destroy both their own tokens and those that they have an allowance for.'
+                    },
+                    {
+                        name: 'Wrapper',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP22`] that allows you to wrap your PSP22 token in a PSP22Wrapper token which can be used for example for governance'
+                    },
+                    {
+                        name: 'FlashMint',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP22`] that allows the user to perform a flash loan on the token my minting the borrowd amount and then burning it along with fees for the loan'
+                    },
+                    {
+                        name: 'Pausable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP22`] that allows you to pause all token operations'
+                    },
+                    {
+                        name: 'Capped',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP22`] that allows you to implement with a supply cap, analogue to ERC20Capped'
                     }
                 ]
             }
@@ -86,29 +104,23 @@ export const wizardConfig = [
                         tooltip: 'Metadata for [`PSP1155`]'
                     },
                     {
-                        name: 'Burnable',
-                        type: 'checkbox',
-                        initState: false,
-                        tooltip: 'Extension of [`PSP1155`] that allows token holders to destroy their tokens'
-                    },
-                    {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP1155`] that allows minting of new tokens'
                     },
                     {
-                        name: 'Ownable',
+                        name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Contract module which provides a basic access control mechanism, where there is an account (an owner) that can be granted exclusive access to specific functions.'
-                    },
+                        tooltip: 'Extension of [`PSP1155`] that allows token holders to destroy their tokens'
+                    }
                 ]
             }
         ],
     },
     {
-        name: 'psp721',
+        name: 'psp34',
         controls: [
             {
                 sectionName: 'Constructor',
@@ -116,7 +128,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP721',
+                        initState: 'MyPSP34',
                         tooltip: ''
                     },
                     {
@@ -134,25 +146,19 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Metadata for [`PSP721`]'
-                    },
-                    {
-                        name: 'Burnable',
-                        type: 'checkbox',
-                        initState: false,
-                        tooltip: 'Extension of [`PSP721`] that allows token holders to destroy their tokens'
+                        tooltip: 'Metadata for [`PSP34`]'
                     },
                     {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP721`] that exposes the mint function'
+                        tooltip: 'Extension of [`PSP34`] that exposes the mint function'
                     },
                     {
-                        name: 'Ownable',
+                        name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP721`] that exposes the mint function'
+                        tooltip: 'Extension of [`PSP34`] that allows token holders to destroy their tokens'
                     }
                 ]
             }
