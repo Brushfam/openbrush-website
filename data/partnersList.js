@@ -4,11 +4,11 @@ export const partnersList = [
   //   src: '/img/partners/logo9.svg',
   //   link: 'https://www.protocolventures.com/'
   // },
-  {
-    alt: 'logo',
-    src: '/img/partners/logo8.svg',
-    link: 'https://www.zokyo.io/'
-  },
+  // {
+  //   alt: 'logo',
+  //   src: '/img/partners/logo8.svg',
+  //   link: 'https://www.zokyo.io/'
+  // },
   // {
   //   alt: 'logo',
   //   src: '/img/partners/logo10.svg',
@@ -25,14 +25,14 @@ export const partnersList = [
     link: 'https://applicature.com/'
   },
   {
-    alt: 'alliance',
-    src: '/img/partners/alliance.png',
-    link: 'https://allianceblock.io/'
-  },
-  {
     alt: 'web3',
     src: '/img/partners/web3.svg',
     link: 'https://web3.foundation/'
+  },
+  {
+    alt: 'alliance',
+    src: '/img/partners/allianceblock.svg',
+    link: 'https://allianceblock.io/',
   },
   // {
   //   alt: 'logo',
@@ -59,4 +59,9 @@ export const partnersList = [
   //   src: '/img/partners/Frame16.svg',
   //   link: 'https://patract.io/'
   // }
+  {
+    alt: 'astar',
+    src: '/img/partners/astar.svg',
+    link: 'https://astar.network/'
+  },
 ]
