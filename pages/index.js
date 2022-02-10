@@ -1,10 +1,12 @@
 import Head from 'next/head'
 import Banner from './../components/Banner'
 import Partners from '../components/Partners'
+import FundedBy from '../components/FundedBy'
 import FAQSwitcher from '../components/FAQSwitcher'
 import SingleTestimonial from '../components/SingleTestimonial'
 
 import { partnersList } from './../data/partnersList';
+import { fundedByList } from './../data/fundedByList';
 import { faq } from '../data/faq';
 import { testimonials } from '../data/testimonials';
 import Wizard from "../components/Wizard";
@@ -27,7 +29,7 @@ export default function Home() {
 
   return (
     <div>
-        {/* TODO: make reusable Head component */} 
+        {/* TODO: make reusable Head component */}
         <Head>
           <title>Openbrush</title>
           <meta name="keywords" content="openbrush"/>
@@ -45,12 +47,14 @@ export default function Home() {
 
         <Partners title="The world’s leading projects trust OpenBrush" data={partnersList} />
 
+        <FundedBy title="Funded by:" data={fundedByList} />
+
         {/* <FAQSwitcher data={faq} /> */}
 
         <Wizard />
 
         {/* <SingleTestimonial testimonial={testimonials[0]} /> */}
-        
+
     </div>
   )
 }
