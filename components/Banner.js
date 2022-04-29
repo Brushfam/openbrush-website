@@ -57,7 +57,7 @@ export default function Banner({ title, illustration }) {
 
       <p className={banner.createdBy}>
         created by<a href="https://www.supercolony.net" target='_blank'>
-          <img src="/img/supercolony.svg" className={banner.supercolony} />
+          <img src="/img/supercolony.svg" className={banner.supercolonyImg} />
         </a>
       </p>
 

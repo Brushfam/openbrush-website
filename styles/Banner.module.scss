@@ -268,9 +268,9 @@ $decor-ray-width-mobile: 35px;
     border-radius: 10px;
     transition: all .4s ease;
     @include md-down {
-        padding: 10px 43px 15px 13px;
+        padding: 10px 43px 10px 13px;
         margin-top: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }
     a {
         font-size: 22px;
@@ -319,10 +319,19 @@ $decor-ray-width-mobile: 35px;
     bottom: 0px;
     z-index: 60;
     padding: 15px 25px 20px 15px;
+
+    @include md-up {
+        font-size: 20px;
+    }
 }
 
-.supercolony {
+.supercolonyImg {
     height: 24px;
     vertical-align: middle;
-    margin-left: 15px;
+    margin-left: 10px;
+
+    @include md-up {
+        height: 28px;
+        margin-left: 15px;
+    }
 }
