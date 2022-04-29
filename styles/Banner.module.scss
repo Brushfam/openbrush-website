@@ -1,11 +1,14 @@
 @import './abstracts/variables';
 @import 'abstracts/mediaQueries';
 
+
 $decor-ray-width: 90px;
 $decor-ray-width-mobile: 35px;
 
+
 .banner{
-    &Container{
+
+    &Container {
         margin-top: 73px;
         width: 100%;
         height: calc(100vh - 85px);
@@ -14,116 +17,22 @@ $decor-ray-width-mobile: 35px;
         justify-content: center;
         border: $outline-width solid $outline-color;
         position: relative;
-        min-height: 500px;
+        min-height: 650px;
+
         @include tablet-portrait-down {
-           margin-top: 50px;
-           height: auto;
-           min-height: unset;
-           padding: 105px 15px;
+            margin-top: 50px;
+            height: auto;
+            min-height: unset;
+            padding: 105px 15px;
         }
         @include md-down {
             padding: 70px 15px;
         }
-        &DecorWrapper{
+
+        &DecorWrapper {
             position: absolute;
             width: 100%;
             height: 100%;
-
-            .leftBottom, .rightBottom{
-                position: absolute;
-                width: 0;
-                height: 0;
-                bottom: -$outline-width;
-                z-index: 1;
-            }
-
-            .leftBottom{
-                left: -$outline-width;
-                border-style: solid;
-                border-width: $decor-triangle-width 0 0 $decor-triangle-width;
-                border-color: transparent transparent transparent $primary-bg-color;
-                line-height: 0px;
-                _border-color: $primary-bg-color;
-                _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
-                @include md-down {
-                    border-width: $decor-triangle-width-mobile 0 0 $decor-triangle-width-mobile;
-                 }
-                &::after, &::before{
-                    content: '';
-                    position: absolute;
-                    height: $outline-width;
-                    background-color: $outline-color;
-                    transform-origin: left bottom;
-                }
-
-                &::after{
-                    width: calc(#{$decor-triangle-width} * #{$sqrt-2});
-                    left: -$decor-triangle-width;
-                    top: -$decor-triangle-width - $outline-width;
-                    transform: rotate(45deg);
-                    @include md-down {
-                        width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
-                        left: -$decor-triangle-width-mobile;
-                        top: -$decor-triangle-width-mobile - $outline-width;
-                     }
-                }
-
-                &::before{
-                    width: $decor-ray-width;
-                    background-color: $outline-color;
-                    transform: rotate(-45deg);
-                    left: 0px;
-                    top: -$decor-triangle-width;
-                    @include md-down {
-                        top: -$decor-triangle-width-mobile;
-                        width: $decor-ray-width-mobile;
-                    }
-
-                }
-            }
-
-            .rightBottom{
-                right: -$outline-width;
-                div{
-                    &::before, &::after{
-                        content: '';
-                        position: absolute;
-                        height: $outline-width;
-                        background-color: $outline-color;
-                        transform-origin: right bottom;
-                        transform: rotate(135deg);
-                        @include md-down {
-                            transform: rotate(135deg) scale(0.7);
-                        }
-                    }
-                    &::before{
-                        width: 10px;
-                        bottom: 8px;
-                        left: -25px;
-                    }
-                    &::after{
-                        width: 23px;
-                        bottom: 8px;
-                        left: -47px;
-                    }
-                }
-                &::before{
-                    content: '';
-                    position: absolute;
-                    width: $decor-ray-width;
-                    height: $outline-width;
-                    background-color: $outline-color;
-                    transform: rotate(45deg);
-                    right: calc(#{$decor-triangle-width}/2);
-                    top: calc(#{$decor-triangle-width}*-2);
-                    @include md-down {
-                        width: $decor-ray-width-mobile;
-                        right: calc(#{$decor-triangle-width-mobile}/1.45);
-                        top: calc(#{$decor-triangle-width-mobile}*-1.45);
-                    }
-                }
-
-            }
 
             &::before, &::after{
                 content: '';
@@ -156,132 +65,118 @@ $decor-ray-width-mobile: 35px;
             }
         }
     }
-    &InnerContentHolder{
+
+    &InnerContentHolder {
         width: 900px;
         max-width: 900px;
-        div{
-            width: 100%;
-            text-align: center;
-            //+ div{
-            //    max-width: 840px;
-            //    text-align: center;
-            //}
-            .headlineBlock{
-                padding-bottom: 75px;
-                h1{
-                    font-size: 30px;
-                    white-space: normal;
-                    @include md-down {
-                        font-size: 20px;
-                        text-align: center;
-                    }
-                }
-                @include md-down {
-                    padding-bottom: 40px;
-                 }
-            }
-            .illustrationConstructor{
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                max-width: 825px;
-                margin: 0 auto;
-                & > div:first-of-type{
-                    margin-right: 20px;
-                    @include md-down {
-                        margin-right: 0px;
-                    }
-                }
-                @include sm-down {
-                    & > div:last-of-type{
-                        width: 100%;
-                    }
-                }
-                @include md-down {
-                    row-gap: 30px;
-                    flex-wrap: wrap;
-                    justify-content: space-around;
-                    padding-bottom: 45px;
-                    img{
-                        width: 50px;
-                        &.brushImg{
-                            width: 65px;
-                        }
-                    }
-
-                    & > img {
-                        max-width: 20px;
-                    }
-                }
-                .illustrationContainer{
-                    width: fit-content;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    height: 100%;
-                    justify-content: flex-end;
-
-                    span{
-                        font-style: normal;
-                        font-weight: bold;
-                        font-size: 25px;
-                        line-height: 140%;
-                        margin-top: 30px;
-                        @include md-down {
-                            font-size: 16px;
-                            margin-top: 15px;
-                        }
-                        &.ink{
-                            color: $polka-primary-color;
-                        }
-                        &.openbrush{
-                            color: $primary-text-color;
-                        }
-                        &.contracts{
-                            color: $code-string-color;
-                        }
-                    }
-                }
-            }
-            //img{
-            //    max-width: 825px;
-            //    @include tablet-portrait-down {
-            //        width: 80%;
-            //    }
-            //}
-        }
-
+        text-align: center;
     }
 }
 
 
 
-.ctaContainer{
+.headlineBlock {
+    padding-bottom: 75px;
+    h1{
+        font-size: 30px;
+        white-space: normal;
+        @include md-down {
+            font-size: 20px;
+            text-align: center;
+        }
+    }
+    @include md-down {
+        padding-bottom: 40px;
+     }
+}
+
+.illustrationConstructor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 825px;
+    margin: 0 auto;
+    & > div:first-of-type {
+        margin-right: 20px;
+        @include md-down {
+            margin-right: 0px;
+        }
+    }
+    @include sm-down {
+        & > div:last-of-type {
+            width: 100%;
+        }
+    }
+    @include md-down {
+        row-gap: 30px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding-bottom: 45px;
+        img {
+            width: 50px;
+            &.brushImg {
+                width: 65px;
+            }
+        }
+
+        & > img {
+            max-width: 20px;
+        }
+    }
+}
+
+.illustrationContainer {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+
+    span {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 25px;
+        line-height: 140%;
+        margin-top: 30px;
+        @include md-down {
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        &.ink {
+            color: $polka-primary-color;
+        }
+        &.openbrush {
+            color: $primary-text-color;
+        }
+        &.contracts {
+            color: $code-string-color;
+        }
+    }
+}
+
+
+// TRY-IT-OUT
+
+.ctaContainer {
     position: relative;
     z-index: 60;
     padding: 15px 25px 15px 15px;
     border: $outline-width solid $outline-color;
     max-width: fit-content;
     margin: auto;
-    margin-top: 130px;
+    margin-top: 100px;
+    // margin-bottom: 75px;
     cursor: pointer;
     border-radius: 10px;
     transition: all .4s ease;
+
     @include md-down {
         padding: 10px 43px 10px 13px;
         margin-top: 20px;
         margin-bottom: 30px;
     }
-    a {
-        font-size: 22px;
-        width: fit-content;
-        letter-spacing: 0.2em;
-        margin: 0;
-        padding: 10px 25px 10px 10px;
-        @include md-down {
-            font-size: 14px;
-        }
-    }
+
     @include md-up {
         &:hover {
             border-color: $code-string-color;
@@ -296,6 +191,7 @@ $decor-ray-width-mobile: 35px;
             }
         }
     }
+
     &:after {
         content: '';
         position: absolute;
@@ -310,9 +206,20 @@ $decor-ray-width-mobile: 35px;
             top: 15px;
         }
     }
+
+    a {
+        font-size: 22px;
+        width: fit-content;
+        letter-spacing: 0.2em;
+        margin: 0;
+        padding: 10px 25px 10px 10px;
+        @include md-down {
+            font-size: 14px;
+        }
+    }
 }
 
-
+//
 
 .createdBy {
     position: absolute;
@@ -324,7 +231,6 @@ $decor-ray-width-mobile: 35px;
         font-size: 20px;
     }
 }
-
 .supercolonyImg {
     height: 24px;
     vertical-align: middle;
@@ -334,4 +240,103 @@ $decor-ray-width-mobile: 35px;
         height: 28px;
         margin-left: 15px;
     }
+}
+
+
+// DECORATIONS
+
+.leftBottom, .rightBottom{
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: -$outline-width;
+    z-index: 1;
+}
+
+.leftBottom{
+    left: -$outline-width;
+    border-style: solid;
+    border-width: $decor-triangle-width 0 0 $decor-triangle-width;
+    border-color: transparent transparent transparent $primary-bg-color;
+    line-height: 0px;
+    _border-color: $primary-bg-color;
+    _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
+    @include md-down {
+        border-width: $decor-triangle-width-mobile 0 0 $decor-triangle-width-mobile;
+     }
+    &::after, &::before{
+        content: '';
+        position: absolute;
+        height: $outline-width;
+        background-color: $outline-color;
+        transform-origin: left bottom;
+    }
+
+    &::after{
+        width: calc(#{$decor-triangle-width} * #{$sqrt-2});
+        left: -$decor-triangle-width;
+        top: -$decor-triangle-width - $outline-width;
+        transform: rotate(45deg);
+        @include md-down {
+            width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
+            left: -$decor-triangle-width-mobile;
+            top: -$decor-triangle-width-mobile - $outline-width;
+         }
+    }
+
+    &::before{
+        width: $decor-ray-width;
+        background-color: $outline-color;
+        transform: rotate(-45deg);
+        left: 0px;
+        top: -$decor-triangle-width;
+        @include md-down {
+            top: -$decor-triangle-width-mobile;
+            width: $decor-ray-width-mobile;
+        }
+
+    }
+}
+
+.rightBottom{
+    right: -$outline-width;
+    div{
+        &::before, &::after{
+            content: '';
+            position: absolute;
+            height: $outline-width;
+            background-color: $outline-color;
+            transform-origin: right bottom;
+            transform: rotate(135deg);
+            @include md-down {
+                transform: rotate(135deg) scale(0.7);
+            }
+        }
+        &::before{
+            width: 10px;
+            bottom: 8px;
+            left: -25px;
+        }
+        &::after{
+            width: 23px;
+            bottom: 8px;
+            left: -47px;
+        }
+    }
+    &::before{
+        content: '';
+        position: absolute;
+        width: $decor-ray-width;
+        height: $outline-width;
+        background-color: $outline-color;
+        transform: rotate(45deg);
+        right: calc(#{$decor-triangle-width}/2);
+        top: calc(#{$decor-triangle-width}*-2);
+        @include md-down {
+            width: $decor-ray-width-mobile;
+            right: calc(#{$decor-triangle-width-mobile}/1.45);
+            top: calc(#{$decor-triangle-width-mobile}*-1.45);
+        }
+    }
+
 }
