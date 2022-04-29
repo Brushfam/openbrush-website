@@ -78,7 +78,7 @@ $decor-ray-width-mobile: 35px;
                         top: -$decor-triangle-width-mobile;
                         width: $decor-ray-width-mobile;
                     }
-                    
+
                 }
             }
 
@@ -122,7 +122,7 @@ $decor-ray-width-mobile: 35px;
                         top: calc(#{$decor-triangle-width-mobile}*-1.45);
                     }
                 }
-                    
+
             }
 
             &::before, &::after{
@@ -152,61 +152,6 @@ $decor-ray-width-mobile: 35px;
                 right: calc(#{$decor-triangle-width}/2);
                 @include md-down {
                     right: calc(#{$decor-triangle-width-mobile}/2);
-                }
-            }
-        }
-        .ctaContainer{
-            position: absolute;
-            bottom: 0px;
-            padding: 15px 25px 20px 15px;
-            border-top: $outline-width solid $outline-color;
-            border-right: $outline-width solid $outline-color;
-            border-left: $outline-width solid $outline-color;
-            width: fit-content;
-            cursor: pointer;
-            z-index: 60;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            transition: all .4s ease;
-            @include md-down {
-                padding: 10px 43px 15px 13px;
-            }
-            a{
-                font-size: 22px;
-                width: fit-content;
-                letter-spacing: 0.2em;
-                margin: 0;
-                padding: 10px 25px 10px 10px;
-                @include md-down {
-                    font-size: 14px;
-                }
-            }
-            @include md-up {
-                &:hover{
-                    border-color: $code-string-color;
-                    a {
-                        color: $code-string-color;
-                        transition: all .8s ease;
-                    }
-                    &:after{
-                        transform: scale(1.33);
-                        top: 28px;
-                        background: url("../public/icons/arrowDownColored.svg");
-                    }
-                }
-            }
-            &:after{
-                content: '';
-                position: absolute;
-                right: 20px;
-                top: 25px;
-                background: url("../public/icons/arrowDown.svg") no-repeat;
-                margin-left: 10px;
-                width: 14px;
-                height: 8px;
-                transition: top .3s .2s ease, transform .3s ease, background .4s ease;
-                @include md-down {
-                    top: 15px;
                 }
             }
         }
@@ -305,6 +250,79 @@ $decor-ray-width-mobile: 35px;
             //    }
             //}
         }
-        
+
     }
+}
+
+
+
+.ctaContainer{
+    position: relative;
+    z-index: 60;
+    padding: 15px 25px 15px 15px;
+    border: $outline-width solid $outline-color;
+    max-width: fit-content;
+    margin: auto;
+    margin-top: 130px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all .4s ease;
+    @include md-down {
+        padding: 10px 43px 15px 13px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    a {
+        font-size: 22px;
+        width: fit-content;
+        letter-spacing: 0.2em;
+        margin: 0;
+        padding: 10px 25px 10px 10px;
+        @include md-down {
+            font-size: 14px;
+        }
+    }
+    @include md-up {
+        &:hover {
+            border-color: $code-string-color;
+            a {
+                color: $code-string-color;
+                transition: all .8s ease;
+            }
+            &:after{
+                transform: scale(1.33);
+                top: 28px;
+                background: url("../public/icons/arrowDownColored.svg");
+            }
+        }
+    }
+    &:after {
+        content: '';
+        position: absolute;
+        right: 20px;
+        top: 25px;
+        background: url("../public/icons/arrowDown.svg") no-repeat;
+        margin-left: 10px;
+        width: 14px;
+        height: 8px;
+        transition: top .3s .2s ease, transform .3s ease, background .4s ease;
+        @include md-down {
+            top: 15px;
+        }
+    }
+}
+
+
+
+.createdBy {
+    position: absolute;
+    bottom: 0px;
+    z-index: 60;
+    padding: 15px 25px 20px 15px;
+}
+
+.supercolony {
+    height: 24px;
+    vertical-align: middle;
+    margin-left: 15px;
 }
