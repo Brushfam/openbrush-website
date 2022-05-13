@@ -23,7 +23,7 @@ const Footer = ({ nav }) => {
         <p>Copyright © 2021 OpenBrush, Supercolony.net</p>
         <p className={footer.createdBy}>
           created by<a href="https://www.supercolony.net" target='_blank'>
-            <img src="/img/supercolony.svg" className={footer.supercolony} />
+            <img src="/img/new-supercolony.svg" className={footer.supercolony} />
           </a>
         </p>
       </div>
