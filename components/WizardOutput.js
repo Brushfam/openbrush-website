@@ -3,30 +3,147 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 import wizardOutput from "./../styles/WizardOutput.module.scss";
 
-
-const WizardOutput = ({data}) => {
-    const [output, setOutPut] = useState(data)
-    const [selectedTab, setSelectedTab] = useState('rust')
-
-    useEffect(() => {
-        setOutPut(data);
-    }, [data, output])
-
-    //Totally unreadable and unoptimized approach. TODO: Make three separate modules with placeholders, refactor
-    if (output)
-     switch (output.type) {
+export const generateCargoToml = (output) => {
+    switch (output.type) {
         case 'psp22':
-            return (
-                <div>
-                    <div className={wizardOutput.tabsSwitch}>
-                        <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
-                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
-                    </div>
-                    <div className={wizardOutput.mainContent}>
-                        {
-                            selectedTab === 'rust' ?
-                             (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
-                                {`#![cfg_attr(not(feature = "std"), no_std)]
+            return `[package]
+name = "my_token"
+version = "1.0.0"
+edition = "2018"
+
+[dependencies]
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
+scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
+
+# Include brush as a dependency and enable default implementation for PSP22 via brush feature
+brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}] }
+
+[lib]
+name = "my_psp22"
+path = "lib.rs"
+crate-type = [
+    # Used for normal contract Wasm blobs.
+    "cdylib",
+]
+
+[features]
+default = ["std"]
+std = [
+    "ink_primitives/std",
+    "ink_metadata",
+    "ink_metadata/std",
+    "ink_env/std",
+    "ink_storage/std",
+    "ink_lang/std",
+    "scale/std",
+    "scale-info",
+    "scale-info/std",
+
+    "brush/std",
+]`
+        case 'psp1155':
+            return `[package]
+name = "my_psp1155"
+version = "1.0.0"
+edition = "2018"
+
+[dependencies]
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
+scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
+
+# These dependencies
+brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp1155"] }
+
+[lib]
+name = "my_psp1155"
+path = "lib.rs"
+crate-type = [
+    # Used for normal contract Wasm blobs.
+    "cdylib",
+]
+
+[features]
+default = ["std"]
+std = [
+    "ink_primitives/std",
+    "ink_metadata",
+    "ink_metadata/std",
+    "ink_env/std",
+    "ink_storage/std",
+    "ink_lang/std",
+    "scale/std",
+    "scale-info",
+    "scale-info/std",
+
+    # These dependencies
+    "brush/std",
+]
+ink-as-dependency = []`
+        case 'psp34':
+            return `[package]
+name = "my_psp34"
+version = "1.0.0"
+edition = "2018"
+
+[dependencies]
+ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
+scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
+
+# These dependencies
+brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
+
+[lib]
+name = "my_psp34"
+path = "lib.rs"
+crate-type = [
+    # Used for normal contract Wasm blobs.
+    "cdylib",
+]
+
+[features]
+default = ["std"]
+std = [
+    "ink_primitives/std",
+    "ink_metadata",
+    "ink_metadata/std",
+    "ink_env/std",
+    "ink_storage/std",
+    "ink_lang/std",
+    "scale/std",
+    "scale-info",
+    "scale-info/std",
+
+    # These dependencies
+    "brush/std",
+]
+ink-as-dependency = []`
+    }
+}
+export const generateLib = (output) => {
+    switch (output.type) {
+        case 'psp22':
+            return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
                                 
 #[brush::contract]
@@ -125,69 +242,9 @@ pub mod my_token {
             Ok(())
         }` : ''}
     }
-}`}
-                            </SyntaxHighlighter>) :
-                             (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
-                                {`[package]
-name = "my_token"
-version = "1.0.0"
-edition = "2018"
-
-[dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-
-scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
-
-# Include brush as a dependency and enable default implementation for PSP22 via brush feature
-brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}] }
-
-[lib]
-name = "my_psp22"
-path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
-
-[features]
-default = ["std"]
-std = [
-    "ink_primitives/std",
-    "ink_metadata",
-    "ink_metadata/std",
-    "ink_env/std",
-    "ink_storage/std",
-    "ink_lang/std",
-    "scale/std",
-    "scale-info",
-    "scale-info/std",
-
-    "brush/std",
-]
-`}
-                            </SyntaxHighlighter>)
-                        }
-                    </div>
-                </div>
-            )        
+}`
         case 'psp1155':
-            return (
-                <div>
-                    <div className={wizardOutput.tabsSwitch}>
-                        <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
-                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
-                    </div>
-                    <div className={wizardOutput.mainContent}>
-                        {
-                            selectedTab === 'rust' ?
-                                (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
-                                    {`#![cfg_attr(not(feature = "std"), no_std)]
+            return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
 #[brush::contract]
@@ -238,69 +295,9 @@ pub mod my_psp1155 {
         }` : ''}
     } 
 }
-`}
-                                </SyntaxHighlighter>) :
-                                (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
-                                    {`[package]
-name = "my_psp1155"
-version = "1.0.0"
-edition = "2018"
-
-[dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-
-scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
-
-# These dependencies
-brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp1155"] }
-
-[lib]
-name = "my_psp1155"
-path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
-
-[features]
-default = ["std"]
-std = [
-    "ink_primitives/std",
-    "ink_metadata",
-    "ink_metadata/std",
-    "ink_env/std",
-    "ink_storage/std",
-    "ink_lang/std",
-    "scale/std",
-    "scale-info",
-    "scale-info/std",
-
-    # These dependencies
-    "brush/std",
-]
-ink-as-dependency = []`}
-                                </SyntaxHighlighter>)
-                        }
-                    </div>
-                </div>)
+`
         case 'psp34':
-            return (<>
-                <div>
-                    <div className={wizardOutput.tabsSwitch}>
-                        <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
-                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
-                    </div>
-                    <div className={wizardOutput.mainContent}>
-                        {
-                            selectedTab === 'rust' ?
-                                (<SyntaxHighlighter language='rust' wrapLongLines={true} style={vscDarkPlus}>
-                                        {`#![cfg_attr(not(feature = "std"), no_std)]
+            return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
                     
 #[brush::contract]
@@ -344,53 +341,75 @@ pub mod my_psp34 {
             self.next_id += 1;
         }` : ''}
     }
-}`}
+}`
+    }
+}
+
+const WizardOutput = ({data}) => {
+    const [output, setOutPut] = useState(data)
+    const [selectedTab, setSelectedTab] = useState('rust')
+
+    useEffect(() => {
+        setOutPut(data);
+    }, [data, output])
+
+    //Totally unreadable and unoptimized approach. TODO: Make three separate modules with placeholders, refactor
+    if (output)
+     switch (output.type) {
+        case 'psp22':
+            return (
+                <div>
+                    <div className={wizardOutput.tabsSwitch}>
+                        <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
+                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
+                    </div>
+                    <div className={wizardOutput.mainContent}>
+                        {
+                            selectedTab === 'rust' ?
+                             (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
+                                {generateLib(output)}
+                            </SyntaxHighlighter>) :
+                             (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
+                                {generateCargoToml(output)}
+                            </SyntaxHighlighter>)
+                        }
+                    </div>
+                </div>
+            )        
+        case 'psp1155':
+            return (
+                <div>
+                    <div className={wizardOutput.tabsSwitch}>
+                        <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
+                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
+                    </div>
+                    <div className={wizardOutput.mainContent}>
+                        {
+                            selectedTab === 'rust' ?
+                                (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
+                                    {generateLib(output)}
+                                </SyntaxHighlighter>) :
+                                (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
+                                    {generateCargoToml(output)}
+                                </SyntaxHighlighter>)
+                        }
+                    </div>
+                </div>)
+        case 'psp34':
+            return (<>
+                <div>
+                    <div className={wizardOutput.tabsSwitch}>
+                        <div onClick={() => setSelectedTab('rust')} className={ selectedTab === 'rust' ? wizardOutput.activeTab : ''}>lib.rs</div>
+                        <div onClick={() => setSelectedTab('toml')} className={ selectedTab === 'toml' ? wizardOutput.activeTab : ''}>Cargo.toml</div>
+                    </div>
+                    <div className={wizardOutput.mainContent}>
+                        {
+                            selectedTab === 'rust' ?
+                                (<SyntaxHighlighter language='rust' wrapLongLines={true} style={vscDarkPlus}>
+                                        {generateLib(output)}
                                     </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
-                                    {`[package]
-name = "my_psp34"
-version = "1.0.0"
-edition = "2018"
-
-[dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-
-scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
-
-# These dependencies
-brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
-
-[lib]
-name = "my_psp34"
-path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
-
-[features]
-default = ["std"]
-std = [
-    "ink_primitives/std",
-    "ink_metadata",
-    "ink_metadata/std",
-    "ink_env/std",
-    "ink_storage/std",
-    "ink_lang/std",
-    "scale/std",
-    "scale-info",
-    "scale-info/std",
-
-    # These dependencies
-    "brush/std",
-]
-ink-as-dependency = []`}
+                                    {generateCargoToml(output)}
                                 </SyntaxHighlighter>)
                         }
                     </div>

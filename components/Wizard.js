@@ -5,13 +5,14 @@ import WizardOutput from "./WizardOutput";
 import Link from "next/link";
 import { docsLink, demoLink } from "../data/headerNavigation";
 import header from "../styles/Header.module.scss";
+import WizardSaveProject from "./WizardSaveProject";
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [config, setConfig] = useState(wizardConfig);
   const [controlsState, setControlsState] = useState([]);
 
-  const [isControlsClosed, setControlsClosed] = useState(false)
+  const [isControlsClosed, setControlsClofsed] = useState(false)
 
   useEffect(() => {
     let currentState_tmp = [];
@@ -63,17 +64,18 @@ const Wizard = () => {
               })}
             </div>
             <div className={wizard.actionsRow}>
-              {/* <div className={wizard.copyToClipboard}
-                  onClick={() => {navigator.clipboard.writeText('temporary placeholder')}}
-              >
-
-                <img
-                  className={wizard.copyIcon}
-                  src="/icons/copy.svg"
-                  alt="logo"
-                />
-                Copy to clipboard
-              </div> */}
+                {
+                    config.map((item, token_i) => {
+                        return (<div
+                            key={token_i.toString()}
+                            style={{
+                                display: activeOptionIndex !== token_i ? "none" : "block",
+                            }}
+                        >
+                            <WizardSaveProject data={controlsState[token_i]} />
+                        </div>)
+                    })
+                }
             </div>
           </div>
           <div className={wizard.body}>
