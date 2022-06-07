@@ -69,6 +69,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP22`] that allows you to implement with a supply cap, analogue to ERC20Capped'
+                    },
+                    {
+                        name: 'Ownable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Openbrush feature that allows you to manage the ownership of contract'
                     }
                 ]
             }
@@ -114,6 +120,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP1155`] that allows token holders to destroy their tokens'
+                    },
+                    {
+                        name: 'Ownable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Openbrush feature that allows you to manage the ownership of contract'
                     }
                 ]
             }
@@ -159,6 +171,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP34`] that allows token holders to destroy their tokens'
+                    },
+                    {
+                        name: 'Ownable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Openbrush feature that allows you to manage the ownership of contract'
                     }
                 ]
             }

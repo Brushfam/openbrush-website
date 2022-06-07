@@ -123,7 +123,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
                 versionInfoElement.inkVersion,
                 versionInfoElement.scaleVersion,
                 versionInfoElement.scaleInfoVersion,
-                versionInfoElement.brushDeclaration(`"psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}`)
+                versionInfoElement.brushDeclaration(`"psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, "ownable"` : ''}`)
             );
         case 'psp1155':
             return generateCargoTomlWithVersion(
@@ -133,7 +133,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
                 versionInfoElement.inkVersion,
                 versionInfoElement.scaleVersion,
                 versionInfoElement.scaleInfoVersion,
-                versionInfoElement.brushDeclaration(`"psp1155"`)
+                versionInfoElement.brushDeclaration(`"psp1155"${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, "ownable"` : ''}`)
             );
         case 'psp34':
             return generateCargoTomlWithVersion(
@@ -143,7 +143,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
                 versionInfoElement.inkVersion,
                 versionInfoElement.scaleVersion,
                 versionInfoElement.scaleInfoVersion,
-                versionInfoElement.brushDeclaration(`"psp34"`)
+                versionInfoElement.brushDeclaration(`"psp34"${output.currentControlsState.find(x => x.name === 'Ownable').state ? `, "ownable"` : ''}`)
             );
     }
 }
@@ -160,7 +160,7 @@ pub mod my_token {
     use ink_prelude::{
         string::String,
         vec::Vec,
-    }; ${output.version > 'v1.3.0' ? `
+    }; ${output.version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
     use ${brushName}::contracts::psp22::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
@@ -172,20 +172,28 @@ pub mod my_token {
     use ${brushName}::{
         contracts::pausable::*,
         modifiers,
-    };`: ''}
+    };`: ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    use ${brushName}::contracts::ownable::*;` : ''}
 
     #[ink(storage)]
-    #[derive(Default, ${output.version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `, PSP22WrapperStorage` : ''}${output.currentControlsState.find(x => x.name == 'Pausable').state ? `, PausableStorage` : ''})]
+    #[derive(Default, ${
+                output.version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP22Storage${
+                output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''}${
+                output.currentControlsState.find(x => x.name === 'Wrapper').state ? `, PSP22WrapperStorage` : ''}${
+                output.currentControlsState.find(x => x.name == 'Pausable').state ? `, PausableStorage` : ''}${
+                output.currentControlsState.find(x => x.name == 'Ownable').state ? `, OwnableStorage` : ''})]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[PSP22StorageField]
-        psp22: PSP22Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+        psp22: PSP22Data, ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[OwnableStorageField]
+        ownable: OwnableData,` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
         #[PSP22MetadataStorageField]
         metadata: PSP22MetadataData,` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
         #[PSP22WrapperStorageField]
         wrapper: PSP22WrapperData,` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
         #[PausableStorageField]
         pause: PausableData,` : ''} ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
-        cap: Balance,`: ''}
+        cap: Balance,`: ''} 
     }
         
     impl PSP22 for ${output.currentControlsState.find(x => x.name === 'Name').state} {} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
@@ -194,7 +202,8 @@ pub mod my_token {
     impl PSP22Mintable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
     impl PSP22Wrapper for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'FlashMint').state ? `
     impl FlashLender for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
-    impl Pausable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
+    impl Pausable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    impl Ownable for ${output.currentControlsState.find(x => x.name === 'Name').state} {}` : ''}
         
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[ink(constructor)]
@@ -204,6 +213,8 @@ pub mod my_token {
             instance.metadata.name = name;
             instance.metadata.symbol = symbol;
             instance.metadata.decimals = decimal;` : '' }
+            ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+            instance._init_with_owner(instance.env().caller());` : '' }
             assert!(instance._mint(instance.env().caller(), initial_supply).is_ok());
             instance`: 
             `ink_lang::codegen::initialize_contract(|instance: &mut ${output.currentControlsState.find(x => x.name === 'Name').state}| { ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
@@ -214,24 +225,30 @@ pub mod my_token {
                 instance
                     ._mint(instance.env().caller(), initial_supply)
                     .expect("Should mint");
+                ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+                instance._init_with_owner(instance.env().caller());` : '' }
             })`
             }
         }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             
-        #[ink(message)]
-        pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) {
+        #[ink(message)] ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[${brushName}::modifiers(only_owner)]` : ''}
+        pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) -> Result<(), PSP22Error> {
             for account in accounts.iter() {
-                self.burn(account.0, account.1);
+                self.burn(account.0, account.1)?;
             }
+            Ok(())
         }` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
             
-        #[ink(message)]
-        pub fn mint_to(&mut self, account: AccountId, amount: Balance) {
-            self.mint(account, amount);
+        #[ink(message)]${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[${brushName}::modifiers(only_owner)]` : ''}
+        pub fn mint_to(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error>  {
+            self.mint(account, amount)
         }` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
         
-        #[ink(message)]
-        pub fn change_state(&mut self) -> Result<(), PSP22Error> {
+        #[ink(message)]${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+        #[${brushName}::modifiers(only_owner)]` : ''}
+        pub fn change_state(&mut self) -> Result<(), PSP22Error> -> Result<(), PSP22Error>  {
             if self.paused() {
                 self._unpause()
             } else {
@@ -278,7 +295,8 @@ pub mod my_psp1155 {
     use ${brushName}::contracts::psp1155::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
     use ${brushName}::contracts::psp1155::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     use ${brushName}::contracts::psp1155::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    use ${brushName}::contracts::psp1155::extensions::mintable::*;` : ''}
+    use ${brushName}::contracts::psp1155::extensions::mintable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    use ${brushName}::contracts::ownable::*;` : ''}
 
     #[ink(storage)]
     #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP1155MetadataStorage` : ``})]
@@ -327,7 +345,8 @@ pub mod my_psp34 {
     use ${brushName}::contracts::psp34::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
     use ${brushName}::contracts::psp34::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
     use ${brushName}::contracts::psp34::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    use ${brushName}::contracts::psp34::extensions::mintable::*;` : ''}
+    use ${brushName}::contracts::psp34::extensions::mintable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
+    use ${brushName}::contracts::ownable::*;` : ''}
     
 
     #[derive(Default, PSP34Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP34MetadataStorage` : ''})]
