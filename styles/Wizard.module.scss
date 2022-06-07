@@ -125,6 +125,9 @@
         border-radius: 7px;
         padding-left: 5px;
         font-family: inherit;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
       }
 
       .copyToClipboard {
