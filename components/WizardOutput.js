@@ -248,7 +248,7 @@ pub mod my_token {
         
         #[ink(message)]${output.currentControlsState.find(x => x.name === 'Ownable').state ? `
         #[${brushName}::modifiers(only_owner)]` : ''}
-        pub fn change_state(&mut self) -> Result<(), PSP22Error> -> Result<(), PSP22Error>  {
+        pub fn change_state(&mut self) -> Result<(), PSP22Error>  {
             if self.paused() {
                 self._unpause()
             } else {
@@ -285,7 +285,7 @@ pub mod my_token {
             return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-#[brush::contract]
+#[${brushName}::contract]
 pub mod my_psp1155 {
     use ink_prelude::{
         string::String,
@@ -337,10 +337,10 @@ pub mod my_psp1155 {
 
         #[ink(message)]
         pub fn deny(&mut self, id: Id) {
-            self.denied_ids.insert(id, ());
+            self.denied_ids.insert(id, ${version == 'v1.3.0' ? '' : '&'}());
         } ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-        #[ink(message)]${
-                output.currentControlsState.find(x => x.name == 'Ownable').state ? `#[${brushName}::modifiers(only_owner)]` : ''}
+        #[ink(message)]${output.currentControlsState.find(x => x.name == 'Ownable').state ? `
+        #[${brushName}::modifiers(only_owner)]` : ''}
         pub fn mint_tokens(&mut self, id: Id, amount: Balance) -> Result<(), PSP1155Error> {
             if self.denied_ids.get(&id).is_some() {
                 return Err(PSP1155Error::Custom(String::from("Id is denied")))
@@ -354,7 +354,7 @@ pub mod my_psp1155 {
             return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
                     
-#[brush::contract]
+#[${brushName}::contract]
 pub mod my_psp34 {
     use ink_prelude::string::String;${output.version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
@@ -407,8 +407,8 @@ pub mod my_psp34 {
             }
         } ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
         /// Mint method which mints a token and updates the id of next token
-        #[ink(message)]${
-        output.currentControlsState.find(x => x.name == 'Ownable').state ? `#[${brushName}::modifiers(only_owner)]` : ''}
+        #[ink(message)]${output.currentControlsState.find(x => x.name == 'Ownable').state ? `
+        #[${brushName}::modifiers(only_owner)]` : ''}
         pub fn mint_token(&mut self) -> Result<(), PSP34Error>{
             self.mint(Self::env().account_id(), Id::U8(self.next_id))?;
             self.next_id += 1;
