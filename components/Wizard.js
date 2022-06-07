@@ -90,6 +90,27 @@ const Wizard = () => {
                     display: activeOptionIndex !== token_i ? "none" : "block",
                   }}
                 >
+                    {/*  select version */}
+                    <div className={wizard.versionSelectorWrapper}>
+                        <h3 className={wizard.controlsSectionName}>Version</h3>
+                        <select
+                            className={wizard.select}
+                            onChange={(e) => {
+                                let tmp_state = [...controlsState];
+                                tmp_state[token_i].version = e.target.value;
+
+                                setControlsState(tmp_state);
+                            }}
+                            defaultValue={'v2.0.0'}
+                        >
+                            <option value='v2.0.0'>v2.0.0</option>
+                            <option value='v1.7.0'>v1.7.0</option>
+                            <option value='v1.6.0'>v1.6.0</option>
+                            <option value='v1.5.0'>v1.5.0</option>
+                            <option value='v1.4.0'>v1.4.0</option>
+                            <option value='v1.3.0'>v1.3.0</option>
+                        </select>
+                    </div>
                   {token.controls.map((item, index) => {
                     return (
                       <div className={wizard.inputSection} key={index.toString()}>

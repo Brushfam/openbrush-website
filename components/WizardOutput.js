@@ -2,31 +2,40 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 import wizardOutput from "./../styles/WizardOutput.module.scss";
+import wizard from "../styles/Wizard.module.scss";
 
-export const generateCargoToml = (output) => {
-    switch (output.type) {
-        case 'psp22':
-            return `[package]
-name = "my_token"
+const generateCargoTomlWithVersion = (
+    version,
+    name,
+    edition,
+    inkVersion,
+    scaleVersion,
+    scaleInfoVersion,
+    brushDeclaration
+) => {
+    const inkVersionString = `${version < 'v1.7.0' ? `tag = "${inkVersion}", git = "https://github.com/paritytech/ink"` : `version = "${inkVersion}"` }`;
+    return `[package]
+name = "${name}"
 version = "1.0.0"
-edition = "2018"
+edition = "${edition}"
+authors = ["The best developer ever"]
 
 [dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
+ink_primitives = { ${inkVersionString}, default-features = false }
+ink_metadata = { ${inkVersionString}, default-features = false, features = ["derive"], optional = true }
+ink_env = { ${inkVersionString}, default-features = false }
+ink_storage = { ${inkVersionString}, default-features = false }
+ink_lang = { ${inkVersionString}, default-features = false }
+ink_prelude = { ${inkVersionString}, default-features = false }
 
-scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
+scale = { package = "parity-scale-codec", version = "${scaleVersion}", default-features = false, features = ["derive"] }
+scale-info = { version = "${scaleInfoVersion}", default-features = false, features = ["derive"], optional = true }
 
 # Include brush as a dependency and enable default implementation for PSP22 via brush feature
-brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}] }
+${brushDeclaration}
 
 [lib]
-name = "my_psp22"
+name = "${name}"
 path = "lib.rs"
 crate-type = [
     # Used for normal contract Wasm blobs.
@@ -46,125 +55,127 @@ std = [
     "scale-info",
     "scale-info/std",
 
-    "brush/std",
-]`
-        case 'psp1155':
-            return `[package]
-name = "my_psp1155"
-version = "1.0.0"
-edition = "2018"
-
-[dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-
-scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
-
-# These dependencies
-brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp1155"] }
-
-[lib]
-name = "my_psp1155"
-path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
-
-[features]
-default = ["std"]
-std = [
-    "ink_primitives/std",
-    "ink_metadata",
-    "ink_metadata/std",
-    "ink_env/std",
-    "ink_storage/std",
-    "ink_lang/std",
-    "scale/std",
-    "scale-info",
-    "scale-info/std",
-
-    # These dependencies
-    "brush/std",
+    "${version >= 'v2.0.0' ? 'openbrush' : 'brush'}/std",
 ]
 ink-as-dependency = []`
-        case 'psp34':
-            return `[package]
-name = "my_psp34"
-version = "1.0.0"
-edition = "2018"
+}
 
-[dependencies]
-ink_primitives = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { tag = "v3.0.0-rc6", git = "https://github.com/paritytech/ink", default-features = false }
-
-scale = { package = "parity-scale-codec", version = "2.1", default-features = false, features = ["derive"] }
-scale-info = { version = "1.0.0", default-features = false, features = ["derive"], optional = true }
-
-# These dependencies
-brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = ["psp34"] }
-
-[lib]
-name = "my_psp34"
-path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
-
-[features]
-default = ["std"]
-std = [
-    "ink_primitives/std",
-    "ink_metadata",
-    "ink_metadata/std",
-    "ink_env/std",
-    "ink_storage/std",
-    "ink_lang/std",
-    "scale/std",
-    "scale-info",
-    "scale-info/std",
-
-    # These dependencies
-    "brush/std",
-]
-ink-as-dependency = []`
+const versionInfo = {
+    'v1.3.0': {
+        edition: '2018',
+        inkVersion: 'v3.0.0-rc6',
+        scaleVersion: '2.1',
+        scaleInfoVersion: '1.0.0',
+        brushDeclaration:
+            (features) => `brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
+    },
+    'v1.4.0': {
+        edition: '2021',
+        inkVersion: 'v3.0.0-rc10',
+        scaleVersion: '3.0',
+        scaleInfoVersion: '2.0.0',
+        brushDeclaration:
+            (features) => `brush = { tag = "v1.4.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
+    },
+    'v1.5.0': {
+        edition: '2021',
+        inkVersion: 'v3.0.0',
+        scaleVersion: '3.0',
+        scaleInfoVersion: '2.0.0',
+        brushDeclaration:
+            (features) => `brush = { tag = "v1.5.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
+    },
+    'v1.6.0': {
+        edition: '2021',
+        inkVersion: 'v3.0.0',
+        scaleVersion: '3.0',
+        scaleInfoVersion: '2.0.0',
+        brushDeclaration:
+            (features) => `brush = { tag = "v1.6.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
+    },
+    'v1.7.0': {
+        edition: '2021',
+        inkVersion: '3.1.0',
+        scaleVersion: '3.0',
+        scaleInfoVersion: '2.0.0',
+        brushDeclaration:
+            (features) => `brush = { tag = "v1.7.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
+    },
+    'v2.0.0': {
+        edition: '2021',
+        inkVersion: '~3.2.0',
+        scaleVersion: '3',
+        scaleInfoVersion: '2',
+        brushDeclaration:
+            (features) => `openbrush = { version = "~2.0.0", default-features = false, features = [${features}] }`,
     }
 }
-export const generateLib = (output) => {
+
+export const generateCargoToml = (output, version='v2.0.0') => {
+    const versionInfoElement = versionInfo[version];
+
+    switch (output.type) {
+        case 'psp22':
+            return generateCargoTomlWithVersion(
+                version,
+                "my_" + output.type,
+                versionInfoElement.edition,
+                versionInfoElement.inkVersion,
+                versionInfoElement.scaleVersion,
+                versionInfoElement.scaleInfoVersion,
+                versionInfoElement.brushDeclaration(`"psp22"${output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}`)
+            );
+        case 'psp1155':
+            return generateCargoTomlWithVersion(
+                version,
+                "my_" + output.type,
+                versionInfoElement.edition,
+                versionInfoElement.inkVersion,
+                versionInfoElement.scaleVersion,
+                versionInfoElement.scaleInfoVersion,
+                versionInfoElement.brushDeclaration(`"psp1155"`)
+            );
+        case 'psp34':
+            return generateCargoTomlWithVersion(
+                version,
+                "my_" + output.type,
+                versionInfoElement.edition,
+                versionInfoElement.inkVersion,
+                versionInfoElement.scaleVersion,
+                versionInfoElement.scaleInfoVersion,
+                versionInfoElement.brushDeclaration(`"psp34"`)
+            );
+    }
+}
+export const generateLib = (output, version='v2.0.0') => {
+    const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
+
     switch (output.type) {
         case 'psp22':
             return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
                                 
-#[brush::contract]
+#[${brushName}::contract]
 pub mod my_token {
     use ink_prelude::{
         string::String,
         vec::Vec,
-    };
-    use brush::contracts::psp22::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    use brush::contracts::psp22::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    use brush::contracts::psp22::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    use brush::contracts::psp22::extensions::mintable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
-    use brush::contracts::psp22::extensions::wrapper::*;` : ''} ${output.currentControlsState.find(x => x.name === 'FlashMint').state ? `
-    use brush::contracts::psp22::extensions::flashmint::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
-    use brush::{
+    }; ${output.version > 'v1.3.0' ? `
+    use ink_storage::traits::SpreadAllocate;` : ''}
+    
+    use ${brushName}::contracts::psp22::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use ${brushName}::contracts::psp22::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use ${brushName}::contracts::psp22::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    use ${brushName}::contracts::psp22::extensions::mintable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `
+    use ${brushName}::contracts::psp22::extensions::wrapper::*;` : ''} ${output.currentControlsState.find(x => x.name === 'FlashMint').state ? `
+    use ${brushName}::contracts::psp22::extensions::flashmint::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Pausable').state ? `
+    use ${brushName}::{
         contracts::pausable::*,
         modifiers,
     };`: ''}
 
     #[ink(storage)]
-    #[derive(Default, PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `, PSP22WrapperStorage` : ''}${output.currentControlsState.find(x => x.name == 'Pausable').state ? `, PausableStorage` : ''})]
+    #[derive(Default, ${output.version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP22Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP22MetadataStorage` : ''}${output.currentControlsState.find(x => x.name === 'Wrapper').state ? `, PSP22WrapperStorage` : ''}${output.currentControlsState.find(x => x.name == 'Pausable').state ? `, PausableStorage` : ''})]
     pub struct ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[PSP22StorageField]
         psp22: PSP22Data, ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
@@ -188,13 +199,23 @@ pub mod my_token {
     impl ${output.currentControlsState.find(x => x.name === 'Name').state} {
         #[ink(constructor)]
         pub fn new(initial_supply: Balance${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, name: Option<String>, symbol: Option<String>, decimal: u8` : ''}${output.currentControlsState.find(x => x.name === 'Capped').state ? `, cap: Balance` : ''}) -> Self {
-            let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
+            ${output.version == 'v1.3.0' ? `let mut instance = Self::default(); ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
             assert!(instance.init_cap(cap).is_ok());` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
             instance.metadata.name = name;
             instance.metadata.symbol = symbol;
             instance.metadata.decimals = decimal;` : '' }
             assert!(instance._mint(instance.env().caller(), initial_supply).is_ok());
-            instance
+            instance`: 
+            `ink_lang::codegen::initialize_contract(|instance: &mut ${output.currentControlsState.find(x => x.name === 'Name').state}| { ${output.currentControlsState.find(x => x.name === 'Capped').state ? `
+                assert!(instance.init_cap(cap).is_ok());` : ''} ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+                instance.metadata.name = name;
+                instance.metadata.symbol = symbol;
+                instance.metadata.decimals = decimal;` : '' }
+                instance
+                    ._mint(instance.env().caller(), initial_supply)
+                    .expect("Should mint");
+            })`
+            }
         }  ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
             
         #[ink(message)]
@@ -254,10 +275,10 @@ pub mod my_psp1155 {
         vec,
     };
     use ink_storage::collections::HashMap as StorageHashMap;
-    use brush::contracts::psp1155::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    use brush::contracts::psp1155::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    use brush::contracts::psp1155::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    use brush::contracts::psp1155::extensions::mintable::*;` : ''}
+    use ${brushName}::contracts::psp1155::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use ${brushName}::contracts::psp1155::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use ${brushName}::contracts::psp1155::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    use ${brushName}::contracts::psp1155::extensions::mintable::*;` : ''}
 
     #[ink(storage)]
     #[derive(Default, PSP1155Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP1155MetadataStorage` : ``})]
@@ -303,10 +324,10 @@ pub mod my_psp1155 {
 #[brush::contract]
 pub mod my_psp34 {
     use ink_prelude::string::String;
-    use brush::contracts::psp34::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
-    use brush::contracts::psp34::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
-    use brush::contracts::psp34::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-    use brush::contracts::psp34::extensions::mintable::*;` : ''}
+    use ${brushName}::contracts::psp34::*; ${output.currentControlsState.find(x => x.name === 'Metadata').state ? `
+    use ${brushName}::contracts::psp34::extensions::metadata::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Burnable').state ? `
+    use ${brushName}::contracts::psp34::extensions::burnable::*;` : ''} ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
+    use ${brushName}::contracts::psp34::extensions::mintable::*;` : ''}
     
 
     #[derive(Default, PSP34Storage${output.currentControlsState.find(x => x.name === 'Metadata').state ? `, PSP34MetadataStorage` : ''})]
@@ -353,7 +374,6 @@ const WizardOutput = ({data}) => {
         setOutPut(data);
     }, [data, output])
 
-    //Totally unreadable and unoptimized approach. TODO: Make three separate modules with placeholders, refactor
     if (output)
      switch (output.type) {
         case 'psp22':
@@ -365,12 +385,25 @@ const WizardOutput = ({data}) => {
                     </div>
                     <div className={wizardOutput.mainContent}>
                         {
+                            <div className={wizard.copyToClipboard}
+                                 onClick={() => {
+                                     selectedTab == 'rust' ? navigator.clipboard.writeText(generateLib(output, output.version)) : navigator.clipboard.writeText(generateCargoToml(output, output.version))
+                                 }}
+                            >
+                                <img
+                                    className={wizard.copyIcon}
+                                    src="/icons/copy.svg"
+                                    alt="logo"
+                                />
+                            </div>
+                        }
+                        {
                             selectedTab === 'rust' ?
                              (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
-                                {generateLib(output)}
+                                {generateLib(output, output.version)}
                             </SyntaxHighlighter>) :
                              (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
-                                {generateCargoToml(output)}
+                                {generateCargoToml(output, output.version)}
                             </SyntaxHighlighter>)
                         }
                     </div>
@@ -385,12 +418,25 @@ const WizardOutput = ({data}) => {
                     </div>
                     <div className={wizardOutput.mainContent}>
                         {
+                            <div className={wizard.copyToClipboard}
+                            onClick={() => {
+                                selectedTab == 'rust' ? navigator.clipboard.writeText(generateLib(output, output.version)) : navigator.clipboard.writeText(generateCargoToml(output, output.version))
+                            }}
+                            >
+                            <img
+                            className={wizard.copyIcon}
+                            src="/icons/copy.svg"
+                            alt="logo"
+                            />
+                            </div>
+                        }
+                        {
                             selectedTab === 'rust' ?
                                 (<SyntaxHighlighter language="rust" wrapLongLines={true} style={vscDarkPlus}>
-                                    {generateLib(output)}
+                                    {generateLib(output, output.version)}
                                 </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
-                                    {generateCargoToml(output)}
+                                    {generateCargoToml(output, output.version)}
                                 </SyntaxHighlighter>)
                         }
                     </div>
@@ -404,12 +450,25 @@ const WizardOutput = ({data}) => {
                     </div>
                     <div className={wizardOutput.mainContent}>
                         {
+                            <div className={wizard.copyToClipboard}
+                                 onClick={() => {
+                                     selectedTab == 'rust' ? navigator.clipboard.writeText(generateLib(output, output.version)) : navigator.clipboard.writeText(generateCargoToml(output, output.version))
+                                 }}
+                            >
+                                <img
+                                    className={wizard.copyIcon}
+                                    src="/icons/copy.svg"
+                                    alt="logo"
+                                />
+                            </div>
+                        }
+                        {
                             selectedTab === 'rust' ?
                                 (<SyntaxHighlighter language='rust' wrapLongLines={true} style={vscDarkPlus}>
-                                        {generateLib(output)}
+                                        {generateLib(output, output.version)}
                                     </SyntaxHighlighter>) :
                                 (<SyntaxHighlighter language="toml" wrapLongLines={true} style={vscDarkPlus}>
-                                    {generateCargoToml(output)}
+                                    {generateCargoToml(output, output.version)}
                                 </SyntaxHighlighter>)
                         }
                     </div>
