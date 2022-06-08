@@ -18,10 +18,11 @@
   }
   .scrollWrapper{
     width: 100%;
-    overflow: scroll;
+    overflow: hidden;
   }
   .wizardWrapper{
     border: $outline-width solid $outline-color;
+    position: relative;
     width: 100%;
     margin-top: 20px;
     @include md-down {
@@ -134,7 +135,7 @@
         position: absolute;
         padding: 5px;
         width: 37px;
-        right: 170px;
+        right: 10px;
       }
 
       .copyToClipboard:hover {

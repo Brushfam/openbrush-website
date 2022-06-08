@@ -213,6 +213,35 @@ const Wizard = () => {
                   })}
                 </div>
               ))}
+                {config.map((token, token_i) => {
+                    return (
+                        <div
+                            key={token_i.toString()}
+                            style={{
+                                display: activeOptionIndex !== token_i ? "none" : "block",
+                            }}
+                        >
+                            <div className={wizard.versionSelectorWrapper}>
+                                <h3 className={wizard.controlsSectionName}>Security</h3>
+                                <select
+                                    className={wizard.select}
+                                    onChange={(e) => {
+                                        let tmp_state = [...controlsState];
+                                        tmp_state[token_i].security = e.target.value;
+
+                                        setControlsState(tmp_state);
+                                    }}
+                                    defaultValue={'none'}
+                                >
+                                    <option value='none'>None</option>
+                                    <option value='ownable'>Ownable</option>
+                                    <option value='access_control'>Access Control</option>
+                                </select>
+                            </div>
+                        </div>
+                     )
+                })}
+
             </div>
             <div className={wizard.contractOutput}>
               {config.map((token, token_i) => {
