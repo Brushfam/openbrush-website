@@ -75,6 +75,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Openbrush feature that allows you to manage the ownership of contract'
+                    },
+                    {
+                        name: 'AccessControl',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Openbrush feature that allows you to manage the roles of users'
                     }
                 ]
             }
@@ -126,6 +132,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Openbrush feature that allows you to manage the ownership of contract'
+                    },
+                    {
+                        name: 'AccessControl',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Openbrush feature that allows you to manage the roles of users'
                     }
                 ]
             }
@@ -177,6 +189,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Openbrush feature that allows you to manage the ownership of contract'
+                    },
+                    {
+                        name: 'AccessControl',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Openbrush feature that allows you to manage the roles of users'
                     }
                 ]
             }
