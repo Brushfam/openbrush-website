@@ -17,12 +17,6 @@ export const wizardConfig = [
                         initState: 'MPSP',
                         tooltip: ''
                     },
-                    {
-                        name: 'Premint',
-                        type: 'text',
-                        initState: '100',
-                        tooltip: ''
-                    },
                 ]
             },
             {
@@ -159,6 +153,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP34`] that allows token holders to destroy their tokens'
+                    },
+                    {
+                        name: 'Enumerable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP34`] that allows to iterate over all NFTs'
                     }
                 ]
             }

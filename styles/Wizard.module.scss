@@ -18,10 +18,11 @@
   }
   .scrollWrapper{
     width: 100%;
-    overflow: scroll;
+    overflow: hidden;
   }
   .wizardWrapper{
     border: $outline-width solid $outline-color;
+    position: relative;
     width: 100%;
     margin-top: 20px;
     @include md-down {
@@ -85,7 +86,7 @@
       }
       .actionsRow{
         display: flex;
-        .copyToClipboard{
+        .download{
           padding: 12px 10px;
           margin-right: 8px;
           cursor: pointer;
@@ -108,6 +109,42 @@
     }
     .body {
       display: flex;
+
+      .versionSelectorWrapper {
+        width: 100%;
+        display: block;
+      }
+
+      .select {
+        width: 100%;
+        display: block;
+        border: $outline-width solid $outline-color;
+        height: 35px;
+        mergin: 5px;
+        background-color: $primary-bg-color;
+        color: $primary-text-color;
+        border-radius: 7px;
+        padding-left: 5px;
+        font-family: inherit;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
+
+      .copyToClipboard {
+        position: absolute;
+        padding: 5px;
+        width: 37px;
+        right: 10px;
+      }
+
+      .copyToClipboard:hover {
+        svg {
+          fill: #b6c0c7;
+        }
+        cursor: pointer;
+        border: $outline-width solid $code-string-color;
+      }
 
       .contractControls {
         width: 23%;

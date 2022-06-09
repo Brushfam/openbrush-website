@@ -5,13 +5,14 @@ import WizardOutput from "./WizardOutput";
 import Link from "next/link";
 import { docsLink, demoLink } from "../data/headerNavigation";
 import header from "../styles/Header.module.scss";
+import WizardSaveProject from "./WizardSaveProject";
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [config, setConfig] = useState(wizardConfig);
   const [controlsState, setControlsState] = useState([]);
 
-  const [isControlsClosed, setControlsClosed] = useState(false)
+  const [isControlsClosed, setControlsClofsed] = useState(false)
 
   useEffect(() => {
     let currentState_tmp = [];
@@ -63,17 +64,18 @@ const Wizard = () => {
               })}
             </div>
             <div className={wizard.actionsRow}>
-              {/* <div className={wizard.copyToClipboard}
-                  onClick={() => {navigator.clipboard.writeText('temporary placeholder')}}
-              >
-
-                <img
-                  className={wizard.copyIcon}
-                  src="/icons/copy.svg"
-                  alt="logo"
-                />
-                Copy to clipboard
-              </div> */}
+                {
+                    config.map((item, token_i) => {
+                        return (<div
+                            key={token_i.toString()}
+                            style={{
+                                display: activeOptionIndex !== token_i ? "none" : "block",
+                            }}
+                        >
+                            <WizardSaveProject data={controlsState[token_i]} />
+                        </div>)
+                    })
+                }
             </div>
           </div>
           <div className={wizard.body}>
@@ -88,6 +90,26 @@ const Wizard = () => {
                     display: activeOptionIndex !== token_i ? "none" : "block",
                   }}
                 >
+                    {/*  select version */}
+                    <div className={wizard.versionSelectorWrapper}>
+                        <h3 className={wizard.controlsSectionName}>Version</h3>
+                        <select
+                            className={wizard.select}
+                            onChange={(e) => {
+                                let tmp_state = [...controlsState];
+                                tmp_state[token_i].version = e.target.value;
+
+                                setControlsState(tmp_state);
+                            }}
+                            defaultValue={'v2.0.0'}
+                        >
+                            <option value='v2.0.0'>v2.0.0</option>
+                            <option value='v1.7.0'>v1.7.0</option>
+                            <option value='v1.6.0'>v1.6.0</option>
+                            <option value='v1.5.0'>v1.5.0</option>
+                            <option value='v1.3.0'>v1.3.0</option>
+                        </select>
+                    </div>
                   {token.controls.map((item, index) => {
                     return (
                       <div className={wizard.inputSection} key={index.toString()}>
@@ -190,6 +212,35 @@ const Wizard = () => {
                   })}
                 </div>
               ))}
+                {config.map((token, token_i) => {
+                    return (
+                        <div
+                            key={token_i.toString()}
+                            style={{
+                                display: activeOptionIndex !== token_i ? "none" : "block",
+                            }}
+                        >
+                            <div className={wizard.versionSelectorWrapper}>
+                                <h3 className={wizard.controlsSectionName}>Security</h3>
+                                <select
+                                    className={wizard.select}
+                                    onChange={(e) => {
+                                        let tmp_state = [...controlsState];
+                                        tmp_state[token_i].security = e.target.value;
+
+                                        setControlsState(tmp_state);
+                                    }}
+                                    defaultValue={'none'}
+                                >
+                                    <option value='none'>None</option>
+                                    <option value='ownable'>Ownable</option>
+                                    <option value='access_control'>Access Control</option>
+                                </select>
+                            </div>
+                        </div>
+                     )
+                })}
+
             </div>
             <div className={wizard.contractOutput}>
               {config.map((token, token_i) => {
