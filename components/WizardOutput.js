@@ -57,7 +57,12 @@ std = [
 
     "${version >= 'v2.0.0' ? 'openbrush' : 'brush'}/std",
 ]
-ink-as-dependency = []`
+ink-as-dependency = [] ${version == 'v1.3.0' ? '\n' +
+        '[profile.dev]\n' +
+        'overflow-checks = false\n' +
+        '\n' +
+        '[profile.release]\n' +
+        'overflow-checks = false' : ''}`
 }
 
 const versionInfo = {
@@ -68,14 +73,6 @@ const versionInfo = {
         scaleInfoVersion: '1.0.0',
         brushDeclaration:
             (features) => `brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
-    },
-    'v1.4.0': {
-        edition: '2021',
-        inkVersion: 'v3.0.0-rc10',
-        scaleVersion: '3.0',
-        scaleInfoVersion: '2.0.0',
-        brushDeclaration:
-            (features) => `brush = { tag = "v1.4.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
     },
     'v1.5.0': {
         edition: '2021',
@@ -169,23 +166,19 @@ export const generateLib = (output, version='v2.0.0') => {
 #![feature(min_specialization)]
                                 
 #[${brushName}::contract]
-pub mod my_token {
-    use ink_prelude::{
-        string::String,
-        vec::Vec,
-    }; ${output.version != 'v1.3.0' ? `
+pub mod my_token {${isMetadata || isCapped ? `
+    // Imports from ink!
+    use ink_prelude::string::String;` : ''} ${output.version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
+    // Imports from ${brushName}
     use ${brushName}::contracts::psp22::*; ${isMetadata ? `
     use ${brushName}::contracts::psp22::extensions::metadata::*;` : ''} ${isBurnable ? `
     use ${brushName}::contracts::psp22::extensions::burnable::*;` : ''} ${isMintable ? `
     use ${brushName}::contracts::psp22::extensions::mintable::*;` : ''} ${isWrapper ? `
     use ${brushName}::contracts::psp22::extensions::wrapper::*;` : ''} ${isFlashMintable ? `
     use ${brushName}::contracts::psp22::extensions::flashmint::*;` : ''} ${isPausable ? `
-    use ${brushName}::{
-        contracts::pausable::*,
-        modifiers,
-    };`: ''} ${isOwnable ? `
+    use ${brushName}::contracts::pausable::*;`: ''} ${isOwnable ? `
     use ${brushName}::contracts::ownable::*;` : ''} ${isAccessControl ? `
     use ${brushName}::contracts::access_control::*;` : ''}
 
@@ -213,24 +206,59 @@ pub mod my_token {
         access_control: AccessControlData,` : ''}
     }${isAccessControl ? `
     
+    // You can add more roles for different purposes
     const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");
     ` : ''}
-        
+
+    // Section contains default implementation without any modifications
     impl PSP22 for ${name} {} ${isMetadata ? `
-    impl PSP22Metadata for ${name} {}` : ''} ${isBurnable ? `
-    impl PSP22Burnable for ${name} {}` : ''} ${isMintable ? `
-    impl PSP22Mintable for ${name} {}` : ''} ${isWrapper ? `
+    impl PSP22Metadata for ${name} {}` : ''} ${isWrapper ? `
     impl PSP22Wrapper for ${name} {}` : ''} ${isFlashMintable ? `
     impl FlashLender for ${name} {}` : ''} ${isPausable ? `
     impl Pausable for ${name} {}` : ''} ${isOwnable ? `
     impl Ownable for ${name} {}` : ''} ${isAccessControl ? `
-    impl AccessControl for ${name} {}` : ''}
+    impl AccessControl for ${name} {}` : ''} ${isAccessControl || isOwnable ? `
+    
+    // Section contains modified methods with additional functionality.` : ''} ${isBurnable ? `
+    impl PSP22Burnable for ${name} {${isAccessControl || isOwnable ? `
+        /// override the \`burn\` function to add the access modifier
+        #[ink(message)]
+        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            self._burn_from(account, amount)
+        }
+    }` : '}'}` : ''} ${isMintable ? `
+    impl PSP22Mintable for ${name} {${isAccessControl || isOwnable ? `
+        /// override the \`mint\` function to add the access modifier
+        #[ink(message)]
+        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
+        fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            self._mint(account, amount)
+        }
+    }` : '}'}` : ''} ${isCapped || isPausable ? `
+    
+    impl ${output.version <= 'v1.5.0'? 'PSP22Internal' : 'PSP22Transfer'} for ${name} {${isPausable ? `
+        /// Return \`Paused\` error if the token is paused
+        #[${brushName}::modifiers(when_not_paused)]` : `` }
+        fn _before_token_transfer(
+            &mut self,
+            _from: Option<&AccountId>,
+            _to: Option<&AccountId>,
+            _amount: &Balance,
+        ) -> Result<(), PSP22Error> {${isCapped ? `
+            // \`is_none\` means that it is minting
+            if _from.is_none() && (self.total_supply() + _amount) > self.cap() {
+                return Err(PSP22Error::Custom(String::from("Cap exceeded")))
+            }` : `` }
+            Ok(())
+        }
+    }` : ''}
         
     impl ${name} {
         #[ink(constructor)]
         pub fn new(initial_supply: Balance${isMetadata ? `, name: Option<String>, symbol: Option<String>, decimal: u8` : ''}${isCapped ? `, cap: Balance` : ''}) -> Self {
             ${output.version == 'v1.3.0' ? `let mut instance = Self::default(); ${isCapped ? `
-            assert!(instance.init_cap(cap).is_ok());` : ''} ${isMetadata ? `
+            assert!(instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
             instance.metadata.name = name;
             instance.metadata.symbol = symbol;
             instance.metadata.decimals = decimal;` : '' }
@@ -241,7 +269,7 @@ pub mod my_token {
             assert!(instance._mint(instance.env().caller(), initial_supply).is_ok());
             instance`: 
             `ink_lang::codegen::initialize_contract(|instance: &mut ${name}| { ${isCapped ? `
-                assert!(instance.init_cap(cap).is_ok());` : ''} ${isMetadata ? `
+                assert!(instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
                 instance.metadata.name = name;
                 instance.metadata.symbol = symbol;
                 instance.metadata.decimals = decimal;` : '' }
@@ -254,22 +282,7 @@ pub mod my_token {
                 instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}
             })`
             }
-        }  ${isBurnable ? `
-            
-        #[ink(message)] ${isOwnable || isAccessControl ? `
-        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}
-        pub fn burn_from_many(&mut self, accounts: Vec<(AccountId, Balance)>) -> Result<(), PSP22Error> {
-            for account in accounts.iter() {
-                self.burn(account.0, account.1)?;
-            }
-            Ok(())
-        }` : ''} ${isMintable ? `
-            
-        #[ink(message)]${isOwnable || isAccessControl ? `
-        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}
-        pub fn mint_to(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error>  {
-            self.mint(account, amount)
-        }` : ''} ${isPausable ? `
+        } ${isPausable ? `
         
         #[ink(message)]${isOwnable || isAccessControl ? `
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}
@@ -286,18 +299,9 @@ pub mod my_token {
         pub fn cap(&self) -> Balance {
             self.cap
         }
-        
-        /// Overrides the \`_mint\` function to check for cap overflow before minting tokens
-        /// Performs \`PSP22Internal::_mint\` after the check succeeds
-        fn _mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
-            if (self.total_supply() + amount) > self.cap() {
-                return Err(PSP22Error::Custom(String::from("Cap exceeded")))
-            }
-            PSP22Internal::_mint(self, account, amount)
-        }
 
         /// Initializes the token's cap
-        fn init_cap(&mut self, cap: Balance) -> Result<(), PSP22Error> {
+        fn _init_cap(&mut self, cap: Balance) -> Result<(), PSP22Error> {
             if cap <= 0 {
                 return Err(PSP22Error::Custom(String::from("Cap must be above 0")))
             }

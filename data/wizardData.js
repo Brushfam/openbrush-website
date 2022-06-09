@@ -17,12 +17,6 @@ export const wizardConfig = [
                         initState: 'MPSP',
                         tooltip: ''
                     },
-                    {
-                        name: 'Premint',
-                        type: 'text',
-                        initState: '100',
-                        tooltip: ''
-                    },
                 ]
             },
             {
