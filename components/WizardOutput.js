@@ -150,7 +150,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
 export const generateLib = (output, version='v2.0.0') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
     const isMetadata = output.currentControlsState.find(x => x.name === 'Metadata')?.state;
-    const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state;
+    const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state && version > "v1.5.0";
     const isBurnable = output.currentControlsState.find(x => x.name === 'Burnable')?.state;
     const isMintable = output.currentControlsState.find(x => x.name === 'Mintable')?.state;
     const isFlashMintable = output.currentControlsState.find(x => x.name === 'FlashMint')?.state;
@@ -160,6 +160,7 @@ export const generateLib = (output, version='v2.0.0') => {
     const isWrapper = output.currentControlsState.find(x => x.name === 'Wrapper')?.state;
     const isCapped = output.currentControlsState.find(x => x.name === 'Capped')?.state;
     const name = output.currentControlsState.find(x => x.name === 'Name')?.state;
+    const symbol = output.currentControlsState.find(x => x.name === 'Symbol')?.state;
 
     switch (output.type) {
         case 'psp22':
@@ -169,7 +170,7 @@ export const generateLib = (output, version='v2.0.0') => {
 #[${brushName}::contract]
 pub mod my_token {
     // Imports from ink! ${isMetadata || isCapped ? `
-    use ink_prelude::string::String;` : ''} ${output.version != 'v1.3.0' ? `
+    use ink_prelude::string::String;` : ''} ${version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
     // Imports from ${brushName}
@@ -185,7 +186,7 @@ pub mod my_token {
 
     #[ink(storage)]
     #[derive(Default, ${
-                output.version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP22Storage${
+                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP22Storage${
                 isMetadata ? `, PSP22MetadataStorage` : ''}${
                 isWrapper ? `, PSP22WrapperStorage` : ''}${
                 isPausable ? `, PausableStorage` : ''}${
@@ -238,7 +239,7 @@ pub mod my_token {
         }
     }` : '}'}` : ''} ${isCapped || isPausable ? `
     
-    impl ${output.version <= 'v1.5.0'? 'PSP22Internal' : 'PSP22Transfer'} for ${name} {${isPausable ? `
+    impl ${version <= 'v1.5.0'? 'PSP22Internal' : 'PSP22Transfer'} for ${name} {${isPausable ? `
         /// Return \`Paused\` error if the token is paused
         #[${brushName}::modifiers(when_not_paused)]` : `` }
         fn _before_token_transfer(
@@ -258,7 +259,7 @@ pub mod my_token {
     impl ${name} {
         #[ink(constructor)]
         pub fn new(initial_supply: Balance${isMetadata ? `, name: Option<String>, symbol: Option<String>, decimal: u8` : ''}${isCapped ? `, cap: Balance` : ''}) -> Self {
-            ${output.version == 'v1.3.0' ? `let mut _instance = Self::default(); ${isCapped ? `
+            ${version == 'v1.3.0' ? `let mut _instance = Self::default(); ${isCapped ? `
             assert!(_instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
             _instance.metadata.name = name;
             _instance.metadata.symbol = symbol;
@@ -319,7 +320,7 @@ pub mod my_token {
 pub mod my_psp1155 {
     // Imports from ink! ${isMetadata ? `
     use ink_prelude::string::String;` : ''} ${(isBurnable || isMintable) && (isOwnable || isAccessControl) ? `
-    use ink_prelude::vec::Vec;` : ''} ${output.version != 'v1.3.0' ? `
+    use ink_prelude::vec::Vec;` : ''} ${version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
     // Imports from ${brushName}
@@ -332,7 +333,7 @@ pub mod my_psp1155 {
 
     #[ink(storage)]
     #[derive(Default, ${
-                output.version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP1155Storage${
+                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP1155Storage${
                 isMetadata ? `, PSP1155MetadataStorage` : ``}${
                 isOwnable ? `, OwnableStorage` : ''}${
                 isAccessControl ? `, AccessControlStorage` : ''})]
@@ -401,21 +402,22 @@ pub mod my_psp1155 {
 #[${brushName}::contract]
 pub mod my_psp34 {
     // Imports from ink! ${isMetadata || isCapped ? `
-    use ink_prelude::string::String;` : ''} ${output.version != 'v1.3.0' ? `
+    use ink_prelude::string::String;` : ''} ${version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
     // Imports from ${brushName}
     use ${brushName}::contracts::psp34::*; ${isMetadata ? `
-    use ${brushName}::contracts::psp34::extensions::metadata::*;` : ''} ${isBurnable ? `
+    use ${brushName}::contracts::psp34::extensions::metadata::*;` : ''} ${isEnumerable ? `
+    use ${brushName}::contracts::psp34::extensions::enumerable::*;` : ''} ${isBurnable ? `
     use ${brushName}::contracts::psp34::extensions::burnable::*;` : ''} ${isMintable ? `
     use ${brushName}::contracts::psp34::extensions::mintable::*;` : ''} ${isOwnable ? `
     use ${brushName}::contracts::ownable::*;` : ''} ${isAccessControl ? `
     use ${brushName}::contracts::access_control::*;` : ''}
     
-
     #[derive(Default, ${
-                output.version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP34Storage${
+                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP34Storage${
                 isMetadata ? `, PSP34MetadataStorage` : ''}${
+                isEnumerable ? `, PSP34EnumerableStorage` : ''}${
                 isOwnable ? `, OwnableStorage` : ''}${
                 isAccessControl ? `, AccessControlStorage` : ''})]
     #[ink(storage)]
@@ -423,31 +425,50 @@ pub mod my_psp34 {
         #[PSP34StorageField]
         psp34: PSP34Data, ${isMetadata ? `
         #[PSP34MetadataStorageField]
-        metadata: PSP34MetadataData,` : ''} ${isOwnable ? `
+        metadata: PSP34MetadataData,` : ''} ${isEnumerable ? `
+        #[PSP34EnumerableStorageField]
+        enumerable: PSP34EnumerableData,` : ``} ${isOwnable ? `
         #[OwnableStorageField]
         ownable: OwnableData,` : ''} ${isAccessControl ? `
         #[AccessControlStorageField]
         access_control: AccessControlData,` : ''}
     }${isAccessControl ? `
     
-    const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");
-    ` : ''}
+    const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");` : ''}
 
-    impl PSP34 for ${name} {}${isBurnable ? `
-    impl PSP34Burnable for ${name} {}` : ''} ${isMintable ? `
-    impl PSP34Mintable for ${name} {}` : ''} ${isMetadata ? `
-    impl PSP34Metadata for ${name} {}
-    impl PSP34Internal for ${name} {}` : ``} ${isOwnable ? `
+    // Section contains default implementation without any modifications
+    impl PSP34 for ${name} {} ${isMetadata ? `
+    impl PSP34Metadata for ${name} {}` : ``} ${isEnumerable ? `
+    impl PSP34Enumerable for ${name} {}` : ``} ${isOwnable ? `
     impl Ownable for ${name} {}` : ''} ${isAccessControl ? `
-    impl AccessControl for ${name} {}` : ''}
+    impl AccessControl for ${name} {}` : ''} ${isAccessControl || isOwnable ? `
+    
+    // Section contains modified methods with additional functionality.` : ''} ${isBurnable ? `
+    impl PSP34Burnable for ${name} {${isAccessControl || isOwnable ? `
+        /// override the \`burn\` function to add the access modifier
+        #[ink(message)]
+        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
+        fn burn(&mut self, account: AccountId, id: Id) -> Result<(), PSP34Error> {
+        self._burn_from(account, id)
+        }
+    }` : '}'}` : ''} ${isMintable ? `
+    impl PSP34Mintable for ${name} {${isAccessControl || isOwnable ? `
+        /// override the \`mint\` function to add the access modifier
+        #[ink(message)]
+        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
+        fn mint(&mut self, account: AccountId, id: Id) -> Result<(), PSP34Error> {
+            self._mint_to(account, id)
+        }
+    }` : '}'}` : ''}
     
     impl ${name} {
         #[ink(constructor)]
-        pub fn new(id: Id) -> Self {
+        pub fn new() -> Self {
             ${version == '1.3.0' ? `${isMetadata ? `let mut _instance = Self::default();
-            _instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
-            _instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${isMintable ? `
-            _instance.mint_token();${isOwnable ? `
+            let collection_id = _instance.collection_id();
+            _instance._set_attribute(collection_id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
+            _instance._set_attribute(collection_id, String::from("symbol").into_bytes(), String::from("${symbol}").into_bytes());${isMintable ? `
+            _instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");${isOwnable ? `
                 _instance._init_with_owner(_instance.env().caller());` : '' }${isAccessControl ? `
                 _instance._init_with_admin(_instance.env().caller()); 
                 _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}` : ''}
@@ -457,9 +478,10 @@ pub mod my_psp34 {
                 _instance.grant_role(MANAGER, _instance.env().caller().expect("Should grant MANAGER role");` : ''}
                 _instance`}` :
                 `ink_lang::codegen::initialize_contract(|_instance: &mut Self| {${isMetadata ? `
-                _instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
-                _instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${isMintable ? `
-                _instance.mint_token();` : ''}${isOwnable ? `
+                let collection_id = _instance.collection_id();
+                _instance._set_attribute(collection_id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
+                _instance._set_attribute(collection_id, String::from("symbol").into_bytes(), String::from("${symbol}").into_bytes());${isMintable ? `
+                _instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");` : ''}${isOwnable ? `
                 _instance._init_with_owner(_instance.env().caller());` : `` }${isAccessControl ? `
                 _instance._init_with_admin(_instance.env().caller()); 
                 _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}` : `${isOwnable ? `
@@ -468,15 +490,7 @@ pub mod my_psp34 {
                 _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}`}
             })`
             }
-        } ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
-        /// Mint method which mints a token and updates the id of next token
-        #[ink(message)]${isOwnable || isAccessControl ? `
-        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}
-        pub fn mint_token(&mut self) -> Result<(), PSP34Error>{
-            self.mint(Self::env().account_id(), Id::U8(self.next_id))?;
-            self.next_id += 1;
-            Ok(())
-        }` : ''}
+        }
     }
 }`
     }
