@@ -150,6 +150,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
 export const generateLib = (output, version='v2.0.0') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
     const isMetadata = output.currentControlsState.find(x => x.name === 'Metadata')?.state;
+    const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state;
     const isBurnable = output.currentControlsState.find(x => x.name === 'Burnable')?.state;
     const isMintable = output.currentControlsState.find(x => x.name === 'Mintable')?.state;
     const isFlashMintable = output.currentControlsState.find(x => x.name === 'FlashMint')?.state;
@@ -166,8 +167,8 @@ export const generateLib = (output, version='v2.0.0') => {
 #![feature(min_specialization)]
                                 
 #[${brushName}::contract]
-pub mod my_token {${isMetadata || isCapped ? `
-    // Imports from ink!
+pub mod my_token {
+    // Imports from ink! ${isMetadata || isCapped ? `
     use ink_prelude::string::String;` : ''} ${output.version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
@@ -257,29 +258,29 @@ pub mod my_token {${isMetadata || isCapped ? `
     impl ${name} {
         #[ink(constructor)]
         pub fn new(initial_supply: Balance${isMetadata ? `, name: Option<String>, symbol: Option<String>, decimal: u8` : ''}${isCapped ? `, cap: Balance` : ''}) -> Self {
-            ${output.version == 'v1.3.0' ? `let mut instance = Self::default(); ${isCapped ? `
-            assert!(instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
-            instance.metadata.name = name;
-            instance.metadata.symbol = symbol;
-            instance.metadata.decimals = decimal;` : '' }
+            ${output.version == 'v1.3.0' ? `let mut _instance = Self::default(); ${isCapped ? `
+            assert!(_instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
+            _instance.metadata.name = name;
+            _instance.metadata.symbol = symbol;
+            _instance.metadata.decimals = decimal;` : '' }
             ${isOwnable ? `
-            instance._init_with_owner(instance.env().caller());` : '' } ${isAccessControl ? `
-            instance._init_with_admin(instance.env().caller());
-            instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}
-            assert!(instance._mint(instance.env().caller(), initial_supply).is_ok());
-            instance`: 
-            `ink_lang::codegen::initialize_contract(|instance: &mut ${name}| { ${isCapped ? `
-                assert!(instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
-                instance.metadata.name = name;
-                instance.metadata.symbol = symbol;
-                instance.metadata.decimals = decimal;` : '' }
-                instance
-                    ._mint(instance.env().caller(), initial_supply)
+            _instance._init_with_owner(_instance.env().caller());` : '' } ${isAccessControl ? `
+            _instance._init_with_admin(_instance.env().caller());
+            _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
+            assert!(_instance._mint(_instance.env().caller(), initial_supply).is_ok());
+            _instance`: 
+            `ink_lang::codegen::initialize_contract(|_instance: &mut ${name}| { ${isCapped ? `
+                assert!(_instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
+                _instance.metadata.name = name;
+                _instance.metadata.symbol = symbol;
+                _instance.metadata.decimals = decimal;` : '' }
+                _instance
+                    ._mint(_instance.env().caller(), initial_supply)
                     .expect("Should mint");
                 ${isOwnable ? `
-                instance._init_with_owner(instance.env().caller());` : '' } ${isAccessControl ? `
-                instance._init_with_admin(instance.env().caller()); 
-                instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}
+                _instance._init_with_owner(_instance.env().caller());` : '' } ${isAccessControl ? `
+                _instance._init_with_admin(_instance.env().caller()); 
+                _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
             })`
             }
         } ${isPausable ? `
@@ -316,13 +317,12 @@ pub mod my_token {${isMetadata || isCapped ? `
 
 #[${brushName}::contract]
 pub mod my_psp1155 {
-    use ink_prelude::{
-        string::String,
-        vec,
-    };${output.version != 'v1.3.0' ? `
+    // Imports from ink! ${isMetadata ? `
+    use ink_prelude::string::String;` : ''} ${(isBurnable || isMintable) && (isOwnable || isAccessControl) ? `
+    use ink_prelude::vec::Vec;` : ''} ${output.version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
-    ${version == 'v1.3.0' ? 'use ink_storage::collections::HashMap as StorageHashMap;' : 'use ink_storage::Mapping;'}
+    // Imports from ${brushName}
     use ${brushName}::contracts::psp1155::*; ${isMetadata ? `
     use ${brushName}::contracts::psp1155::extensions::metadata::*;` : ''} ${isBurnable ? `
     use ${brushName}::contracts::psp1155::extensions::burnable::*;` : ''} ${isMintable ? `
@@ -338,8 +338,7 @@ pub mod my_psp1155 {
                 isAccessControl ? `, AccessControlStorage` : ''})]
     pub struct ${name} {
         #[PSP1155StorageField]
-        psp1155: PSP1155Data,
-        denied_ids: ${version == 'v1.3.0' ? `StorageHashMap<Id, ()>` : 'Mapping<Id, ()>'}, ${isMetadata ? `
+        psp1155: PSP1155Data, ${isMetadata ? `
         #[PSP1155MetadataStorageField]
         metadata: PSP1155MetadataData,` : ``} ${isOwnable ? `
         #[OwnableStorageField]
@@ -351,43 +350,47 @@ pub mod my_psp1155 {
     const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");
     ` : ''}
     
+    // Section contains default implementation without any modifications
     impl PSP1155 for ${name} {} ${isMetadata ? `
-    impl PSP1155Metadata for ${name} {}` : ''} ${isBurnable ? `
-    impl PSP1155Burnable for ${name} {}` : ''} ${isMintable ? `
-    impl PSP1155Mintable for ${name} {}` : ''} ${isOwnable ? `
+    impl PSP1155Metadata for ${name} {}` : ''} ${isOwnable ? `
     impl Ownable for ${name} {}` : ''} ${isAccessControl ? `
-    impl AccessControl for ${name} {}` : ''}
+    impl AccessControl for ${name} {}` : ''} ${isAccessControl || isOwnable ? `
+    
+    // Section contains modified methods with additional functionality.` : ''} ${isBurnable ? `
+    impl PSP1155Burnable for ${name} {${isAccessControl || isOwnable ? `
+        /// override the \`burn\` function to add the access modifier
+        #[ink(message)]
+        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
+        fn burn(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), PSP1155Error> {
+            self._burn_from(from, ids_amounts)
+        }
+    }` : '}'}` : ''} ${isMintable ? `
+    impl PSP1155Mintable for ${name} {${isAccessControl || isOwnable ? `
+        /// override the \`mint\` function to add the access modifier
+        #[ink(message)]
+        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
+        fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), PSP1155Error> {
+            self._mint_to(to, ids_amounts)
+        }
+    }` : '}'}` : ''}
     
     impl ${name} {
         #[ink(constructor)]
         pub fn new(${isMetadata ? `uri: Option<String>` : ''}) -> Self {
-            ${ version == 'v1.3.0' ? `${isMetadata ? `let mut instance = Self::default();
-            instance.metadata.uri = uri;${isOwnable ? 
-            `instance._init_with_owner(instance.env().caller());` : '' }${isAccessControl ? `
-            instance._init_with_admin(instance.env().caller()); 
-            instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}
-            instance` : `Self::default()` } ` :
-                `ink_lang::codegen::initialize_contract(|instance: &mut Self| {${isMetadata ? `
-                instance.metadata.uri = uri;` : ''} ${isOwnable ? `
-                instance._init_with_owner(instance.env().caller());` : '' } ${isAccessControl ? `
-                instance._init_with_admin(instance.env().caller()); 
-                instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}
+            ${ version == 'v1.3.0' ? `${isMetadata ? `let mut _instance = Self::default();
+            _instance.metadata.uri = uri;${isOwnable ? 
+            `_instance._init_with_owner(_instance.env().caller());` : '' }${isAccessControl ? `
+            _instance._init_with_admin(_instance.env().caller()); 
+            _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
+            _instance` : `Self::default()` } ` :
+                `ink_lang::codegen::initialize_contract(|_instance: &mut Self| {${isMetadata ? `
+                _instance.metadata.uri = uri;` : ''} ${isOwnable ? `
+                _instance._init_with_owner(_instance.env().caller());` : '' } ${isAccessControl ? `
+                _instance._init_with_admin(_instance.env().caller()); 
+                _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
             })`
             }
         }
-
-        #[ink(message)]
-        pub fn deny(&mut self, id: Id) {
-            self.denied_ids.insert(id, ${version == 'v1.3.0' ? '' : '&'}());
-        } ${isMintable ? `
-        #[ink(message)]${isOwnable || isAccessControl ? `
-        #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}
-        pub fn mint_tokens(&mut self, id: Id, amount: Balance) -> Result<(), PSP1155Error> {
-            if self.denied_ids.get(&id).is_some() {
-                return Err(PSP1155Error::Custom(String::from("Id is denied")))
-            }
-            self._mint_to(Self::env().caller(), vec![(id, amount)])
-        }` : ''}
     } 
 }
 `
@@ -397,8 +400,11 @@ pub mod my_psp1155 {
                     
 #[${brushName}::contract]
 pub mod my_psp34 {
-    use ink_prelude::string::String;${output.version != 'v1.3.0' ? `
+    // Imports from ink! ${isMetadata || isCapped ? `
+    use ink_prelude::string::String;` : ''} ${output.version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
+    
+    // Imports from ${brushName}
     use ${brushName}::contracts::psp34::*; ${isMetadata ? `
     use ${brushName}::contracts::psp34::extensions::metadata::*;` : ''} ${isBurnable ? `
     use ${brushName}::contracts::psp34::extensions::burnable::*;` : ''} ${isMintable ? `
@@ -415,8 +421,7 @@ pub mod my_psp34 {
     #[ink(storage)]
     pub struct ${name}{
         #[PSP34StorageField]
-        psp34: PSP34Data,
-        next_id: u8, ${isMetadata ? `
+        psp34: PSP34Data, ${isMetadata ? `
         #[PSP34MetadataStorageField]
         metadata: PSP34MetadataData,` : ''} ${isOwnable ? `
         #[OwnableStorageField]
@@ -439,28 +444,28 @@ pub mod my_psp34 {
     impl ${name} {
         #[ink(constructor)]
         pub fn new(id: Id) -> Self {
-            ${version == '1.3.0' ? `${isMetadata ? `let mut instance = Self::default();
-            instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
-            instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${isMintable ? `
-            instance.mint_token();${isOwnable ? `
-                instance._init_with_owner(instance.env().caller());` : '' }${isAccessControl ? `
-                instance._init_with_admin(instance.env().caller()); 
-                instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}` : ''}
-            instance` : `let mut instance = Self::default()${isOwnable ? `
-                instance._init_with_owner(instance.env().caller());` : '' }${isAccessControl ? `
-                instance._init_with_admin(instance.env().caller()); 
-                instance.grant_role(MANAGER, instance.env().caller().expect("Should grant MANAGER role");` : ''}
-                instance`}` :
-                `ink_lang::codegen::initialize_contract(|instance: &mut Self| {${isMetadata ? 
-            `instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
-                instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${isMintable ? `
-                instance.mint_token();` : ''}${isOwnable ? `
-                instance._init_with_owner(instance.env().caller());` : `` }${isAccessControl ? `
-                instance._init_with_admin(instance.env().caller()); 
-                instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}` : `${isOwnable ? `
-                instance._init_with_owner(instance.env().caller());` : `` }${isAccessControl ? `
-                instance._init_with_admin(instance.env().caller()); 
-                instance.grant_role(MANAGER, instance.env().caller()).expect("Should grant MANAGER role");` : ''}`}
+            ${version == '1.3.0' ? `${isMetadata ? `let mut _instance = Self::default();
+            _instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
+            _instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${isMintable ? `
+            _instance.mint_token();${isOwnable ? `
+                _instance._init_with_owner(_instance.env().caller());` : '' }${isAccessControl ? `
+                _instance._init_with_admin(_instance.env().caller()); 
+                _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}` : ''}
+            _instance` : `let mut _instance = Self::default()${isOwnable ? `
+                _instance._init_with_owner(_instance.env().caller());` : '' }${isAccessControl ? `
+                _instance._init_with_admin(_instance.env().caller()); 
+                _instance.grant_role(MANAGER, _instance.env().caller().expect("Should grant MANAGER role");` : ''}
+                _instance`}` :
+                `ink_lang::codegen::initialize_contract(|_instance: &mut Self| {${isMetadata ? `
+                _instance._set_attribute(id.clone(), String::from("name").into_bytes(), String::from("${name}").into_bytes());
+                _instance._set_attribute(id, String::from("symbol").into_bytes(), String::from("${output.currentControlsState.find(x => x.name === 'Symbol').state}").into_bytes());${isMintable ? `
+                _instance.mint_token();` : ''}${isOwnable ? `
+                _instance._init_with_owner(_instance.env().caller());` : `` }${isAccessControl ? `
+                _instance._init_with_admin(_instance.env().caller()); 
+                _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}` : `${isOwnable ? `
+                _instance._init_with_owner(_instance.env().caller());` : `` }${isAccessControl ? `
+                _instance._init_with_admin(_instance.env().caller()); 
+                _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}`}
             })`
             }
         } ${output.currentControlsState.find(x => x.name === 'Mintable').state ? `
