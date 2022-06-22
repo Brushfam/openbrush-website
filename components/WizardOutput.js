@@ -27,6 +27,7 @@ ink_env = { ${inkVersionString}, default-features = false }
 ink_storage = { ${inkVersionString}, default-features = false }
 ink_lang = { ${inkVersionString}, default-features = false }
 ink_prelude = { ${inkVersionString}, default-features = false }
+ink_engine = { ${inkVersionString}, default-features = false, optional = true }
 
 scale = { package = "parity-scale-codec", version = "${scaleVersion}", default-features = false, features = ["derive"] }
 scale-info = { version = "${scaleInfoVersion}", default-features = false, features = ["derive"], optional = true }
@@ -263,8 +264,7 @@ pub mod my_token {
             assert!(_instance._init_cap(cap).is_ok());` : ''} ${isMetadata ? `
             _instance.metadata.name = name;
             _instance.metadata.symbol = symbol;
-            _instance.metadata.decimals = decimal;` : '' }
-            ${isOwnable ? `
+            _instance.metadata.decimals = decimal;` : '' } ${isOwnable ? `
             _instance._init_with_owner(_instance.env().caller());` : '' } ${isAccessControl ? `
             _instance._init_with_admin(_instance.env().caller());
             _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
@@ -277,8 +277,7 @@ pub mod my_token {
                 _instance.metadata.decimals = decimal;` : '' }
                 _instance
                     ._mint(_instance.env().caller(), initial_supply)
-                    .expect("Should mint");
-                ${isOwnable ? `
+                    .expect("Should mint");${isOwnable ? `
                 _instance._init_with_owner(_instance.env().caller());` : '' } ${isAccessControl ? `
                 _instance._init_with_admin(_instance.env().caller()); 
                 _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
