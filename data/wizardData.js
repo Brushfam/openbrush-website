@@ -69,7 +69,7 @@ export const wizardConfig = [
         ],
     },
     {
-        name: 'psp1155',
+        name: 'psp37',
         controls: [
             {
                 sectionName: 'Constructor',
@@ -77,7 +77,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP1155',
+                        initState: 'MyPSP37',
                         tooltip: ''
                     },
                     {
@@ -95,19 +95,19 @@ export const wizardConfig = [
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Metadata for [`PSP1155`]'
+                        tooltip: 'Metadata for [`PSP37`]'
                     },
                     {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP1155`] that allows minting of new tokens'
+                        tooltip: 'Extension of [`PSP37`] that allows minting of new tokens'
                     },
                     {
                         name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP1155`] that allows token holders to destroy their tokens'
+                        tooltip: 'Extension of [`PSP37`] that allows token holders to destroy their tokens'
                     }
                 ]
             }

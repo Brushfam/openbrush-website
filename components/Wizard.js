@@ -101,8 +101,10 @@ const Wizard = () => {
 
                                 setControlsState(tmp_state);
                             }}
-                            defaultValue={'v2.0.0'}
+                            defaultValue={'v2.2.0'}
                         >
+                            <option value='v2.2.0'>v2.2.0</option>
+                            <option value='v2.1.0'>v2.1.0</option>`
                             <option value='v2.0.0'>v2.0.0</option>
                             <option value='v1.7.0'>v1.7.0</option>
                             <option value='v1.6.0'>v1.6.0</option>

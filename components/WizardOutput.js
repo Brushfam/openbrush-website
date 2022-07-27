@@ -106,10 +106,26 @@ const versionInfo = {
         scaleInfoVersion: '2',
         brushDeclaration:
             (features) => `openbrush = { version = "~2.0.0", default-features = false, features = [${features}] }`,
+    },
+    'v2.1.0': {
+        edition: '2021',
+        inkVersion: '~3.3.0',
+        scaleVersion: '3',
+        scaleInfoVersion: '2',
+        brushDeclaration:
+            (features) => `openbrush = { version = "~2.1.0", default-features = false, features = [${features}] }`,
+    },
+    'v2.2.0': {
+        edition: '2021',
+        inkVersion: '~3.3.0',
+        scaleVersion: '3',
+        scaleInfoVersion: '2',
+        brushDeclaration:
+            (features) => `openbrush = { version = "~2.2.0", default-features = false, features = [${features}] }`,
     }
 }
 
-export const generateCargoToml = (output, version='v2.0.0') => {
+export const generateCargoToml = (output, version='v2.2.0') => {
     const versionInfoElement = versionInfo[version];
 
     switch (output.type) {
@@ -126,7 +142,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
                     output.security == "ownable" ? `, "ownable"` : ''}${
                     output.security == "access_control" ? `, "access_control"` : ''}`)
             );
-        case 'psp1155':
+        case 'psp37':
             return generateCargoTomlWithVersion(
                 version,
                 "my_" + output.type,
@@ -134,7 +150,7 @@ export const generateCargoToml = (output, version='v2.0.0') => {
                 versionInfoElement.inkVersion,
                 versionInfoElement.scaleVersion,
                 versionInfoElement.scaleInfoVersion,
-                versionInfoElement.brushDeclaration(`"psp1155"${output.security == "ownable" ? `, "ownable"` : ''}${output.security == "access_control" ? `, "access_control"` : ''}`)
+                versionInfoElement.brushDeclaration(`"${version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37')}"${output.security == "ownable" ? `, "ownable"` : ''}${output.security == "access_control" ? `, "access_control"` : ''}`)
             );
         case 'psp34':
             return generateCargoTomlWithVersion(
@@ -148,8 +164,8 @@ export const generateCargoToml = (output, version='v2.0.0') => {
             );
     }
 }
-export const generateLib = (output, version='v2.0.0') => {
-    const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
+export const generateLib = (output, version='v2.2.0') => {
+    const brushName = version >= 'v2.2.0' ? 'openbrush' : 'brush';
     const isMetadata = output.currentControlsState.find(x => x.name === 'Metadata')?.state;
     const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state && version > "v1.5.0";
     const isBurnable = output.currentControlsState.find(x => x.name === 'Burnable')?.state;
@@ -187,26 +203,27 @@ pub mod my_token {
 
     #[ink(storage)]
     #[derive(Default, ${
-                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP22Storage${
-                isMetadata ? `, PSP22MetadataStorage` : ''}${
-                isWrapper ? `, PSP22WrapperStorage` : ''}${
-                isPausable ? `, PausableStorage` : ''}${
-                isOwnable ? `, OwnableStorage` : ''}${
-                isAccessControl ? `, AccessControlStorage` : ''})]
-    pub struct ${name} {
-        #[PSP22StorageField]
-        psp22: PSP22Data, ${isOwnable ? `
-        #[OwnableStorageField]
-        ownable: OwnableData,` : ''} ${isMetadata ? `
-        #[PSP22MetadataStorageField]
-        metadata: PSP22MetadataData,` : ''} ${isWrapper ? `
-        #[PSP22WrapperStorageField]
-        wrapper: PSP22WrapperData,` : ''} ${isPausable ? `
-        #[PausableStorageField]
-        pause: PausableData,` : ''} ${isCapped ? `
+                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}${
+                version < 'v2.2.0' ? 'PSP22' : ''}Storage${
+                (version < 'v2.2.0' && isMetadata) ? `, PSP22MetadataStorage` : ''}${
+                (version < 'v2.2.0' && isWrapper) ? `, PSP22WrapperStorage` : ''}${
+                (version < 'v2.2.0' && isPausable) ? `, PausableStorage` : ''}${
+                (version < 'v2.2.0' && isOwnable) ? `, OwnableStorage` : ''}${
+                (version < 'v2.2.0' && isAccessControl) ? `, AccessControlStorage` : ''})]
+    pub struct Contract {
+        #[${version < 'v2.2.0' ? 'PSP22StorageField' : 'storage_field'}]
+        psp22: ${version < 'v2.2.0' ? 'PSP22Data' : 'psp22::Data'}, ${isOwnable ? `
+        #[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]
+        ownable: ${version < 'v2.2.0' ? 'OwnableData' : 'ownable::Data'},` : ''} ${isMetadata ? `
+        #[${version < 'v2.2.0' ? 'PSP22MetadataStorageField' : 'storage_field'}]
+        metadata: ${version < 'v2.2.0' ? 'PSP22MetadataData' : 'metadata::Data'},` : ''} ${isWrapper ? `
+        #[${version < 'v2.2.0' ? 'PSP22WrapperStorageField' : 'storage_field'}]
+        wrapper: ${version < 'v2.2.0' ? 'PSP22WrapperData' : 'wrapper::Data'},` : ''} ${isPausable ? `
+        #[${version < 'v2.2.0' ? 'PausableStorageField' : 'storage_field'}]
+        pause: ${version < 'v2.2.0' ? 'PausableData' : 'pausable::Data'},` : ''} ${isCapped ? `
         cap: Balance,`: ''} ${isAccessControl ? `
-        #[AccessControlStorageField]
-        access_control: AccessControlData,` : ''}
+        #[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]
+        access_control: ${version < 'v2.2.0' ? 'AccessControlData' : 'access_control::Data'},` : ''}
     }${isAccessControl ? `
     
     // You can add more roles for different purposes
@@ -214,16 +231,16 @@ pub mod my_token {
     ` : ''}
 
     // Section contains default implementation without any modifications
-    impl PSP22 for ${name} {} ${isMetadata ? `
-    impl PSP22Metadata for ${name} {}` : ''} ${isWrapper ? `
-    impl PSP22Wrapper for ${name} {}` : ''} ${isFlashMintable ? `
-    impl FlashLender for ${name} {}` : ''} ${isPausable ? `
-    impl Pausable for ${name} {}` : ''} ${isOwnable ? `
-    impl Ownable for ${name} {}` : ''} ${isAccessControl ? `
-    impl AccessControl for ${name} {}` : ''} ${isAccessControl || isOwnable ? `
+    impl PSP22 for Contract {} ${isMetadata ? `
+    impl PSP22Metadata for Contract {}` : ''} ${isWrapper ? `
+    impl PSP22Wrapper for Contract {}` : ''} ${isFlashMintable ? `
+    impl FlashLender for Contract {}` : ''} ${isPausable ? `
+    impl Pausable for Contract {}` : ''} ${isOwnable ? `
+    impl Ownable for Contract {}` : ''} ${isAccessControl ? `
+    impl AccessControl for Contract {}` : ''} ${isAccessControl || isOwnable ? `
     
     // Section contains modified methods with additional functionality.` : ''} ${isBurnable ? `
-    impl PSP22Burnable for ${name} {${isAccessControl || isOwnable ? `
+    impl PSP22Burnable for Contract {${isAccessControl || isOwnable ? `
         /// override the \`burn\` function to add the access modifier
         #[ink(message)]
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
@@ -231,7 +248,7 @@ pub mod my_token {
             self._burn_from(account, amount)
         }
     }` : '}'}` : ''} ${isMintable ? `
-    impl PSP22Mintable for ${name} {${isAccessControl || isOwnable ? `
+    impl PSP22Mintable for Contract {${isAccessControl || isOwnable ? `
         /// override the \`mint\` function to add the access modifier
         #[ink(message)]
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
@@ -240,7 +257,7 @@ pub mod my_token {
         }
     }` : '}'}` : ''} ${isCapped || isPausable ? `
     
-    impl ${version <= 'v1.5.0'? 'PSP22Internal' : 'PSP22Transfer'} for ${name} {${isPausable ? `
+    impl ${version <= 'v1.5.0'? 'PSP22Internal' : 'PSP22Transfer'} for Contract {${isPausable ? `
         /// Return \`Paused\` error if the token is paused
         #[${brushName}::modifiers(when_not_paused)]` : `` }
         fn _before_token_transfer(
@@ -257,7 +274,7 @@ pub mod my_token {
         }
     }` : ''}
         
-    impl ${name} {
+    impl Contract {
         #[ink(constructor)]
         pub fn new(initial_supply: Balance${isMetadata ? `, name: Option<String>, symbol: Option<String>, decimal: u8` : ''}${isCapped ? `, cap: Balance` : ''}) -> Self {
             ${version == 'v1.3.0' ? `let mut _instance = Self::default(); ${isCapped ? `
@@ -311,70 +328,72 @@ pub mod my_token {
         }` : ''}
     }
 }`
-        case 'psp1155':
+        case 'psp37':
+            const standard_name = (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
             return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
 #[${brushName}::contract]
-pub mod my_psp1155 {
+pub mod my_${standard_name} {
     // Imports from ink! ${isMetadata ? `
     use ink_prelude::string::String;` : ''} ${(isBurnable || isMintable) && (isOwnable || isAccessControl) ? `
     use ink_prelude::vec::Vec;` : ''} ${version != 'v1.3.0' ? `
     use ink_storage::traits::SpreadAllocate;` : ''}
     
     // Imports from ${brushName}
-    use ${brushName}::contracts::psp1155::*; ${isMetadata ? `
-    use ${brushName}::contracts::psp1155::extensions::metadata::*;` : ''} ${isBurnable ? `
-    use ${brushName}::contracts::psp1155::extensions::burnable::*;` : ''} ${isMintable ? `
-    use ${brushName}::contracts::psp1155::extensions::mintable::*;` : ''} ${isOwnable ? `
+    use ${brushName}::contracts::${standard_name}::*; ${isMetadata ? `
+    use ${brushName}::contracts::${standard_name}::extensions::metadata::*;` : ''} ${isBurnable ? `
+    use ${brushName}::contracts::${standard_name}::extensions::burnable::*;` : ''} ${isMintable ? `
+    use ${brushName}::contracts::${standard_name}::extensions::mintable::*;` : ''} ${isOwnable ? `
     use ${brushName}::contracts::ownable::*;` : ''} ${isAccessControl ? `
     use ${brushName}::contracts::access_control::*;` : ''}
 
     #[ink(storage)]
     #[derive(Default, ${
-                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP1155Storage${
-                isMetadata ? `, PSP1155MetadataStorage` : ``}${
-                isOwnable ? `, OwnableStorage` : ''}${
-                isAccessControl ? `, AccessControlStorage` : ''})]
-    pub struct ${name} {
-        #[PSP1155StorageField]
-        psp1155: PSP1155Data, ${isMetadata ? `
-        #[PSP1155MetadataStorageField]
-        metadata: PSP1155MetadataData,` : ``} ${isOwnable ? `
-        #[OwnableStorageField]
-        ownable: OwnableData,` : ``} ${isAccessControl ? `
-        #[AccessControlStorageField]
-        access_control: AccessControlData,` : ''}
+                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}${
+                version < 'v2.2.0' ? standard_name.toUpperCase() : ''}Storage${
+                (version < 'v2.2.0' && isMetadata) ? `, ${standard_name.toUpperCase()}MetadataStorage` : ``}${
+                (version < 'v2.2.0' && isOwnable) ? `, OwnableStorage` : ''}${
+                (version < 'v2.2.0' && isAccessControl) ? `, AccessControlStorage` : ''})]
+    pub struct Contract {
+        #[${version < 'v2.2.0' ? `${standard_name.toUpperCase()}StorageField` : 'storage_field'}]
+        ${standard_name}: ${version < 'v2.2.0' ? `${standard_name.toUpperCase()}Data` : `${standard_name}::Data`}, ${isMetadata ? `
+        #[${version < 'v2.2.0' ? `${standard_name.toUpperCase()}MetadataStorageField` : 'storage_field'}]
+        metadata: ${version < 'v2.2.0' ? `${standard_name.toUpperCase()}MetadataData` : 'metadata::Data'},` : ``} ${isOwnable ? `
+        #[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]
+        ownable: ${version < 'v2.2.0' ? 'OwnableData' : 'ownable::Data'},` : ``} ${isAccessControl ? `
+        #[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]
+        access_control: ${version < 'v2.2.0' ? 'AccessControlData' : 'access_control::Data'},` : ''}
     }${isAccessControl ? `
     
     const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");
     ` : ''}
     
     // Section contains default implementation without any modifications
-    impl PSP1155 for ${name} {} ${isMetadata ? `
-    impl PSP1155Metadata for ${name} {}` : ''} ${isOwnable ? `
-    impl Ownable for ${name} {}` : ''} ${isAccessControl ? `
-    impl AccessControl for ${name} {}` : ''} ${isAccessControl || isOwnable ? `
+    impl ${standard_name.toUpperCase()} for Contract {} ${isMetadata ? `
+    impl ${standard_name.toUpperCase()}Metadata for Contract {}` : ''} ${isOwnable ? `
+    impl Ownable for Contract {}` : ''} ${isAccessControl ? `
+    impl AccessControl for Contract {}` : ''} ${isAccessControl || isOwnable ? `
     
     // Section contains modified methods with additional functionality.` : ''} ${isBurnable ? `
-    impl PSP1155Burnable for ${name} {${isAccessControl || isOwnable ? `
+    impl ${standard_name.toUpperCase()}Burnable for Contract {${isAccessControl || isOwnable ? `
         /// override the \`burn\` function to add the access modifier
         #[ink(message)]
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
-        fn burn(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), PSP1155Error> {
+        fn burn(&mut self, from: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), ${standard_name.toUpperCase()}Error> {
             self._burn_from(from, ids_amounts)
         }
     }` : '}'}` : ''} ${isMintable ? `
-    impl PSP1155Mintable for ${name} {${isAccessControl || isOwnable ? `
+    impl ${standard_name.toUpperCase()}Mintable for Contract {${isAccessControl || isOwnable ? `
         /// override the \`mint\` function to add the access modifier
         #[ink(message)]
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
-        fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), PSP1155Error> {
+        fn mint(&mut self, to: AccountId, ids_amounts: Vec<(Id, Balance)>) -> Result<(), ${standard_name.toUpperCase()}Error> {
             self._mint_to(to, ids_amounts)
         }
     }` : '}'}` : ''}
     
-    impl ${name} {
+    impl Contract {
         #[ink(constructor)]
         pub fn new(${isMetadata ? `uri: Option<String>` : ''}) -> Self {
             ${ version == 'v1.3.0' ? `${isMetadata ? `let mut _instance = Self::default();
@@ -414,22 +433,24 @@ pub mod my_psp34 {
     use ${brushName}::contracts::access_control::*;` : ''}
     
     #[derive(Default, ${
-                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}PSP34Storage${
-                isMetadata ? `, PSP34MetadataStorage` : ''}${
-                isEnumerable ? `, PSP34EnumerableStorage` : ''}${
-                isOwnable ? `, OwnableStorage` : ''}${
-                isAccessControl ? `, AccessControlStorage` : ''})]
+                version !== 'v1.3.0' ? 'SpreadAllocate, ' : ''}${
+                version < 'v2.2.0' ? 'PSP34' : ''}Storage${
+                (version < 'v2.2.0' && isMetadata) ? `, PSP34MetadataStorage` : ''}${
+                (version < 'v2.2.0' && isEnumerable) ? `, PSP34EnumerableStorage` : ''}${
+                (version < 'v2.2.0' && isOwnable) ? `, OwnableStorage` : ''}${
+                (version < 'v2.2.0' && isAccessControl) ? `, AccessControlStorage` : ''})]
     #[ink(storage)]
-    pub struct ${name}{
-        #[PSP34StorageField]
-        psp34: PSP34Data, ${isMetadata ? `
-        #[PSP34MetadataStorageField]
-        metadata: PSP34MetadataData,` : ''} ${isEnumerable ? `
+    pub struct Contract{
+        #[${version < 'v2.2.0' ? 'PSP34StorageField' : 'storage_field'}]
+        psp34: ${version < 'v2.2.0' ? 'PSP34Data' : 'psp34::Data'}${
+                (version > 'v2.0.0' && isEnumerable) ? '<enumerable::Balances>' : ''}, ${isMetadata ? `
+        #[${version < 'v2.2.0' ? 'PSP34MetadataStorageField' : 'storage_field'}]
+        metadata: ${version < 'v2.2.0' ? 'PSP34MetadataData' : 'metadata::Data'},` : ''} ${isEnumerable && version < 'v2.1.0' ? `
         #[PSP34EnumerableStorageField]
         enumerable: PSP34EnumerableData,` : ``} ${isOwnable ? `
-        #[OwnableStorageField]
+        #[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]
         ownable: OwnableData,` : ''} ${isAccessControl ? `
-        #[AccessControlStorageField]
+        #[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]
         access_control: AccessControlData,` : ''}
     }${isAccessControl ? `
     
@@ -443,7 +464,7 @@ pub mod my_psp34 {
     impl AccessControl for ${name} {}` : ''} ${isAccessControl || isOwnable ? `
     
     // Section contains modified methods with additional functionality.` : ''} ${isBurnable ? `
-    impl PSP34Burnable for ${name} {${isAccessControl || isOwnable ? `
+    impl PSP34Burnable for Contract {${isAccessControl || isOwnable ? `
         /// override the \`burn\` function to add the access modifier
         #[ink(message)]
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
@@ -451,7 +472,7 @@ pub mod my_psp34 {
         self._burn_from(account, id)
         }
     }` : '}'}` : ''} ${isMintable ? `
-    impl PSP34Mintable for ${name} {${isAccessControl || isOwnable ? `
+    impl PSP34Mintable for Contract {${isAccessControl || isOwnable ? `
         /// override the \`mint\` function to add the access modifier
         #[ink(message)]
         #[${brushName}::modifiers(${isOwnable ? 'only_owner' : 'only_role(MANAGER)'})]
@@ -460,7 +481,7 @@ pub mod my_psp34 {
         }
     }` : '}'}` : ''}
     
-    impl ${name} {
+    impl Contract {
         #[ink(constructor)]
         pub fn new() -> Self {
             ${version == '1.3.0' ? `${isMetadata ? `let mut _instance = Self::default();
@@ -538,7 +559,7 @@ const WizardOutput = ({data}) => {
                     </div>
                 </div>
             )        
-        case 'psp1155':
+        case 'psp37':
             return (
                 <div>
                     <div className={wizardOutput.tabsSwitch}>
