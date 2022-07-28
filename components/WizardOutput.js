@@ -166,6 +166,7 @@ export const generateCargoToml = (output, version='v2.2.0') => {
 }
 export const generateLib = (output, version='v2.2.0') => {
     const brushName = version >= 'v2.2.0' ? 'openbrush' : 'brush';
+    const isBatch = output.currentControlsState.find(x => x.name === 'Batch')?.state;
     const isMetadata = output.currentControlsState.find(x => x.name === 'Metadata')?.state;
     const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state && version > "v1.5.0";
     const isBurnable = output.currentControlsState.find(x => x.name === 'Burnable')?.state;
@@ -341,10 +342,12 @@ pub mod my_${standard_name} {
     use ink_storage::traits::SpreadAllocate;` : ''}
     
     // Imports from ${brushName}
-    use ${brushName}::contracts::${standard_name}::*; ${isMetadata ? `
+    use ${brushName}::contracts::${standard_name}::*; ${isBatch ? `
+    use ${brushName}::contracts::${standard_name}::extensions::batch::*;` : ''} ${isMetadata ? `
     use ${brushName}::contracts::${standard_name}::extensions::metadata::*;` : ''} ${isBurnable ? `
     use ${brushName}::contracts::${standard_name}::extensions::burnable::*;` : ''} ${isMintable ? `
-    use ${brushName}::contracts::${standard_name}::extensions::mintable::*;` : ''} ${isOwnable ? `
+    use ${brushName}::contracts::${standard_name}::extensions::mintable::*;` : ''} ${isEnumerable ? `
+    use ${brushName}::contracts::${standard_name}::extensions::enumerable::*;` : ''}${isOwnable ? `
     use ${brushName}::contracts::ownable::*;` : ''} ${isAccessControl ? `
     use ${brushName}::contracts::access_control::*;` : ''}
 
@@ -357,7 +360,7 @@ pub mod my_${standard_name} {
                 (version < 'v2.2.0' && isAccessControl) ? `, AccessControlStorage` : ''})]
     pub struct Contract {
         #[${version < 'v2.2.0' ? `${standard_name.toUpperCase()}StorageField` : 'storage_field'}]
-        ${standard_name}: ${version < 'v2.2.0' ? `${standard_name.toUpperCase()}Data` : `${standard_name}::Data`}, ${isMetadata ? `
+        ${standard_name}: ${version < 'v2.2.0' ? `${standard_name.toUpperCase()}Data` : `${standard_name}::Data`}${isEnumerable? (version < 'v2.2.0' ? '<EnumerableBalances>' : '<enumerable::Balances>'): ''}, ${isMetadata ? `
         #[${version < 'v2.2.0' ? `${standard_name.toUpperCase()}MetadataStorageField` : 'storage_field'}]
         metadata: ${version < 'v2.2.0' ? `${standard_name.toUpperCase()}MetadataData` : 'metadata::Data'},` : ``} ${isOwnable ? `
         #[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]
@@ -370,8 +373,10 @@ pub mod my_${standard_name} {
     ` : ''}
     
     // Section contains default implementation without any modifications
-    impl ${standard_name.toUpperCase()} for Contract {} ${isMetadata ? `
-    impl ${standard_name.toUpperCase()}Metadata for Contract {}` : ''} ${isOwnable ? `
+    impl ${standard_name.toUpperCase()} for Contract {} ${isBatch ? `
+    impl ${standard_name.toUpperCase()}Batch for Contract {}` : ''} ${isMetadata ? `
+    impl ${standard_name.toUpperCase()}Metadata for Contract {}` : ''} ${isEnumerable ? `
+    impl ${standard_name.toUpperCase()}Enumerable for Contract {}` : ''} ${isOwnable ? `
     impl Ownable for Contract {}` : ''} ${isAccessControl ? `
     impl AccessControl for Contract {}` : ''} ${isAccessControl || isOwnable ? `
     
@@ -395,15 +400,17 @@ pub mod my_${standard_name} {
     
     impl Contract {
         #[ink(constructor)]
-        pub fn new(${isMetadata ? `uri: Option<String>` : ''}) -> Self {
+        pub fn new(${isMetadata ? (version >= 'v2.1.0' ? `id: Id, key: Vec<u8>, data: Vec<u8>` : `uri: Option<String>`) : ''}) -> Self {
             ${ version == 'v1.3.0' ? `${isMetadata ? `let mut _instance = Self::default();
             _instance.metadata.uri = uri;${isOwnable ? 
             `_instance._init_with_owner(_instance.env().caller());` : '' }${isAccessControl ? `
             _instance._init_with_admin(_instance.env().caller()); 
             _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
             _instance` : `Self::default()` } ` :
-                `ink_lang::codegen::initialize_contract(|_instance: &mut Self| {${isMetadata ? `
-                _instance.metadata.uri = uri;` : ''} ${isOwnable ? `
+                `ink_lang::codegen::initialize_contract(|_instance: &mut Self| {${isMetadata ?
+                (version < 'v2.1.0' ? `
+                _instance.metadata.uri = uri;` : `
+                _instance._set_attribute(&id, &key, &data);`) : ''} ${isOwnable ? `
                 _instance._init_with_owner(_instance.env().caller());` : '' } ${isAccessControl ? `
                 _instance._init_with_admin(_instance.env().caller()); 
                 _instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");` : ''}
@@ -443,7 +450,7 @@ pub mod my_psp34 {
     pub struct Contract{
         #[${version < 'v2.2.0' ? 'PSP34StorageField' : 'storage_field'}]
         psp34: ${version < 'v2.2.0' ? 'PSP34Data' : 'psp34::Data'}${
-                (version > 'v2.0.0' && isEnumerable) ? '<enumerable::Balances>' : ''}, ${isMetadata ? `
+                (version > 'v2.0.0' && isEnumerable) ? (version < 'v2.2.0' ? '<EnumerableBalances>' : '<enumerable::Balances>') : ''}, ${isMetadata ? `
         #[${version < 'v2.2.0' ? 'PSP34MetadataStorageField' : 'storage_field'}]
         metadata: ${version < 'v2.2.0' ? 'PSP34MetadataData' : 'metadata::Data'},` : ''} ${isEnumerable && version < 'v2.1.0' ? `
         #[PSP34EnumerableStorageField]
@@ -632,4 +639,3 @@ const WizardOutput = ({data}) => {
 }
 
 export default WizardOutput;
-

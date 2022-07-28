@@ -92,6 +92,12 @@ export const wizardConfig = [
                 sectionName: 'Extensions',
                 optionList: [
                     {
+                        name: 'Batch',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP37`] that allows you batch transfering tokens'
+                    },
+                    {
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
@@ -108,6 +114,12 @@ export const wizardConfig = [
                         type: 'checkbox',
                         initState: false,
                         tooltip: 'Extension of [`PSP37`] that allows token holders to destroy their tokens'
+                    },
+                    {
+                        name: 'Enumerable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP37`] that allows you to iterate over tokens'
                     }
                 ]
             }
@@ -161,6 +173,7 @@ export const wizardConfig = [
                         tooltip: 'Extension of [`PSP34`] that allows to iterate over all NFTs'
                     }
                 ]
+
             }
         ],
     },

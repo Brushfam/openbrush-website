@@ -12,7 +12,7 @@ const Wizard = () => {
   const [config, setConfig] = useState(wizardConfig);
   const [controlsState, setControlsState] = useState([]);
 
-  const [isControlsClosed, setControlsClofsed] = useState(false)
+  const [isControlsClosed, setControlsClosed] = useState(false)
 
   useEffect(() => {
     let currentState_tmp = [];
