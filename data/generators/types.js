@@ -35,10 +35,10 @@ export class Contract {
 
     collectStorageDerives() {
         return `${(this.storage && this.storage.derive) ? `, ${this.storage.derive}` : ""}${
-            (this.storage && this.storage.derive && this.extensions && this.extensions.filter(e => (e.storage && e.storage.derive))).length ? ', ' : ''}${
+            (this.storage && this.storage.derive && this.extensions && this.extensions.filter(e => (e.storage && e.storage?.derive))).length ? ', ' : ''}${
             this.extensions ? this.extensions.filter(
-            e => (e.storage && e.storage.derive)).map(
-                e => e.storage.derive).join(", ") : ""}`;
+            e => (e.storage && e.storage?.derive)).map(
+                e => e.storage?.derive).join(", ") : ""}`;
     }
 
     collectStorageFields() {
@@ -92,7 +92,7 @@ export class Extension {
     storage = null;
     impl = null;
 
-    constructor(name, isStandardExtension, inkImports, brushImports, storage, impl) {
+    constructor(name, inkImports, brushImports, storage, impl) {
         this.name = name;
         this.inkImports = inkImports;
         this.brushImports = brushImports;

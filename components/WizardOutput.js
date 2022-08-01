@@ -3,7 +3,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 import wizardOutput from "./../styles/WizardOutput.module.scss";
 import wizard from "../styles/Wizard.module.scss";
-import {Contract, Import, Storage, TraitImpl} from "../data/generators/types";
+import {Contract, Extension, Import, Storage, TraitImpl} from "../data/generators/types";
 import {generateExtension} from "../data/generators/extensions";
 
 const generateCargoTomlWithVersion = (
@@ -189,6 +189,11 @@ export const generateLib = (output, version='v2.2.0') => {
     if(output.security === 'access_control') {
         extensions.push(generateExtension('access_control', standardName, version));
     }
+    // AccessControlEnumerable extension
+    if(output.security === 'access_control_enumerable') {
+        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract')));
+        extensions.push(generateExtension('access_control_enumerable', standardName, version));
+    }
     // Mintable extension
     if(output.currentControlsState.find(x => x.name === 'Mintable')?.state) {
         extensions.push(generateExtension('Mintable', standardName, version));
@@ -225,7 +230,11 @@ export const generateLib = (output, version='v2.2.0') => {
         [new Import('ink_storage::traits::SpreadAllocate')],
         [new Import(`${brushName}::traits::${standardName}::*`)],
         new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', null),
-        new Storage(`${standardName.toUpperCase()}Storage`, `#[${standardName.toUpperCase()}StorageField]`, standardName, `${standardName.toUpperCase()}Data`),
+        new Storage(
+            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Storage` : 'Storage'}`,
+            `#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}StorageField` : 'storage_field'}]`,
+            standardName,
+            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Data` : `${standardName}::Data`}${version >= 'v2.1.0' ? (version == 'v2.1.0' ? '<EnumerableData>' : '<enumerable::Data>') : ''}`),
         extensions,
     ).toString();
 }

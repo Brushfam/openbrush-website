@@ -8,7 +8,6 @@ export function generateExtension(extensionName, standardName, version) {
         case 'Batch':
             return new Extension(
                 'Batch',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::batch::*`)],
                 null,
@@ -17,7 +16,6 @@ export function generateExtension(extensionName, standardName, version) {
         case 'Burnable':
             return new Extension(
                 'Burnable',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::burnable::*`)],
                 null,
@@ -26,25 +24,42 @@ export function generateExtension(extensionName, standardName, version) {
         case 'ownable':
             return new Extension(
                 'Ownable',
-                false,
                 [],
                 [new Import(`${brushName}::contracts::ownable::*`)],
-                new Storage(`OwnableStorage`, `\t#[OwnableStorageField]`, 'ownable', 'OwnableData'),
+                new Storage(
+                    (version < 'v2.2.0' ? 'OwnableStorage' : null),
+                    `\t#[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]`,
+                    'ownable',
+                    `${version < 'v2.2.0' ? 'OwnableData' : 'ownable::Data'}`),
                 new TraitImpl('Ownable', 'Contract', null),
             );
         case 'access_control':
             return new Extension(
                 'AccessControl',
-                false,
                 [],
                 [new Import(`${brushName}::contracts::access_control::*`)],
-                new Storage(`AccessControlStorage`, `\t#[AccessControlStorageField]`, 'access_control', 'AccessControlData'),
+                new Storage(
+                    (version < 'v2.2.0' ? 'AccessControlStorage' : null),
+                    `\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`,
+                    'access',
+                    `${version < 'v2.2.0' ? 'AccessControlData' : 'access_control::Data'}`),
                 new TraitImpl('AccessControl', 'Contract', null),
+            );
+        case 'access_control_enumerable':
+            return new Extension(
+                'AccessControlEnumerable',
+                [],
+                [new Import(`${brushName}::contracts::access_control::extensions::enumerable::*`)],
+                new Storage(
+                    (version < 'v2.2.0' ? 'AccessControlStorage' : null),
+                    `\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`,
+                    'access',
+                    `${version < 'v2.2.0' ? 'AccessControlData<EnumerableMembers>' : 'access_control::Data<enumerable::Members>'}`),
+                new TraitImpl('AccessControlEnumerable', 'Contract', null)
             );
         case 'Mintable':
             return new Extension(
                 'Mintable',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::mintable::*`)],
                 null,
@@ -53,16 +68,18 @@ export function generateExtension(extensionName, standardName, version) {
         case 'Enumerable':
             return new Extension(
                 'Enumerable',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::enumerable::*`)],
-                new Storage(`${standardName.toUpperCase()}EnumerableStorage`, `\t#[${standardName.toUpperCase()}EnumerableStorageField]`, 'enumerable', `${standardName.toUpperCase()}EnumerableData`),
+                version < 'v2.1.0' ? new Storage(
+                    (version < 'v2.2.0' ? `${standardName.toUpperCase()}EnumerableStorage` : null),
+                    `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}EnumerableStorageField` : 'storage_field'}]`,
+                    'enumerable',
+                    `${standardName.toUpperCase()}EnumerableData`) : null,
                 new TraitImpl(`${standardName.toUpperCase()}Enumerable`, 'Contract', null),
             );
         case 'Pausable':
             return new Extension(
                 'Pausable',
-                false,
                 [],
                 [new Import(`${brushName}::contracts::pausable::*`)],
                 null,
@@ -71,16 +88,18 @@ export function generateExtension(extensionName, standardName, version) {
         case 'Metadata':
             return new Extension(
                 'Metadata',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::metadata::*`)],
-                new Storage(`${standardName.toUpperCase()}MetadataStorage`, `\t#[${standardName.toUpperCase()}MetadataStorageField]`, 'metadata', `${standardName.toUpperCase()}MetadataData`),
+                new Storage(
+                    (version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataStorage` : null),
+                    `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataStorageField` : 'storage_field'}]`,
+                    'metadata',
+                    `${version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataData` : 'metadata::Data'}`),
                 new TraitImpl(`${standardName.toUpperCase()}Metadata`, 'Contract', null),
             );
         case 'FlashMint':
             return new Extension(
                 'Flashmint',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::flashmint::*`)],
                 null,
@@ -89,20 +108,21 @@ export function generateExtension(extensionName, standardName, version) {
         case 'Wrapper':
             return new Extension(
                 'Wrapper',
-                true,
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::wrapper::*`)],
-                new Storage(`${standardName.toUpperCase()}WrapperStorage`, `\t#[${standardName.toUpperCase()}WrapperStorageField]`, 'wrapper', `${standardName.toUpperCase()}WrapperData`),
+                new Storage(
+                    (version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperStorage` : null),
+                    `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperStorageField`: 'storage_field'}]`,
+                    'wrapper',
+                    `${version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperData` : 'wrapper::Data'}`),
                 new TraitImpl(`${standardName.toUpperCase()}Wrapper`, 'Contract', null),
             );
         case 'Capped':
             return new Extension(
                 'Capped',
-                true,
                 [new Import(`ink_prelude::string::String`)],
                 [],
                 new Storage(null, null, 'cap', 'Balance'),
-                null,
                 null,
             );
     }
