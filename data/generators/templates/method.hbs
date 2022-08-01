@@ -1,2 +1,0 @@
-{{#if method.modifiers}}#[openbrush::modifiers({{#each method.modifiers}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}})]
-{{/if}}fn {{{method.name}}}(&mut self{{#each method.args}}, {{{this}}}{{/each}}) -> {{{method.return_type}}} { {{{method.body}}} }

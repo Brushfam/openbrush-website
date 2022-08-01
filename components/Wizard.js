@@ -237,6 +237,7 @@ const Wizard = () => {
                                     <option value='none'>None</option>
                                     <option value='ownable'>Ownable</option>
                                     <option value='access_control'>Access Control</option>
+                                    <option value='access_control_enumerable'>Access Control Enumerable</option>
                                 </select>
                             </div>
                         </div>
