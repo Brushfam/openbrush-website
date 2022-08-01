@@ -169,64 +169,86 @@ export const generateCargoToml = (output, version='v2.2.0') => {
 export const generateLib = (output, version='v2.2.0') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
 
-    const standardName = output.type != 'psp37' ? output.type : (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
+    const standardName = output.type !== 'psp37' ? output.type : (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
 
     let extensions = [];
+    let additionalImpls = [];
+    let constructorArgs = [];
+    let constructorActions = [];
 
     // Batch extension
     if(output.currentControlsState.find(x => x.name === 'Batch')?.state) {
-        extensions.push(generateExtension('Batch', standardName, version));
+        extensions.push(generateExtension('Batch', standardName, version, []));
     }
     // Burnable extension
     if(output.currentControlsState.find(x => x.name === 'Burnable')?.state) {
-        extensions.push(generateExtension('Burnable', standardName, version));
-    }
-    // Ownable extension
-    if(output.security === 'ownable') {
-        extensions.push(generateExtension('ownable', standardName, version));
-    }
-    // AccessControl extension
-    if(output.security === 'access_control') {
-        extensions.push(generateExtension('access_control', standardName, version));
-    }
-    // AccessControlEnumerable extension
-    if(output.security === 'access_control_enumerable') {
-        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract', [])));
-        extensions.push(generateExtension('access_control_enumerable', standardName, version));
+        let additionalMethods = [];
+        if(output.security === 'access_control') {
+            additionalMethods.push(new Method(brushName,
+                true,
+                `#[ink(message)]\n\t\t#[${brushName}::modifiers(only_role(manager))]]`,
+                'burn',
+                ['account: AccountId', 'amount: Balance'],
+                `Result<(), ${standardName}Error>`,
+                `self._burn_from(account, amount)`));
+        }
+        extensions.push(generateExtension('Burnable', standardName, version, additionalMethods));
     }
     // Mintable extension
     if(output.currentControlsState.find(x => x.name === 'Mintable')?.state) {
-        extensions.push(generateExtension('Mintable', standardName, version));
+        let additionalMethods = [];
+        if(output.security === 'access_control') {
+            additionalMethods.push(new Method(brushName,
+                true,
+                `#[ink(message)]\n\t\t#[${brushName}::modifiers(only_role(manager))]]`,
+                'mint',
+                ['account: AccountId', 'amount: Balance'],
+                `Result<(), ${standardName}Error>`,
+                `self._mint(account, amount)`));
+        }
+        extensions.push(generateExtension('Mintable', standardName, version, additionalMethods));
     }
+    // Ownable extension
+    if(output.security === 'ownable') {
+        extensions.push(generateExtension('ownable', standardName, version, []));
+    }
+    // AccessControl extension
+    if(output.security === 'access_control') {
+        extensions.push(generateExtension('access_control', standardName, version, []));
+    }
+    // AccessControlEnumerable extension
+    if(output.security === 'access_control_enumerable') {
+        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract', []), [], []));
+        extensions.push(generateExtension('access_control_enumerable', standardName, version, []));
+    }
+
     // Enumerable extension psp34 > v1.5.0
     if(output.currentControlsState.find(x => x.name === 'Enumerable')?.state) {
-        extensions.push(generateExtension('Enumerable', standardName, version));
+        extensions.push(generateExtension('Enumerable', standardName, version, []));
     }
     // Pausable extension
     if(output.currentControlsState.find(x => x.name === 'Pausable')?.state) {
-        extensions.push(generateExtension('Pausable', standardName, version));
+        extensions.push(generateExtension('Pausable', standardName, version, []));
     }
     // Metadata extension
     if(output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        extensions.push(generateExtension('Metadata', standardName, version));
+        extensions.push(generateExtension('Metadata', standardName, version, []));
     }
     // Flashmint extension
     if(output.currentControlsState.find(x => x.name === 'FlashMint')?.state) {
-        extensions.push(generateExtension('FlashMint', standardName, version));
+        extensions.push(generateExtension('FlashMint', standardName, version, []));
     }
     // Wrapper extension
     if(output.currentControlsState.find(x => x.name ==='Wrapper')?.state) {
-        extensions.push(generateExtension('Wrapper', standardName, version));
+        extensions.push(generateExtension('Wrapper', standardName, version, []));
     }
     // Capped extension
     if(output.currentControlsState.find(x => x.name === 'Capped')?.state) {
-        extensions.push(generateExtension('Capped', standardName, version));
+        extensions.push(generateExtension('Capped', standardName, version, []));
     }
 
     const isPausable = output.currentControlsState.find(x => x.name === 'Pausable')?.state;
     const isCapped = output.currentControlsState.find(x => x.name === 'Capped')?.state;
-
-    let additionalImpls = [];
 
     if(isCapped || isPausable) {
         additionalImpls.push(new TraitImpl(`${standardName.toUpperCase()}Transfer`, 'Contract', [new Method(
@@ -242,20 +264,29 @@ export const generateLib = (output, version='v2.2.0') => {
             )]));
     }
 
+    if(standardName === 'psp22') {
+        constructorArgs.push('intial_supply: Balance');
+        constructorActions.push(`_instance
+                    ._mint(_instance.env().caller(), initial_supply)
+                    .expect("Should mint"); `);
+    }
+
     return new Contract(
         version,
         brushName,
         standardName,
         [new Import('ink_storage::traits::SpreadAllocate')],
-        [new Import(`${brushName}::traits::${standardName}::*`)],
+        [new Import(`${brushName}::contracts::${standardName}::*`)],
         new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', []),
         additionalImpls,
         new Storage(
             `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Storage` : 'Storage'}`,
             `#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}StorageField` : 'storage_field'}]`,
             standardName,
-            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Data` : `${standardName}::Data`}${version >= 'v2.1.0' ? (version == 'v2.1.0' ? '<EnumerableData>' : '<enumerable::Data>') : ''}`),
+            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Data` : `${standardName}::Data`}${version >= 'v2.1.0' ? (version === 'v2.1.0' ? '<EnumerableData>' : '<enumerable::Data>') : ''}`),
         extensions,
+        constructorArgs,
+        constructorActions
     ).toString();
 }
 

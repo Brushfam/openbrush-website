@@ -8,8 +8,10 @@ export class Contract {
     additionalImpls = [];
     storage = null;
     extensions = [];
+    constructorArgs = [];
+    constructorActions = [];
 
-    constructor(version, brushName, standardName, inkImports, brushImports, impl, additionalImpls, storage, extensions) {
+    constructor(version, brushName, standardName, inkImports, brushImports, impl, additionalImpls, storage, extensions, constructorArgs, constructorActions) {
         this.version = version;
         this.brushName = brushName;
         this.standardName = standardName;
@@ -19,46 +21,92 @@ export class Contract {
         this.additionalImpls = additionalImpls;
         this.storage = storage;
         this.extensions = extensions;
+        this.constructorArgs = constructorArgs;
+        this.constructorActions = constructorActions;
     }
 
     collectInkImports(){
         return `${this.inkImports.map(i => (i.toString())).join("\n")}${
-            (this.inkImports.length && this.extensions && this.extensions.filter(e => (e.inkImports && e.inkImports.length)).length) ? '\n': ''}${
-            this.extensions ? this.extensions.filter(e => (e.inkImports && e.inkImports.length)).map(e => (`\t${e.collectInkImports()}`)).join("\n") : ""}`;
+            (this.inkImports.length && this.extensions && this.extensions
+                .filter(e => (e.inkImports && e.inkImports.length)).length) ? '\n': ''}${
+            this.extensions ? this.extensions
+                .filter(e => (e.inkImports && e.inkImports.length))
+                .map(e => (`\t${e.collectInkImports()}`)).join("\n") : ""}`;
     }
 
     collectBrushImports() {
         return `${this.brushImports.map(i => (i.toString())).join("\n")}${
-            (this.brushImports.length && this.extensions && this.extensions.filter(e => (e.brushImports && e.brushImports.length)).length) ? '\n' : ''}${
-            this.extensions ? this.extensions.filter(
-        e => (e.brushImports && e.brushImports.length)).map(
-            e => `\t${e.collectBrushImports()}`).join("\n") : ""}`;
+            (this.brushImports.length && this.extensions && this.extensions
+                .filter(e => (e.brushImports && e.brushImports.length)).length) ? '\n' : ''}${
+            this.extensions ? this.extensions
+                .filter(e => (e.brushImports && e.brushImports.length))
+                .map(e => `\t${e.collectBrushImports()}`)
+                .join("\n") : ""}`;
     }
 
     collectStorageDerives() {
         return `${(this.storage && this.storage.derive) ? `, ${this.storage.derive}` : ""}${
-            (this.storage && this.storage.derive && this.extensions && this.extensions.filter(e => (e.storage && e.storage?.derive))).length ? ', ' : ''}${
-            this.extensions ? this.extensions.filter(
-            e => (e.storage && e.storage?.derive)).map(
-                e => e.storage?.derive).join(", ") : ""}`;
+            (this.storage && this.storage.derive && this.extensions && this.extensions
+                .filter(e => (e.storage && e.storage?.derive))).length ? ', ' : ''}${
+            this.extensions ? this.extensions
+                .filter(e => (e.storage && e.storage?.derive))
+                .map(e => e.storage?.derive)
+                .join(", ") : ""}`;
     }
 
     collectStorageFields() {
-        return `${(this.storage) ? this.storage.toString() : ''}${(this.storage && this.extensions && this.extensions.filter(e => e.storage).length) ? '\n': ''}${this.extensions ? this.extensions.filter(
-            e => (e.storage)).map(
-                e => `${e.storage.toString()}`).join("\n") : ""}`;
+        return `${(this.storage) ? this.storage.toString() : ''}${(this.storage && this.extensions && this.extensions
+            .filter(e => e.storage).length) ? '\n': ''}${
+            this.extensions ? this.extensions
+                .filter(e => (e.storage))
+                .map(e => `${e.storage.toString()}`)
+                .join("\n") : ""}`;
     }
 
     collectTraitImpls() {
         return `${(this.impl) ? this.impl.toString() : ''}${
-            (this.impl && this.extensions && this.extensions.filter(e => e.impl).length) ? '\n' : ''}${
-            this.extensions ? this.extensions.filter(
-            e => (e.impl)).map(
-                e => `\t${e.impl.toString()}`).join("\n") : ""}`;
+            (this.impl && this.extensions && this.extensions
+                .filter(e => e.impl).length) ? '\n' : ''}${
+            this.extensions ? this.extensions
+                .filter(e => (e.impl))
+                .map(e => `\t${e.impl.toString()}`)
+                .join("\n") : ""}`;
     }
 
     collectAdditionalImpls() {
-        return `${this.additionalImpls.length ? `\n\n\t${this.additionalImpls.map(e => (e.toString())).join("\n")}` : ''}`;
+        return `${this.additionalImpls.length ? `\n\n\t${this.additionalImpls
+            .map(e => (e.toString())).join("\n")}` : ''}`;
+    }
+
+    collectConstructorArgs() {
+        return `${this.constructorArgs.join(', ')}${
+            this.constructorArgs.length && this.extensions
+                .filter(e => e.constructorArgs.length).length ? ', ' : ''}${
+            this.extensions
+                .filter(e => e.constructorArgs.length)
+                .map(e => e.constructorArgs
+                    .join(', '))
+                .join(', ')}`;
+    }
+
+    collectConstructorActions() {
+        return `${
+            this.constructorActions.length ? '\n\t\t\t\t' + this.constructorActions.join("\n\t\t\t\t") : ''}
+${this.extensions && this.extensions
+                .filter(e => e.constructorActions.length).length ?
+                `${this.extensions
+                    .filter(e => e.constructorActions.length)
+                    .map(e => `${e.constructorActions
+                        .map(a => `\t\t\t\t${a}`)
+                        .join("\n")}`)
+                    .join("\n")}` : ""}`;
+    }
+
+    collectContractMethods() {
+        return `${this.extensions ? this.extensions
+            .filter(e => e.contractMethods.length)
+            .map(e => `\t${e.contractMethods.map(m => m.toString()).join("\n")}`)
+            .join("\n") : ""}`;
     }
 
     toString() {
@@ -83,9 +131,14 @@ pub mod my_${this.standardName} {
     
     impl Contract {
         #[ink(constructor)]
-        pub fn new() -> Self {
-            Self::default()
+        pub fn new(${this.collectConstructorArgs()}) -> Self {
+            ${this.version === 'v1.3.0' ?
+            '_instance = Self::Default;' :
+            'ink_lang::codegen::initialize_contract(|_instance: &mut Contract|{'}${this.collectConstructorActions()}${
+            this.version > 'v1.3.0' ? '\n\t\t\t})' : ''}
         }
+        
+        ${this.collectContractMethods()}
     }
 }`;
     }
@@ -97,13 +150,19 @@ export class Extension {
     brushImports = [];
     storage = null;
     impl = null;
+    constructorArgs = [];
+    constructorActions = [];
+    contractMethods = [];
 
-    constructor(name, inkImports, brushImports, storage, impl) {
+    constructor(name, inkImports, brushImports, storage, impl, constructorArgs, constructorActions, contractMethods) {
         this.name = name;
         this.inkImports = inkImports;
         this.brushImports = brushImports;
         this.storage = storage;
         this.impl = impl;
+        this.constructorArgs = constructorArgs;
+        this.constructorActions = constructorActions;
+        this.contractMethods = contractMethods;
     }
 
     collectInkImports() {
@@ -180,7 +239,9 @@ export class Method {
 
     toString() {
         let result = '';
+
         result += `${this.derives ? `\t\t${this.derives}\n` : ''}`;
+
         if(this.args.length < 2) {
             result += `\t\tfn ${this.name}(&${this.mutating ? 'mut' : ''} self, ${this.args.map(a => a.toString()).join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {`;
         }
@@ -190,8 +251,10 @@ export class Method {
             ${this.args.map(a => a.toString()).join(',\n\t\t\t')}
         )${this.return_type? ` -> ${this.return_type}` : ''} {`;
         }
+
         result += `${this.body ? `\n\t\t\t${this.body}\n\t\t}` : '}'}`;
-            return result;
+
+        return result;
     }
 
 
