@@ -3,7 +3,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 import wizardOutput from "./../styles/WizardOutput.module.scss";
 import wizard from "../styles/Wizard.module.scss";
-import {Contract, Extension, Import, Storage, TraitImpl} from "../data/generators/types";
+import {Contract, Extension, Import, Method, Storage, TraitImpl} from "../data/generators/types";
 import {generateExtension} from "../data/generators/extensions";
 
 const generateCargoTomlWithVersion = (
@@ -191,7 +191,7 @@ export const generateLib = (output, version='v2.2.0') => {
     }
     // AccessControlEnumerable extension
     if(output.security === 'access_control_enumerable') {
-        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract')));
+        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract', [])));
         extensions.push(generateExtension('access_control_enumerable', standardName, version));
     }
     // Mintable extension
@@ -223,13 +223,33 @@ export const generateLib = (output, version='v2.2.0') => {
         extensions.push(generateExtension('Capped', standardName, version));
     }
 
+    const isPausable = output.currentControlsState.find(x => x.name === 'Pausable')?.state;
+    const isCapped = output.currentControlsState.find(x => x.name === 'Capped')?.state;
+
+    let additionalImpls = [];
+
+    if(isCapped || isPausable) {
+        additionalImpls.push(new TraitImpl(`${standardName.toUpperCase()}Transfer`, 'Contract', [new Method(
+            brushName,
+            true,
+            isPausable ? `#[${brushName}::modifiers(when_not_paused)]` : null,
+            '_before_token_transfer',
+            ['_from: Option<&AccountId>', '_to: Option<&AccountId>', '_amount: &Balance'],
+            `Result<(), ${standardName.toUpperCase()}Error>`,
+            isCapped ? `if _from.is_none() && (self.total_supply() + _amount) > self.cap() {
+                return Err(PSP22Error::Custom(String::from("Cap exceeded")))
+            }` : null
+            )]));
+    }
+
     return new Contract(
         version,
         brushName,
         standardName,
         [new Import('ink_storage::traits::SpreadAllocate')],
         [new Import(`${brushName}::traits::${standardName}::*`)],
-        new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', null),
+        new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', []),
+        additionalImpls,
         new Storage(
             `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Storage` : 'Storage'}`,
             `#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}StorageField` : 'storage_field'}]`,

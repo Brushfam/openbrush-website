@@ -11,7 +11,7 @@ export function generateExtension(extensionName, standardName, version) {
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::batch::*`)],
                 null,
-                new TraitImpl(`${standardName.toUpperCase()}Batch`, 'Contract', null),
+                new TraitImpl(`${standardName.toUpperCase()}Batch`, 'Contract', []),
             );
         case 'Burnable':
             return new Extension(
@@ -19,7 +19,7 @@ export function generateExtension(extensionName, standardName, version) {
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::burnable::*`)],
                 null,
-                new TraitImpl(`${standardName.toUpperCase()}Burnable`, 'Contract', null),
+                new TraitImpl(`${standardName.toUpperCase()}Burnable`, 'Contract', []),
             );
         case 'ownable':
             return new Extension(
@@ -31,7 +31,7 @@ export function generateExtension(extensionName, standardName, version) {
                     `\t#[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]`,
                     'ownable',
                     `${version < 'v2.2.0' ? 'OwnableData' : 'ownable::Data'}`),
-                new TraitImpl('Ownable', 'Contract', null),
+                new TraitImpl('Ownable', 'Contract', []),
             );
         case 'access_control':
             return new Extension(
@@ -43,7 +43,7 @@ export function generateExtension(extensionName, standardName, version) {
                     `\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`,
                     'access',
                     `${version < 'v2.2.0' ? 'AccessControlData' : 'access_control::Data'}`),
-                new TraitImpl('AccessControl', 'Contract', null),
+                new TraitImpl('AccessControl', 'Contract', []),
             );
         case 'access_control_enumerable':
             return new Extension(
@@ -55,7 +55,7 @@ export function generateExtension(extensionName, standardName, version) {
                     `\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`,
                     'access',
                     `${version < 'v2.2.0' ? 'AccessControlData<EnumerableMembers>' : 'access_control::Data<enumerable::Members>'}`),
-                new TraitImpl('AccessControlEnumerable', 'Contract', null)
+                new TraitImpl('AccessControlEnumerable', 'Contract', [])
             );
         case 'Mintable':
             return new Extension(
@@ -63,7 +63,7 @@ export function generateExtension(extensionName, standardName, version) {
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::mintable::*`)],
                 null,
-                new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', null),
+                new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', []),
             );
         case 'Enumerable':
             return new Extension(
@@ -75,7 +75,7 @@ export function generateExtension(extensionName, standardName, version) {
                     `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}EnumerableStorageField` : 'storage_field'}]`,
                     'enumerable',
                     `${standardName.toUpperCase()}EnumerableData`) : null,
-                new TraitImpl(`${standardName.toUpperCase()}Enumerable`, 'Contract', null),
+                new TraitImpl(`${standardName.toUpperCase()}Enumerable`, 'Contract', []),
             );
         case 'Pausable':
             return new Extension(
@@ -83,7 +83,7 @@ export function generateExtension(extensionName, standardName, version) {
                 [],
                 [new Import(`${brushName}::contracts::pausable::*`)],
                 null,
-                new TraitImpl(`Pausable`, 'Contract', null),
+                new TraitImpl(`Pausable`, 'Contract', []),
             );
         case 'Metadata':
             return new Extension(
@@ -95,7 +95,7 @@ export function generateExtension(extensionName, standardName, version) {
                     `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataStorageField` : 'storage_field'}]`,
                     'metadata',
                     `${version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataData` : 'metadata::Data'}`),
-                new TraitImpl(`${standardName.toUpperCase()}Metadata`, 'Contract', null),
+                new TraitImpl(`${standardName.toUpperCase()}Metadata`, 'Contract', []),
             );
         case 'FlashMint':
             return new Extension(
@@ -103,7 +103,7 @@ export function generateExtension(extensionName, standardName, version) {
                 [],
                 [new Import(`${brushName}::traits::${standardName}::extensions::flashmint::*`)],
                 null,
-                new TraitImpl(`FlashLender`, 'Contract', null),
+                new TraitImpl(`FlashLender`, 'Contract', []),
             );
         case 'Wrapper':
             return new Extension(
@@ -115,7 +115,7 @@ export function generateExtension(extensionName, standardName, version) {
                     `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperStorageField`: 'storage_field'}]`,
                     'wrapper',
                     `${version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperData` : 'wrapper::Data'}`),
-                new TraitImpl(`${standardName.toUpperCase()}Wrapper`, 'Contract', null),
+                new TraitImpl(`${standardName.toUpperCase()}Wrapper`, 'Contract', []),
             );
         case 'Capped':
             return new Extension(

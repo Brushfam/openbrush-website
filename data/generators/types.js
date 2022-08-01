@@ -5,16 +5,18 @@ export class Contract {
     inkImports = [];
     brushImports = [];
     impl = null;
+    additionalImpls = [];
     storage = null;
     extensions = [];
 
-    constructor(version, brushName, standardName, inkImports, brushImports, impl, storage, extensions) {
+    constructor(version, brushName, standardName, inkImports, brushImports, impl, additionalImpls, storage, extensions) {
         this.version = version;
         this.brushName = brushName;
         this.standardName = standardName;
         this.inkImports = inkImports;
         this.brushImports = brushImports;
         this.impl = impl;
+        this.additionalImpls = additionalImpls;
         this.storage = storage;
         this.extensions = extensions;
     }
@@ -55,6 +57,10 @@ export class Contract {
                 e => `\t${e.impl.toString()}`).join("\n") : ""}`;
     }
 
+    collectAdditionalImpls() {
+        return `${this.additionalImpls.length ? `\n\n\t${this.additionalImpls.map(e => (e.toString())).join("\n")}` : ''}`;
+    }
+
     toString() {
         return `#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
@@ -73,7 +79,7 @@ pub mod my_${this.standardName} {
     ${this.collectStorageFields()}
     }
     
-    ${this.collectTraitImpls()}
+    ${this.collectTraitImpls()}${this.collectAdditionalImpls()}
     
     impl Contract {
         #[ink(constructor)]
@@ -123,7 +129,7 @@ export class Import {
 
 export class TraitImpl {
     traitName = "";
-    methods = null;
+    methods = [];
 
     constructor(trait_name, struct_name, methods) {
         this.traitName = trait_name;
@@ -131,7 +137,7 @@ export class TraitImpl {
     }
 
     toString() {
-        return `impl ${this.traitName} for Contract {${this.methods ? `\n${this.methods.map(m => m.toString()).join("\n")}`: ""}}`;
+        return `impl ${this.traitName} for Contract {${this.methods.length ? `\n${this.methods.map(m => m.toString()).join("\n")}\n\t`: ""}}`;
     }
 }
 
@@ -156,16 +162,16 @@ export class Storage {
 export class Method {
     brushName = "";
     mutating = false;
-    modifiers = [];
+    derives = null;
     name = "";
     args = [];
     return_type = null;
     body = "";
 
-    constructor(brushName, mutating, modifiers, name, args, return_type, body) {
+    constructor(brushName, mutating, derives, name, args, return_type, body) {
         this.brushName = brushName;
         this.mutating = mutating;
-        this.modifiers = modifiers;
+        this.derives = derives;
         this.name = name;
         this.args = args;
         this.return_type = return_type;
@@ -173,8 +179,20 @@ export class Method {
     }
 
     toString() {
-        return `${
-            this.modifiers ? `#[${this.brushName}::modifiers(${this.modifiers?.join(', ')}]` : ''}
-fn ${this.name}(&${this.mutating ? 'mut' : ''} self, ${this.args?.join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {${this.body ? `\n${this.body}` : ''}}`;
+        let result = '';
+        result += `${this.derives ? `\t\t${this.derives}\n` : ''}`;
+        if(this.args.length < 2) {
+            result += `\t\tfn ${this.name}(&${this.mutating ? 'mut' : ''} self, ${this.args.map(a => a.toString()).join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {`;
+        }
+        else {
+            result += `\t\tfn ${this.name}(
+            &${this.mutating ? 'mut' : ''} self,
+            ${this.args.map(a => a.toString()).join(',\n\t\t\t')}
+        )${this.return_type? ` -> ${this.return_type}` : ''} {`;
+        }
+        result += `${this.body ? `\n\t\t\t${this.body}\n\t\t}` : '}'}`;
+            return result;
     }
+
+
 }
