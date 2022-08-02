@@ -141,8 +141,8 @@ export const generateCargoToml = (output, version='v2.2.0') => {
                 versionInfoElement.scaleInfoVersion,
                 versionInfoElement.brushDeclaration(`"psp22"${
                     output.currentControlsState.find(x => x.name === 'Pausable').state ? `, "pausable"` : ''}${
-                    output.security == "ownable" ? `, "ownable"` : ''}${
-                    output.security == "access_control" ? `, "access_control"` : ''}`)
+                    output.security === "ownable" ? `, "ownable"` : ''}${
+                    output.security === "access_control" ? `, "access_control"` : ''}`)
             );
         case 'psp37':
             return generateCargoTomlWithVersion(
@@ -152,7 +152,7 @@ export const generateCargoToml = (output, version='v2.2.0') => {
                 versionInfoElement.inkVersion,
                 versionInfoElement.scaleVersion,
                 versionInfoElement.scaleInfoVersion,
-                versionInfoElement.brushDeclaration(`"${version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37')}"${output.security == "ownable" ? `, "ownable"` : ''}${output.security == "access_control" ? `, "access_control"` : ''}`)
+                versionInfoElement.brushDeclaration(`"${version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37')}"${output.security === "ownable" ? `, "ownable"` : ''}${output.security === "access_control" ? `, "access_control"` : ''}`)
             );
         case 'psp34':
             return generateCargoTomlWithVersion(
@@ -162,7 +162,7 @@ export const generateCargoToml = (output, version='v2.2.0') => {
                 versionInfoElement.inkVersion,
                 versionInfoElement.scaleVersion,
                 versionInfoElement.scaleInfoVersion,
-                versionInfoElement.brushDeclaration(`"psp34"${output.security == "ownable" ? `, "ownable"` : ''}${output.security == "access_control" ? `, "access_control"` : ''}`)
+                versionInfoElement.brushDeclaration(`"psp34"${output.security === "ownable" ? `, "ownable"` : ''}${output.security === "access_control" ? `, "access_control"` : ''}`)
             );
     }
 }
@@ -176,75 +176,76 @@ export const generateLib = (output, version='v2.2.0') => {
     let constructorArgs = [];
     let constructorActions = [];
 
+    // Ownable extension
+    if(output.security === 'ownable') {
+        extensions.push(generateExtension('ownable', standardName, version, output.security,[]));
+    }
+    // AccessControl extension
+    if(output.security === 'access_control') {
+        extensions.push(generateExtension('access_control', standardName, version, output.security,[]));
+    }
+    // AccessControlEnumerable extension
+    if(output.security === 'access_control_enumerable') {
+        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract', []), [], [], []));
+        extensions.push(generateExtension('access_control_enumerable', standardName, version, output.security,[]));
+    }
+
+
     // Batch extension
     if(output.currentControlsState.find(x => x.name === 'Batch')?.state) {
-        extensions.push(generateExtension('Batch', standardName, version, []));
+        extensions.push(generateExtension('Batch', standardName, version, output.security,[]));
     }
     // Burnable extension
     if(output.currentControlsState.find(x => x.name === 'Burnable')?.state) {
         let additionalMethods = [];
-        if(output.security === 'access_control') {
+        if(output.security === 'access_control' || output.security === 'access_control_enumerable' || output.security === 'ownable') {
             additionalMethods.push(new Method(brushName,
                 true,
-                `#[ink(message)]\n\t\t#[${brushName}::modifiers(only_role(manager))]]`,
+                `#[ink(message)]\n\t\t#[${brushName}::modifiers(${output.security === 'ownable' ?'only_owner' : 'only_role(manager)'})]]`,
                 'burn',
                 ['account: AccountId', 'amount: Balance'],
                 `Result<(), ${standardName}Error>`,
                 `self._burn_from(account, amount)`));
         }
-        extensions.push(generateExtension('Burnable', standardName, version, additionalMethods));
+        extensions.push(generateExtension('Burnable', standardName, version, output.security, additionalMethods));
     }
     // Mintable extension
     if(output.currentControlsState.find(x => x.name === 'Mintable')?.state) {
         let additionalMethods = [];
-        if(output.security === 'access_control') {
+        if(output.security === 'access_control' || output.security === 'access_control_enumerable' || output.security === 'ownable') {
             additionalMethods.push(new Method(brushName,
                 true,
-                `#[ink(message)]\n\t\t#[${brushName}::modifiers(only_role(manager))]]`,
+                `#[ink(message)]\n\t\t#[${brushName}::modifiers(${output.security === 'ownable' ?'only_owner' : 'only_role(manager)'})]]`,
                 'mint',
                 ['account: AccountId', 'amount: Balance'],
                 `Result<(), ${standardName}Error>`,
                 `self._mint(account, amount)`));
         }
-        extensions.push(generateExtension('Mintable', standardName, version, additionalMethods));
+        extensions.push(generateExtension('Mintable', standardName, version, output.security, additionalMethods));
     }
-    // Ownable extension
-    if(output.security === 'ownable') {
-        extensions.push(generateExtension('ownable', standardName, version, []));
-    }
-    // AccessControl extension
-    if(output.security === 'access_control') {
-        extensions.push(generateExtension('access_control', standardName, version, []));
-    }
-    // AccessControlEnumerable extension
-    if(output.security === 'access_control_enumerable') {
-        extensions.push(new Extension('', [], [], null, new TraitImpl('AccessControl', 'Contract', []), [], []));
-        extensions.push(generateExtension('access_control_enumerable', standardName, version, []));
-    }
-
     // Enumerable extension psp34 > v1.5.0
     if(output.currentControlsState.find(x => x.name === 'Enumerable')?.state) {
-        extensions.push(generateExtension('Enumerable', standardName, version, []));
+        extensions.push(generateExtension('Enumerable', standardName, version, output.security, []));
     }
     // Pausable extension
     if(output.currentControlsState.find(x => x.name === 'Pausable')?.state) {
-        extensions.push(generateExtension('Pausable', standardName, version, []));
+        extensions.push(generateExtension('Pausable', standardName, version, output.security,[]));
     }
     // Metadata extension
     if(output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        extensions.push(generateExtension('Metadata', standardName, version, []));
+        extensions.push(generateExtension('Metadata', standardName, version, output.security,[]));
     }
     // Flashmint extension
     if(output.currentControlsState.find(x => x.name === 'FlashMint')?.state) {
-        extensions.push(generateExtension('FlashMint', standardName, version, []));
+        extensions.push(generateExtension('FlashMint', standardName, version, output.security,[]));
     }
     // Wrapper extension
     if(output.currentControlsState.find(x => x.name ==='Wrapper')?.state) {
-        extensions.push(generateExtension('Wrapper', standardName, version, []));
+        extensions.push(generateExtension('Wrapper', standardName, version, output.security,[]));
     }
     // Capped extension
     if(output.currentControlsState.find(x => x.name === 'Capped')?.state) {
-        extensions.push(generateExtension('Capped', standardName, version, []));
+        extensions.push(generateExtension('Capped', standardName, version, output.security,[]));
     }
 
     const isPausable = output.currentControlsState.find(x => x.name === 'Pausable')?.state;
@@ -283,7 +284,7 @@ export const generateLib = (output, version='v2.2.0') => {
             `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Storage` : 'Storage'}`,
             `#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}StorageField` : 'storage_field'}]`,
             standardName,
-            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Data` : `${standardName}::Data`}${version >= 'v2.1.0' ? (version === 'v2.1.0' ? '<EnumerableData>' : '<enumerable::Data>') : ''}`),
+            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Data` : `${standardName}::Data`}${version >= 'v2.1.0'  && output.currentControlsState.find(x => x.name === 'Enumerable')?.state ? (version === 'v2.1.0' ? '<EnumerableData>' : '<enumerable::Data>') : ''}`),
         extensions,
         constructorArgs,
         constructorActions

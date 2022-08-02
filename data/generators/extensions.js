@@ -1,6 +1,6 @@
-import {Extension, Import, Storage, TraitImpl} from "./types";
+import {Extension, Import, Method, Storage, TraitImpl} from "./types";
 
-export function generateExtension(extensionName, standardName, version, additionalMethods) {
+export function generateExtension(extensionName, standardName, version, security, additionalMethods) {
 
     const brushName = (version < 'v2.1.0') ? 'brush' : 'openbrush';
     let constructorArgs = [];
@@ -41,7 +41,7 @@ export function generateExtension(extensionName, standardName, version, addition
                     `${version < 'v2.2.0' ? 'OwnableData' : 'ownable::Data'}`),
                 new TraitImpl('Ownable', 'Contract', additionalMethods),
                 [],
-                [],
+                ['_instance._init_with_owner(_instance.env().caller());'],
                 []
             );
         case 'access_control':
@@ -56,7 +56,7 @@ export function generateExtension(extensionName, standardName, version, addition
                     `${version < 'v2.2.0' ? 'AccessControlData' : 'access_control::Data'}`),
                 new TraitImpl('AccessControl', 'Contract', additionalMethods),
                 [],
-                [],
+                ['_instance._init_with_admin(_instance.env().caller());', '_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");'],
                 []
             );
         case 'access_control_enumerable':
@@ -71,7 +71,7 @@ export function generateExtension(extensionName, standardName, version, addition
                     `${version < 'v2.2.0' ? 'AccessControlData<EnumerableMembers>' : 'access_control::Data<enumerable::Members>'}`),
                 new TraitImpl('AccessControlEnumerable', 'Contract', additionalMethods),
                 [],
-                [],
+                ['_instance._init_with_admin(_instance.env().caller());', '_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");'],
                 []
             );
         case 'Mintable':
@@ -111,11 +111,27 @@ export function generateExtension(extensionName, standardName, version, addition
                 'Pausable',
                 [],
                 [new Import(`${brushName}::contracts::pausable::*`)],
-                null,
+                new Storage(
+                    (version < 'v2.2.0' ? 'PausableStorage' : null),
+                    `\t#[${version < 'v2.2.0' ? 'PausableStorageField' : 'storage_field'}]`,
+                    'pausable',
+                    `${version < 'v2.2.0' ? 'PausableData' : 'pausable::Data'}`),
                 new TraitImpl(`Pausable`, 'Contract', additionalMethods),
                 [],
                 [],
-                []
+                [new Method(
+                    brushName,
+                    true,
+                    `#[ink(message)]${security ? `\n\t\t#[${brushName}::modifiers(${security === 'ownable' ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}`,
+                    'change_state',
+                    [],
+                    `Result<(), ${standardName.toUpperCase()}Error>`,
+                    `if self.paused() {
+                self._unpause()
+            } else {
+                self._pause()
+            }`
+                    )]
             );
         case 'Metadata':
             constructorArgs = [];
@@ -131,7 +147,7 @@ export function generateExtension(extensionName, standardName, version, addition
                 constructorActions.push('_instance.metadata.decimal = decimal;');
             }
 
-            if(version < 'v2.1.0' && standardName === 'psp37' || standardName === 'psp35' || standardName === 'psp1155') {
+            if(version < 'v2.1.0' && (standardName === 'psp37' || standardName === 'psp35' || standardName === 'psp1155')) {
                 constructorArgs.push('uri: Option<String>');
                 constructorActions.push('_instance.metadata.uri = uri;');
             }
@@ -177,15 +193,41 @@ export function generateExtension(extensionName, standardName, version, addition
                 []
             );
         case 'Capped':
+            let contractMethodsCapped = [];
+
+            contractMethodsCapped.push(new Method(
+                brushName,
+                false,
+                `#[ink(message)]`,
+                'cap',
+                [],
+                'Balance',
+                `self.cap()`
+            ));
+
+            contractMethodsCapped.push(new Method(
+                brushName,
+                true,
+                null,
+                '_init_cap',
+                ['cap: Balance'],
+                `Result<(), ${standardName.toUpperCase()}Error>`,
+                `if cap <= 0 {
+                return Err(PSP22Error::Custom(String::from("Cap must be above 0")))
+            }
+            self.cap = cap;
+            Ok(())`
+            ));
+
             return new Extension(
                 'Capped',
                 [new Import(`ink_prelude::string::String`)],
                 [],
                 new Storage(null, null, 'cap', 'Balance'),
                 null,
-                [],
-                [],
-                []
+                ['cap: Balance'],
+                ['assert!(_instance._init_with(cap).is_ok());'],
+                contractMethodsCapped
             );
     }
 }

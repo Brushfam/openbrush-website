@@ -91,22 +91,21 @@ export class Contract {
 
     collectConstructorActions() {
         return `${
-            this.constructorActions.length ? '\n\t\t\t\t' + this.constructorActions.join("\n\t\t\t\t") : ''}
-${this.extensions && this.extensions
+            this.constructorActions.length ? '\n\t\t\t\t' + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
                 .filter(e => e.constructorActions.length).length ?
-                `${this.extensions
+                `\n${this.extensions
                     .filter(e => e.constructorActions.length)
                     .map(e => `${e.constructorActions
-                        .map(a => `\t\t\t\t${a}`)
+                        .map(a => `${this.version === 'v1.3.0' ? '' : '\t'}\t\t\t${a}`)
                         .join("\n")}`)
                     .join("\n")}` : ""}`;
     }
 
     collectContractMethods() {
-        return `${this.extensions ? this.extensions
+        return `${this.extensions && this.extensions.filter(e => e.contractMethods.length).length ? '\n\n\t' : ''}${this.extensions ? this.extensions
             .filter(e => e.contractMethods.length)
-            .map(e => `\t${e.contractMethods.map(m => m.toString()).join("\n")}`)
-            .join("\n") : ""}`;
+            .map(e => `${e.contractMethods.map(m => m.toString()).join("\n\n")}`)
+            .join("\n\n") : ""}`;
     }
 
     toString() {
@@ -125,7 +124,7 @@ pub mod my_${this.standardName} {
     #[derive(SpreadAllocate, Default${this.collectStorageDerives()})]
     pub struct Contract {
     ${this.collectStorageFields()}
-    }
+    }${this.extensions.find(e => (e.name === 'AccessControl' || e.name === 'AccessControlEnumerable')) !== undefined ? '\n\n\tconst MANAGER: RoleType = ink_lang::selector_id!("MANAGER");' : ''}
     
     ${this.collectTraitImpls()}${this.collectAdditionalImpls()}
     
@@ -136,9 +135,7 @@ pub mod my_${this.standardName} {
             '_instance = Self::Default;' :
             'ink_lang::codegen::initialize_contract(|_instance: &mut Contract|{'}${this.collectConstructorActions()}${
             this.version > 'v1.3.0' ? '\n\t\t\t})' : ''}
-        }
-        
-        ${this.collectContractMethods()}
+        }${this.collectContractMethods()}
     }
 }`;
     }
@@ -243,11 +240,11 @@ export class Method {
         result += `${this.derives ? `\t\t${this.derives}\n` : ''}`;
 
         if(this.args.length < 2) {
-            result += `\t\tfn ${this.name}(&${this.mutating ? 'mut' : ''} self, ${this.args.map(a => a.toString()).join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {`;
+            result += `\t\tfn ${this.name}(&${this.mutating ? 'mut ' : ''}self${this.args.length ? ', ' : ''}${this.args.map(a => a.toString()).join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {`;
         }
         else {
             result += `\t\tfn ${this.name}(
-            &${this.mutating ? 'mut' : ''} self,
+            &${this.mutating ? 'mut ' : ''}self,
             ${this.args.map(a => a.toString()).join(',\n\t\t\t')}
         )${this.return_type? ` -> ${this.return_type}` : ''} {`;
         }
