@@ -35,7 +35,7 @@ export class Contract {
     }
 
     collectBrushImports() {
-        return `// imports from openbrush\n\t${this.brushImports.map(i => (i.toString())).join("\n\t")}${
+        return `// imports from openbrush\n${this.brushImports.map(i => ('\t' + i.toString())).join("\n")}${
             (this.brushImports.length && this.extensions && this.extensions
                 .filter(e => (e.brushImports && e.brushImports.length)).length) ? '\n' : ''}${
             this.extensions ? this.extensions
