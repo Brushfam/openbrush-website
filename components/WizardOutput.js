@@ -170,7 +170,7 @@ export const generateLib = (output, version='v2.2.0') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
 
     const standardName = output.type !== 'psp37' ? output.type : (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
-    let {extensions, usesStandardExtensions} = getExtensions(output, version);
+    let {extensions, usesStandardExtensions} = getExtensions(output, version, standardName, brushName);
     let additionalImpls = [];
     let constructorArgs = [];
     let constructorActions = [];

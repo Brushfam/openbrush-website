@@ -6,6 +6,7 @@ import Link from "next/link";
 import { docsLink, demoLink } from "../data/headerNavigation";
 import header from "../styles/Header.module.scss";
 import WizardSaveProject from "./WizardSaveProject";
+import {isVisible} from "../data/utils";
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
@@ -23,10 +24,10 @@ const Wizard = () => {
       });
       token.controls.forEach((controlSection) => {
         controlSection.optionList.forEach((control) => {
-          currentState_tmp[index].currentControlsState.push({
-            name: control.name,
-            state: control.initState,
-          });
+            currentState_tmp[index].currentControlsState.push({
+                name: control.name,
+                state: control.initState,
+            });
         });
       });
     });
@@ -98,6 +99,15 @@ const Wizard = () => {
                             onChange={(e) => {
                                 let tmp_state = [...controlsState];
                                 tmp_state[token_i].version = e.target.value;
+
+                                if(e.target.value < 'v2.2.0') {
+                                    tmp_state[token_i].notShowAccessControlEnumerable = true;
+                                    if(tmp_state[token_i].security === 'access_control_enumerable') {
+                                        tmp_state[token_i].security = 'none';
+                                    }
+                                } else {
+                                    tmp_state[token_i].notShowAccessControlEnumerable = false;
+                                }
 
                                 setControlsState(tmp_state);
                             }}

@@ -1,7 +1,6 @@
 import {Extension, Import, Method, Storage, TraitImpl} from "./types";
 
-export function getExtensions(output, version) {
-
+export function getExtensions(output, version, standardName, brushName) {
     let extensions = [];
     let usesStandardExtensions = false;
 
@@ -49,7 +48,7 @@ export function getExtensions(output, version) {
     if(output.currentControlsState.find(x => x.name === 'Pausable')?.state) {
         extensions.push(generateExtension('Pausable', standardName, version, output.security,[]));
 
-        usesStandardExtensions = true;последни
+        usesStandardExtensions = true;
     }
     // Metadata extension
     if(output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
