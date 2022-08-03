@@ -190,38 +190,17 @@ export const generateLib = (output, version='v2.2.0') => {
         extensions.push(generateExtension('access_control_enumerable', standardName, version, output.security,[]));
     }
 
-
     // Batch extension
     if(output.currentControlsState.find(x => x.name === 'Batch')?.state) {
         extensions.push(generateExtension('Batch', standardName, version, output.security,[]));
     }
     // Burnable extension
     if(output.currentControlsState.find(x => x.name === 'Burnable')?.state) {
-        let additionalMethods = [];
-        if(output.security === 'access_control' || output.security === 'access_control_enumerable' || output.security === 'ownable') {
-            additionalMethods.push(new Method(brushName,
-                true,
-                `#[ink(message)]\n\t\t#[${brushName}::modifiers(${output.security === 'ownable' ?'only_owner' : 'only_role(manager)'})]]`,
-                'burn',
-                ['account: AccountId', 'amount: Balance'],
-                `Result<(), ${standardName}Error>`,
-                `self._burn_from(account, amount)`));
-        }
-        extensions.push(generateExtension('Burnable', standardName, version, output.security, additionalMethods));
+        extensions.push(generateExtension('Burnable', standardName, version, output.security, []));
     }
     // Mintable extension
     if(output.currentControlsState.find(x => x.name === 'Mintable')?.state) {
-        let additionalMethods = [];
-        if(output.security === 'access_control' || output.security === 'access_control_enumerable' || output.security === 'ownable') {
-            additionalMethods.push(new Method(brushName,
-                true,
-                `#[ink(message)]\n\t\t#[${brushName}::modifiers(${output.security === 'ownable' ?'only_owner' : 'only_role(manager)'})]]`,
-                'mint',
-                ['account: AccountId', 'amount: Balance'],
-                `Result<(), ${standardName}Error>`,
-                `self._mint(account, amount)`));
-        }
-        extensions.push(generateExtension('Mintable', standardName, version, output.security, additionalMethods));
+        extensions.push(generateExtension('Mintable', standardName, version, output.security, []));
     }
     // Enumerable extension psp34 > v1.5.0
     if(output.currentControlsState.find(x => x.name === 'Enumerable')?.state) {
@@ -252,8 +231,9 @@ export const generateLib = (output, version='v2.2.0') => {
     const isCapped = output.currentControlsState.find(x => x.name === 'Capped')?.state;
 
     if(isCapped || isPausable) {
-        additionalImpls.push(new TraitImpl(`${standardName.toUpperCase()}Transfer`, 'Contract', [new Method(
+        additionalImpls.push(new TraitImpl(`${standardName.toUpperCase()}${version < 'v1.6.0'? 'Internal' : 'Transfer'}`, 'Contract', [new Method(
             brushName,
+            false,
             true,
             isPausable ? `#[${brushName}::modifiers(when_not_paused)]` : null,
             '_before_token_transfer',
@@ -261,22 +241,33 @@ export const generateLib = (output, version='v2.2.0') => {
             `Result<(), ${standardName.toUpperCase()}Error>`,
             isCapped ? `if _from.is_none() && (self.total_supply() + _amount) > self.cap() {
                 return Err(PSP22Error::Custom(String::from("Cap exceeded")))
-            }` : null
+            }
+            Ok(())` : null
             )]));
     }
 
     if(standardName === 'psp22') {
-        constructorArgs.push('intial_supply: Balance');
-        constructorActions.push(`_instance
-                    ._mint(_instance.env().caller(), initial_supply)
-                    .expect("Should mint"); `);
+        constructorArgs.push('initial_supply: Balance');
+        constructorActions.push(`_instance._mint(_instance.env().caller(), initial_supply).expect("Should mint"); `);
     }
+
+    let inkImports = [];
+
+    if(isCapped || output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
+        inkImports.push(new Import('ink_prelude::string::String'));
+    }
+
+    if(output.security && output.type === 'psp37' && (output.currentControlsState.find(x => x.name === 'Mintable')?.state || output.currentControlsState.find(x => x.name === 'Burnable')?.state)) {
+        inkImports.push(new Import('ink_prelude::vec::Vec'));
+    }
+
+    if(version > 'v1.3.0') inkImports.push(new Import('ink_storage::traits::SpreadAllocate'));
 
     return new Contract(
         version,
         brushName,
         standardName,
-        [new Import('ink_storage::traits::SpreadAllocate')],
+        inkImports,
         [new Import(`${brushName}::contracts::${standardName}::*`)],
         new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', []),
         additionalImpls,

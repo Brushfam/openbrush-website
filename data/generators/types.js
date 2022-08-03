@@ -26,7 +26,7 @@ export class Contract {
     }
 
     collectInkImports(){
-        return `${this.inkImports.map(i => (i.toString())).join("\n")}${
+        return `${this.inkImports.map(i => ('\t' + i.toString())).join("\n")}${
             (this.inkImports.length && this.extensions && this.extensions
                 .filter(e => (e.inkImports && e.inkImports.length)).length) ? '\n': ''}${
             this.extensions ? this.extensions
@@ -91,7 +91,7 @@ export class Contract {
 
     collectConstructorActions() {
         return `${
-            this.constructorActions.length ? '\n\t\t\t\t' + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
+            this.constructorActions.length ? '\n\t\t\t' + (this.version === 'v1.3.0' ? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
                 .filter(e => e.constructorActions.length).length ?
                 `\n${this.extensions
                     .filter(e => e.constructorActions.length)
@@ -102,7 +102,7 @@ export class Contract {
     }
 
     collectContractMethods() {
-        return `${this.extensions && this.extensions.filter(e => e.contractMethods.length).length ? '\n\n\t' : ''}${this.extensions ? this.extensions
+        return `${this.extensions && this.extensions.filter(e => e.contractMethods.length).length ? '\n\n' : ''}${this.extensions ? this.extensions
             .filter(e => e.contractMethods.length)
             .map(e => `${e.contractMethods.map(m => m.toString()).join("\n\n")}`)
             .join("\n\n") : ""}`;
@@ -115,13 +115,13 @@ export class Contract {
 #[${this.brushName}::contract]
 pub mod my_${this.standardName} {
     // Imports from ink!
-    ${this.collectInkImports()}
+${this.collectInkImports()}
     
     // Imports from openbrush
     ${this.collectBrushImports()}
     
-    #[ink(storage)]]
-    #[derive(SpreadAllocate, Default${this.collectStorageDerives()})]
+    #[ink(storage)]
+    #[derive(Default${this.version === 'v1.3.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
     pub struct Contract {
     ${this.collectStorageFields()}
     }${this.extensions.find(e => (e.name === 'AccessControl' || e.name === 'AccessControlEnumerable')) !== undefined ? '\n\n\tconst MANAGER: RoleType = ink_lang::selector_id!("MANAGER");' : ''}
@@ -132,9 +132,9 @@ pub mod my_${this.standardName} {
         #[ink(constructor)]
         pub fn new(${this.collectConstructorArgs()}) -> Self {
             ${this.version === 'v1.3.0' ?
-            '_instance = Self::Default;' :
+            'let mut _instance = Self::default();' :
             'ink_lang::codegen::initialize_contract(|_instance: &mut Contract|{'}${this.collectConstructorActions()}${
-            this.version > 'v1.3.0' ? '\n\t\t\t})' : ''}
+            this.version > 'v1.3.0' ? '\n\t\t\t})' : '\n\t\t\t_instance'}
         }${this.collectContractMethods()}
     }
 }`;
@@ -217,6 +217,7 @@ export class Storage {
 
 export class Method {
     brushName = "";
+    isPublic = false;
     mutating = false;
     derives = null;
     name = "";
@@ -224,8 +225,9 @@ export class Method {
     return_type = null;
     body = "";
 
-    constructor(brushName, mutating, derives, name, args, return_type, body) {
+    constructor(brushName, isPublic, mutating, derives, name, args, return_type, body) {
         this.brushName = brushName;
+        this.isPublic = isPublic;
         this.mutating = mutating;
         this.derives = derives;
         this.name = name;
@@ -240,10 +242,10 @@ export class Method {
         result += `${this.derives ? `\t\t${this.derives}\n` : ''}`;
 
         if(this.args.length < 2) {
-            result += `\t\tfn ${this.name}(&${this.mutating ? 'mut ' : ''}self${this.args.length ? ', ' : ''}${this.args.map(a => a.toString()).join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {`;
+            result += `\t\t${this.isPublic ? 'pub ' : ''}fn ${this.name}(&${this.mutating ? 'mut ' : ''}self${this.args.length ? ', ' : ''}${this.args.map(a => a.toString()).join(', ')})${this.return_type? ` -> ${this.return_type}` : ''} {`;
         }
         else {
-            result += `\t\tfn ${this.name}(
+            result += `\t\t${this.isPublic ? 'pub ' : ''}fn ${this.name}(
             &${this.mutating ? 'mut ' : ''}self,
             ${this.args.map(a => a.toString()).join(',\n\t\t\t')}
         )${this.return_type? ` -> ${this.return_type}` : ''} {`;

@@ -19,6 +19,24 @@ export function generateExtension(extensionName, standardName, version, security
                 []
             );
         case 'Burnable':
+            if(security === 'access_control' || security === 'access_control_enumerable' || security === 'ownable') {
+                let args = [];
+                args.push('account: AccountId');
+
+                if(standardName === 'psp22')args.push('amount: Balance');
+                if(standardName === 'psp37' || standardName === 'psp1155' || standardName === 'psp35')args.push('ids_amounts: Vec<(Id, Balance)>');
+                if(standardName === 'psp34')args.push('id: Id');
+
+                additionalMethods.push(new Method(brushName,
+                    false,
+                    true,
+                    `#[ink(message)]\n\t\t#[${brushName}::modifiers(${security === 'ownable' ?'only_owner' : 'only_role(MANAGER)'})]`,
+                    'burn',
+                    args,
+                    `Result<(), ${standardName.toUpperCase()}Error>`,
+                    `self._burn_from(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`));
+            }
+
             return new Extension(
                 'Burnable',
                 [],
@@ -27,6 +45,40 @@ export function generateExtension(extensionName, standardName, version, security
                 new TraitImpl(`${standardName.toUpperCase()}Burnable`, 'Contract', additionalMethods),
                 [],
                 [],
+                []
+            );
+        case 'Mintable':
+            constructorActions = [];
+            if(security === 'access_control' || security === 'access_control_enumerable' || security === 'ownable') {
+                let args = [];
+                args.push('account: AccountId');
+
+                if(standardName === 'psp22')args.push('amount: Balance');
+                if(standardName === 'psp37' || standardName === 'psp1155' || standardName === 'psp35')args.push('ids_amounts: Vec<(Id, Balance)>');
+                if(standardName === 'psp34')args.push('id: Id');
+
+                additionalMethods.push(new Method(brushName,
+                    false,
+                    true,
+                    `#[ink(message)]\n\t\t#[${brushName}::modifiers(${security === 'ownable' ?'only_owner' : 'only_role(MANAGER)'})]`,
+                    'mint',
+                    args,
+                    `Result<(), ${standardName.toUpperCase()}Error>`,
+                    `self._mint${standardName !== 'psp22' ? '_to' : ''}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`));
+            }
+
+            if(standardName === 'psp34'){
+                constructorActions.push('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");');
+            }
+
+            return new Extension(
+                'Mintable',
+                [],
+                [new Import(`${brushName}::contracts::${standardName}::extensions::mintable::*`)],
+                null,
+                new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', additionalMethods),
+                [],
+                constructorActions,
                 []
             );
         case 'ownable':
@@ -74,23 +126,6 @@ export function generateExtension(extensionName, standardName, version, security
                 ['_instance._init_with_admin(_instance.env().caller());', '_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");'],
                 []
             );
-        case 'Mintable':
-            constructorActions = [];
-
-            if(standardName === 'psp34'){
-                constructorActions.push('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");');
-            }
-
-            return new Extension(
-                'Mintable',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::mintable::*`)],
-                null,
-                new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', additionalMethods),
-                [],
-                constructorActions,
-                []
-            );
         case 'Enumerable':
             return new Extension(
                 'Enumerable',
@@ -122,6 +157,7 @@ export function generateExtension(extensionName, standardName, version, security
                 [new Method(
                     brushName,
                     true,
+                    true,
                     `#[ink(message)]${security ? `\n\t\t#[${brushName}::modifiers(${security === 'ownable' ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}`,
                     'change_state',
                     [],
@@ -136,6 +172,7 @@ export function generateExtension(extensionName, standardName, version, security
         case 'Metadata':
             constructorArgs = [];
             constructorActions = [];
+            let inkImports = []
 
             if(standardName === 'psp22') {
                 constructorArgs.push('name: Option<String>');
@@ -144,12 +181,18 @@ export function generateExtension(extensionName, standardName, version, security
 
                 constructorActions.push('_instance.metadata.name = name;');
                 constructorActions.push('_instance.metadata.symbol = symbol;');
-                constructorActions.push('_instance.metadata.decimal = decimal;');
+                constructorActions.push('_instance.metadata.decimals = decimal;');
             }
 
             if(version < 'v2.1.0' && (standardName === 'psp37' || standardName === 'psp35' || standardName === 'psp1155')) {
                 constructorArgs.push('uri: Option<String>');
                 constructorActions.push('_instance.metadata.uri = uri;');
+            }
+
+            if(standardName === 'psp34') {
+                constructorActions.push('let collection_id = _instance.collection_id();');
+                constructorActions.push('_instance._set_attribute(collection_id.clone(), String::from("name").into_bytes(), String::from("MyPSP34").into_bytes());');
+                constructorActions.push('_instance._set_attribute(collection_id, String::from("symbol").into_bytes(), String::from("MPSP").into_bytes());');
             }
 
             return new Extension(
@@ -197,16 +240,18 @@ export function generateExtension(extensionName, standardName, version, security
 
             contractMethodsCapped.push(new Method(
                 brushName,
+                true,
                 false,
                 `#[ink(message)]`,
                 'cap',
                 [],
                 'Balance',
-                `self.cap()`
+                `self.cap`
             ));
 
             contractMethodsCapped.push(new Method(
                 brushName,
+                false,
                 true,
                 null,
                 '_init_cap',
@@ -221,12 +266,12 @@ export function generateExtension(extensionName, standardName, version, security
 
             return new Extension(
                 'Capped',
-                [new Import(`ink_prelude::string::String`)],
+                [],
                 [],
                 new Storage(null, null, 'cap', 'Balance'),
                 null,
                 ['cap: Balance'],
-                ['assert!(_instance._init_with(cap).is_ok());'],
+                ['assert!(_instance._init_cap(cap).is_ok());'],
                 contractMethodsCapped
             );
     }
