@@ -21,6 +21,7 @@ const Wizard = () => {
       currentState_tmp.push({
         type: token.name,
         currentControlsState: [],
+        notShowAccessControlEnumerable: false,
       });
       token.controls.forEach((controlSection) => {
         controlSection.optionList.forEach((control) => {
@@ -130,7 +131,12 @@ const Wizard = () => {
                         </div>
                         <div className={wizard.settingsInputs}>
                           {item.optionList.map((option, count) => {
-
+                            let tmp_state = [...controlsState];
+                            if (!isVisible(token.name, (tmp_state[token_i]?.version ? tmp_state[token_i].version : 'v2.2.0'), option.name)) {
+                                let pos = controlsState[token_i]?.currentControlsState.map(function (e) { return e.name; }).indexOf(option.name);
+                                controlsState[token_i].currentControlsState[pos].state = false;
+                                return '';
+                            }
                             if (option.name === 'Symbol' || option.name === 'URI') {
                               let pos = controlsState[token_i]?.currentControlsState.map(function (e) { return e.name; }).indexOf('Metadata');
                               if (controlsState[token_i]?.currentControlsState[pos]?.state === false) {
@@ -247,7 +253,10 @@ const Wizard = () => {
                                     <option value='none'>None</option>
                                     <option value='ownable'>Ownable</option>
                                     <option value='access_control'>Access Control</option>
-                                    <option value='access_control_enumerable'>Access Control Enumerable</option>
+
+                                    <option value='access_control_enumerable' style={{
+                                        display: controlsState[token_i]?.notShowAccessControlEnumerable ? "none" : "block"
+                                    }}>Access Control Enumerable</option>
                                 </select>
                             </div>
                         </div>
