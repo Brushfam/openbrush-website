@@ -3,8 +3,8 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 import wizardOutput from "./../styles/WizardOutput.module.scss";
 import wizard from "../styles/Wizard.module.scss";
-import {Contract, Extension, Import, Method, Storage, TraitImpl} from "../data/generators/types";
-import {generateExtension} from "../data/generators/extensions";
+import {Contract, Import, Method, Storage, TraitImpl} from "../data/generators/types";
+import {getExtensions} from "../data/generators/extensions";
 
 const generateCargoTomlWithVersion = (
     version,
@@ -170,85 +170,12 @@ export const generateLib = (output, version='v2.2.0') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
 
     const standardName = output.type !== 'psp37' ? output.type : (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
-    let usesStandardExtensions = false;
-
-    let extensions = [];
+    let {extensions, usesStandardExtensions} = getExtensions(output, version);
     let additionalImpls = [];
     let constructorArgs = [];
     let constructorActions = [];
     let inkImports = [];
     let brushImports = [];
-
-    // Ownable extension
-    if(output.security === 'ownable') {
-        extensions.push(generateExtension('ownable', standardName, version, output.security,[]));
-    }
-    // AccessControl extension
-    if(output.security === 'access_control') {
-        extensions.push(generateExtension('access_control', standardName, version, output.security,[]));
-    }
-    // AccessControlEnumerable extension
-    if(output.security === 'access_control_enumerable') {
-        extensions.push(new Extension('', [], [new Import(`${brushName}::contracts::access_control::only_role`)], null, new TraitImpl('AccessControl', 'Contract', []), [], [], []));
-        extensions.push(generateExtension('access_control_enumerable', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
-
-    // Batch extension
-    if(output.currentControlsState.find(x => x.name === 'Batch')?.state) {
-        extensions.push(generateExtension('Batch', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
-    // Burnable extension
-    if(output.currentControlsState.find(x => x.name === 'Burnable')?.state) {
-        extensions.push(generateExtension('Burnable', standardName, version, output.security, []));
-
-        usesStandardExtensions = true;
-    }
-    // Mintable extension
-    if(output.currentControlsState.find(x => x.name === 'Mintable')?.state) {
-        extensions.push(generateExtension('Mintable', standardName, version, output.security, []));
-
-        usesStandardExtensions = true;
-    }
-    // Enumerable extension psp34 > v1.5.0
-    if(output.currentControlsState.find(x => x.name === 'Enumerable')?.state) {
-        extensions.push(generateExtension('Enumerable', standardName, version, output.security, []));
-
-        usesStandardExtensions = true;
-    }
-    // Pausable extension
-    if(output.currentControlsState.find(x => x.name === 'Pausable')?.state) {
-        extensions.push(generateExtension('Pausable', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
-    // Metadata extension
-    if(output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        extensions.push(generateExtension('Metadata', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
-    // Flashmint extension
-    if(output.currentControlsState.find(x => x.name === 'FlashMint')?.state) {
-        extensions.push(generateExtension('FlashMint', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
-    // Wrapper extension
-    if(output.currentControlsState.find(x => x.name ==='Wrapper')?.state) {
-        extensions.push(generateExtension('Wrapper', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
-    // Capped extension
-    if(output.currentControlsState.find(x => x.name === 'Capped')?.state) {
-        extensions.push(generateExtension('Capped', standardName, version, output.security,[]));
-
-        usesStandardExtensions = true;
-    }
 
     const isPausable = output.currentControlsState.find(x => x.name === 'Pausable')?.state;
     const isCapped = output.currentControlsState.find(x => x.name === 'Capped')?.state;
