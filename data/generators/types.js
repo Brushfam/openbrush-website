@@ -26,7 +26,7 @@ export class Contract {
     }
 
     collectInkImports(){
-        return `${this.inkImports.map(i => ('\t' + i.toString())).join("\n")}${
+        return `// imports from ink!\n${this.inkImports.map(i => ('\t' + i.toString())).join("\n")}${
             (this.inkImports.length && this.extensions && this.extensions
                 .filter(e => (e.inkImports && e.inkImports.length)).length) ? '\n': ''}${
             this.extensions ? this.extensions
@@ -35,7 +35,7 @@ export class Contract {
     }
 
     collectBrushImports() {
-        return `${this.brushImports.map(i => (i.toString())).join("\n\t")}${
+        return `// imports from openbrush\n\t${this.brushImports.map(i => (i.toString())).join("\n\t")}${
             (this.brushImports.length && this.extensions && this.extensions
                 .filter(e => (e.brushImports && e.brushImports.length)).length) ? '\n' : ''}${
             this.extensions ? this.extensions
@@ -64,7 +64,8 @@ export class Contract {
     }
 
     collectTraitImpls() {
-        return `${(this.impl) ? this.impl.toString() : ''}${
+        return `// Section contains default implementation without any modifications\n\t${
+            (this.impl) ? this.impl.toString() : ''}${
             (this.impl && this.extensions && this.extensions
                 .filter(e => e.impl).length) ? '\n' : ''}${
             this.extensions ? this.extensions
@@ -114,10 +115,8 @@ export class Contract {
         
 #[${this.brushName}::contract]
 pub mod my_${this.standardName} {
-    // Imports from ink!
-${this.collectInkImports()}
+    ${this.collectInkImports()}
     
-    // Imports from openbrush
     ${this.collectBrushImports()}
     
     #[ink(storage)]
