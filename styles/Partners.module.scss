@@ -20,7 +20,7 @@
             display: flex;
             grid-column-gap: 24px;
             grid-row-gap: 54px;
-            //justify-content: center;
+            justify-content: space-between;
             flex-wrap: wrap;
             margin-top: 62px;
             @include md-down {
