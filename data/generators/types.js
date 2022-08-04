@@ -1,28 +1,155 @@
-export class Contract {
-    version = "";
-    brushName = "";
-    standardName = "";
-    inkImports = [];
-    brushImports = [];
-    impl = null;
-    additionalImpls = [];
-    storage = null;
-    extensions = [];
-    constructorArgs = [];
-    constructorActions = [];
+export class ContractBuilder {
+    #contract = null;
 
-    constructor(version, brushName, standardName, inkImports, brushImports, impl, additionalImpls, storage, extensions, constructorArgs, constructorActions) {
-        this.version = version;
-        this.brushName = brushName;
-        this.standardName = standardName;
-        this.inkImports = inkImports;
-        this.brushImports = brushImports;
-        this.impl = impl;
-        this.additionalImpls = additionalImpls;
-        this.storage = storage;
-        this.extensions = extensions;
-        this.constructorArgs = constructorArgs;
-        this.constructorActions = constructorActions;
+    constructor() {
+        this.#contract = new Contract();
+    }
+
+    setVersion(version) {
+        this.#contract.version = version;
+    }
+
+    setBrushName(brushName) {
+        this.#contract.brushName = brushName;
+    }
+
+    setStandardName(standardName) {
+        this.#contract.standardName = standardName;
+    }
+
+    addInkImport(inkImport) {
+        this.#contract.inkImports.push(inkImport);
+    }
+
+    addBrushImport(brushImport) {
+        this.#contract.brushImports.push(brushImport);
+    }
+
+    setImpl(impl) {
+        this.#contract.impl = impl;
+    }
+
+    addAdditionalImpl(impl) {
+        this.#contract.additionalImpls.push(impl);
+    }
+
+    setStorage(storage) {
+        this.#contract.storage = storage;
+    }
+
+    addExtension(extension) {
+        this.#contract.extensions.push(extension);
+    }
+
+    addConstructorArg(arg) {
+        this.#contract.constructorArgs.push(arg);
+    }
+
+    addConstructorAction(action) {
+        this.#contract.constructorActions.push(action);
+    }
+
+    getContract() {
+        return this.#contract;
+    }
+}
+
+export class ExtensionBuilder {
+    #extension = null;
+
+    constructor() {
+        this.#extension = new Extension();
+    }
+
+    setName(name) {
+        this.#extension.name = name;
+    }
+
+    addInkImport(inkImport) {
+        this.#extension.inkImports.push(inkImport);
+    }
+
+    addBrushImport(brushImport) {
+        this.#extension.brushImports.push(brushImport);
+    }
+
+    setImpl(impl) {
+        this.#extension.impl = impl;
+    }
+
+    addAdditionalImpl(impl) {
+        this.#extension.additionalImpls.push(impl);
+    }
+
+    setStorage(storage) {
+        this.#extension.storage = storage;
+    }
+
+    addConstructorArg(arg) {
+        this.#extension.constructorArgs.push(arg);
+    }
+
+    addConstructorAction(action) {
+        this.#extension.constructorActions.push(action);
+    }
+
+    addContractMethod(method) {
+        this.#extension.contractMethods.push(method);
+    }
+
+    getExtension() {
+        return this.#extension;
+    }
+}
+
+export class StorageBuilder{
+    #storage = null;
+
+    constructor() {
+        this.#storage = new Storage();
+    }
+
+    constructDefaultStorage(name, version, standard = '') {
+        this.#storage.derive = version < 'v2.2.0' ? `${standard.toUpperCase()}${name}Storage` : null;
+        this.#storage.field = `\t#[${version < 'v2.2.0' ? `${standard.toUpperCase()}${name}StorageField` : 'storage_field'}]`;
+        this.#storage.name = name.toLowerCase();
+        this.#storage.type = version < 'v2.2.0' ? `${standard.toUpperCase()}${name}Data` : `${name.toLowerCase()}::Data`;
+    }
+
+    setDerive(derive) {
+        this.#storage.derive = derive;
+    }
+
+    setField(field) {
+        this.#storage.field = field;
+    }
+
+    setName(name) {
+        this.#storage.name = name;
+    }
+
+    setType(type) {
+        this.#storage.type = type;
+    }
+
+    getStorage() {
+        return this.#storage;
+    }
+}
+
+export class Contract {
+    constructor() {
+        this.version = "";
+        this.brushName = "";
+        this.standardName = "";
+        this.inkImports = [];
+        this.brushImports = [];
+        this.impl = null;
+        this.additionalImpls = [];
+        this.storage = null;
+        this.extensions = [];
+        this.constructorArgs = [];
+        this.constructorActions = [];
     }
 
     collectInkImports(){
@@ -47,7 +174,7 @@ export class Contract {
     collectStorageDerives() {
         return `${(this.storage && this.storage.derive) ? `, ${this.storage.derive}` : ""}${
             (this.storage && this.storage.derive && this.extensions && this.extensions
-                .filter(e => (e.storage && e.storage?.derive))).length ? ', ' : ''}${
+                .filter(e => (e.storage && e.storage?.derive)))?.length ? ', ' : ''}${
             this.extensions ? this.extensions
                 .filter(e => (e.storage && e.storage?.derive))
                 .map(e => e.storage?.derive)
@@ -81,10 +208,10 @@ export class Contract {
 
     collectConstructorArgs() {
         return `${this.constructorArgs.join(', ')}${
-            this.constructorArgs.length && this.extensions
-                .filter(e => e.constructorArgs.length).length ? ', ' : ''}${
+            this.constructorArgs?.length && this.extensions
+                .filter(e => e.constructorArgs?.length).length ? ', ' : ''}${
             this.extensions
-                .filter(e => e.constructorArgs.length)
+                .filter(e => e.constructorArgs?.length)
                 .map(e => e.constructorArgs
                     .join(', '))
                 .join(', ')}`;
@@ -92,10 +219,10 @@ export class Contract {
 
     collectConstructorActions() {
         return `${
-            this.constructorActions.length ? '\n\t\t\t' + (this.version === 'v1.3.0' ? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
-                .filter(e => e.constructorActions.length).length ?
+            this.constructorActions?.length ? '\n\t\t\t' + (this.version === 'v1.3.0' ? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
+                .filter(e => e.constructorActions?.length).length ?
                 `\n${this.extensions
-                    .filter(e => e.constructorActions.length)
+                    .filter(e => e.constructorActions?.length)
                     .map(e => `${e.constructorActions
                         .map(a => `${this.version === 'v1.3.0' ? '' : '\t'}\t\t\t${a}`)
                         .join("\n")}`)
@@ -103,8 +230,8 @@ export class Contract {
     }
 
     collectContractMethods() {
-        return `${this.extensions && this.extensions.filter(e => e.contractMethods.length).length ? '\n\n' : ''}${this.extensions ? this.extensions
-            .filter(e => e.contractMethods.length)
+        return `${this.extensions && this.extensions.filter(e => e.contractMethods?.length).length ? '\n\n' : ''}${this.extensions ? this.extensions
+            .filter(e => e.contractMethods?.length)
             .map(e => `${e.contractMethods.map(m => m.toString()).join("\n\n")}`)
             .join("\n\n") : ""}`;
     }
@@ -141,24 +268,15 @@ pub mod my_${this.standardName} {
 }
 
 export class Extension {
-    name = "";
-    inkImports = [];
-    brushImports = [];
-    storage = null;
-    impl = null;
-    constructorArgs = [];
-    constructorActions = [];
-    contractMethods = [];
-
-    constructor(name, inkImports, brushImports, storage, impl, constructorArgs, constructorActions, contractMethods) {
-        this.name = name;
-        this.inkImports = inkImports;
-        this.brushImports = brushImports;
-        this.storage = storage;
-        this.impl = impl;
-        this.constructorArgs = constructorArgs;
-        this.constructorActions = constructorActions;
-        this.contractMethods = contractMethods;
+    constructor() {
+        this.name = "";
+        this.inkImports = [];
+        this.brushImports = [];
+        this.storage = null;
+        this.impl = null;
+        this.constructorArgs = [];
+        this.constructorActions = [];
+        this.contractMethods = [];
     }
 
     collectInkImports() {
@@ -197,16 +315,11 @@ export class TraitImpl {
 }
 
 export class Storage {
-    derive = "";
-    field = "";
-    name = "";
-    type = "";
-
-    constructor(derive, field, name, type) {
-        this.derive = derive;
-        this.field = field;
-        this.name = name;
-        this.type = type;
+    constructor() {
+        this.derive = "";
+        this.field = "";
+        this.name = "";
+        this.type = "";
     }
 
     toString() {
@@ -254,6 +367,4 @@ export class Method {
 
         return result;
     }
-
-
 }

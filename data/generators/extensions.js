@@ -1,4 +1,4 @@
-import {Extension, Import, Method, Storage, TraitImpl} from "./types";
+import {Extension, ExtensionBuilder, Import, Method, Storage, StorageBuilder, TraitImpl} from "./types";
 
 export function getExtensions(output, version, standardName, brushName) {
     let extensions = [];
@@ -14,7 +14,12 @@ export function getExtensions(output, version, standardName, brushName) {
     }
     // AccessControlEnumerable extension
     if(output.security === 'access_control_enumerable') {
-        extensions.push(new Extension('', [], [new Import(`${brushName}::contracts::access_control::only_role`)], null, new TraitImpl('AccessControl', 'Contract', []), [], [], []));
+
+        let extension = new ExtensionBuilder();
+        extension.addBrushImport(new Import(`${brushName}::contracts::access_control::only_role`));
+        extension.setImpl(new TraitImpl('AccessControl', 'Contract', []));
+
+        extensions.push(extension.getExtension());
         extensions.push(generateExtension('access_control_enumerable', standardName, version, output.security,[]));
 
         usesStandardExtensions = true;
@@ -79,25 +84,22 @@ export function getExtensions(output, version, standardName, brushName) {
 }
 
 export function generateExtension(extensionName, standardName, version, security, additionalMethods) {
-
-    const brushName = (version < 'v2.1.0') ? 'brush' : 'openbrush';
-    let constructorArgs = [];
-    let constructorActions = [];
+    const brushName = (version < 'v2.0.0') ? 'brush' : 'openbrush';
 
     switch(extensionName){
         case 'Batch':
-            return new Extension(
-                'Batch',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::batch::*`)],
-                null,
-                new TraitImpl(`${standardName.toUpperCase()}Batch`, 'Contract', additionalMethods),
-                [],
-                [],
-                []
-            );
+            let batchExtension = new ExtensionBuilder();
+            batchExtension.setName('Batch');
+            batchExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::batch::*`));
+            batchExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Batch`, 'Contract', additionalMethods));
+
+            return batchExtension.getExtension();
         case 'Burnable':
-            if(security === 'access_control' || security === 'access_control_enumerable' || security === 'ownable') {
+            let burnableExtension = new ExtensionBuilder();
+            burnableExtension.setName('Burnable');
+            burnableExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::burnable::*`));
+
+            if(security && security !== 'none') {
                 let args = [];
                 args.push('account: AccountId');
 
@@ -112,22 +114,19 @@ export function generateExtension(extensionName, standardName, version, security
                     'burn',
                     args,
                     `Result<(), ${standardName.toUpperCase()}Error>`,
-                    `self._burn_from(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`));
+                    `self._burn_from(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`
+                ));
             }
 
-            return new Extension(
-                'Burnable',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::burnable::*`)],
-                null,
-                new TraitImpl(`${standardName.toUpperCase()}Burnable`, 'Contract', additionalMethods),
-                [],
-                [],
-                []
-            );
+            burnableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Burnable`, 'Contract', additionalMethods));
+
+            return burnableExtension.getExtension();
         case 'Mintable':
-            constructorActions = [];
-            if(security === 'access_control' || security === 'access_control_enumerable' || security === 'ownable') {
+            let mintableExtension = new ExtensionBuilder();
+            mintableExtension.setName('Mintable');
+            mintableExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::mintable::*`));
+
+            if(security && security !== 'none') {
                 let args = [];
                 args.push('account: AccountId');
 
@@ -142,181 +141,174 @@ export function generateExtension(extensionName, standardName, version, security
                     'mint',
                     args,
                     `Result<(), ${standardName.toUpperCase()}Error>`,
-                    `self._mint${standardName !== 'psp22' ? '_to' : ''}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`));
+                    `self._mint${standardName !== 'psp22' ? '_to' : ''}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`
+                ));
             }
+
+            mintableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', additionalMethods));
 
             if(standardName === 'psp34'){
-                constructorActions.push('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");');
+                mintableExtension.addConstructorAction('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");');
             }
 
-            return new Extension(
-                'Mintable',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::mintable::*`)],
-                null,
-                new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', additionalMethods),
-                [],
-                constructorActions,
-                []
-            );
+            return mintableExtension.getExtension();
         case 'ownable':
-            return new Extension(
-                'Ownable',
-                [],
-                [new Import(`${brushName}::contracts::ownable::*`)],
-                new Storage(
-                    (version < 'v2.2.0' ? 'OwnableStorage' : null),
-                    `\t#[${version < 'v2.2.0' ? 'OwnableStorageField' : 'storage_field'}]`,
-                    'ownable',
-                    `${version < 'v2.2.0' ? 'OwnableData' : 'ownable::Data'}`),
-                new TraitImpl('Ownable', 'Contract', additionalMethods),
-                [],
-                ['_instance._init_with_owner(_instance.env().caller());'],
-                []
-            );
+            let ownableExtension = new ExtensionBuilder();
+            ownableExtension.setName('Ownable');
+            ownableExtension.addInkImport(new Import(`${brushName}::contracts::ownable::*`));
+
+            let ownableStorage = new StorageBuilder();
+            ownableStorage.constructDefaultStorage('Ownable', version);
+            ownableExtension.setStorage(ownableStorage.getStorage());
+
+            ownableExtension.setImpl(new TraitImpl(`Ownable`, 'Contract', additionalMethods));
+            ownableExtension.addConstructorAction('_instance._init_with_owner(_instance.env().caller());');
+
+            return ownableExtension.getExtension()
         case 'access_control':
-            return new Extension(
-                'AccessControl',
-                [],
-                [new Import(`${brushName}::contracts::access_control::*`)],
-                new Storage(
-                    (version < 'v2.2.0' ? 'AccessControlStorage' : null),
-                    `\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`,
-                    'access',
-                    `${version < 'v2.2.0' ? 'AccessControlData' : 'access_control::Data'}`),
-                new TraitImpl('AccessControl', 'Contract', additionalMethods),
-                [],
-                ['_instance._init_with_admin(_instance.env().caller());', '_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");'],
-                []
-            );
+            let accessControlExtension = new ExtensionBuilder();
+
+            accessControlExtension.setName('AccessControl');
+            accessControlExtension.addBrushImport(new Import(`${brushName}::contracts::access_control::*`));
+
+            let accessControlStorage = new StorageBuilder();
+            accessControlStorage.constructDefaultStorage('AccessControl', version);
+            if(version > 'v2.1.0')accessControlStorage.setType('access_control::Data')
+            accessControlStorage.setName('access');
+            accessControlExtension.setStorage(accessControlStorage.getStorage());
+
+            accessControlExtension.setImpl(new TraitImpl(`AccessControl`, 'Contract', additionalMethods));
+            accessControlExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());');
+            accessControlExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");');
+
+            return accessControlExtension.getExtension();
         case 'access_control_enumerable':
-            return new Extension(
-                'AccessControlEnumerable',
-                [],
-                [new Import(`${brushName}::contracts::access_control::extensions::enumerable::*`)],
-                new Storage(
-                    (version < 'v2.2.0' ? 'AccessControlStorage' : null),
-                    `\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`,
-                    'access',
-                    `${version < 'v2.2.0' ? 'AccessControlData<EnumerableMembers>' : 'access_control::Data<enumerable::Members>'}`),
-                new TraitImpl('AccessControlEnumerable', 'Contract', additionalMethods),
-                [],
-                ['_instance._init_with_admin(_instance.env().caller());', '_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");'],
-                []
-            );
+
+            let accessControlEnumerableExtension = new ExtensionBuilder();
+            accessControlEnumerableExtension.setName('AccessControlEnumerable');
+            accessControlEnumerableExtension.addBrushImport(new Import(`${brushName}::contracts::access_control::extensions::enumerable::*`));
+
+            let accessControlEnumerableStorage = new StorageBuilder();
+
+            if(version < 'v2.2.0')accessControlEnumerableStorage.setDerive('AccessControlStorage');
+            accessControlEnumerableStorage.setField(`\t#[${version < 'v2.2.0' ? 'AccessControlStorageField' : 'storage_field'}]`);
+            accessControlEnumerableStorage.setName('access');
+            accessControlEnumerableStorage.setType(`${version < 'v2.2.0' ? 'AccessControlData<EnumerableMembers>' : 'access_control::Data<Members>'}`);
+
+            accessControlEnumerableExtension.setStorage(accessControlEnumerableStorage.getStorage());
+
+            accessControlEnumerableExtension.setImpl(new TraitImpl(`AccessControlEnumerable`, 'Contract', additionalMethods));
+            accessControlEnumerableExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());');
+            accessControlEnumerableExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");');
+
+            return accessControlEnumerableExtension.getExtension();
         case 'Enumerable':
-            return new Extension(
-                'Enumerable',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::enumerable::*`)],
-                version < 'v2.1.0' ? new Storage(
-                    (version < 'v2.2.0' ? `${standardName.toUpperCase()}EnumerableStorage` : null),
-                    `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}EnumerableStorageField` : 'storage_field'}]`,
-                    'enumerable',
-                    `${standardName.toUpperCase()}EnumerableData`) : null,
-                new TraitImpl(`${standardName.toUpperCase()}Enumerable`, 'Contract', additionalMethods),
-                [],
-                [],
-                []
-            );
+            let enumerableExtension = new ExtensionBuilder();
+
+            enumerableExtension.setName('Enumerable');
+            enumerableExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::enumerable::*`));
+            if(version < 'v2.1.0') {
+                let enumerableStorage = new StorageBuilder();
+                enumerableStorage.constructDefaultStorage('Enumerable', version, standardName);
+                enumerableExtension.setStorage(enumerableStorage.getStorage());
+            }
+
+            enumerableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Enumerable`, 'Contract', additionalMethods));
+
+            return enumerableExtension.getExtension();
         case 'Pausable':
-            return new Extension(
-                'Pausable',
+            let pausableExtension = new ExtensionBuilder();
+
+            pausableExtension.setName('Pausable');
+            pausableExtension.addBrushImport(new Import(`${brushName}::contracts::pausable::*`));
+
+            let pausableStorage = new StorageBuilder();
+            pausableStorage.constructDefaultStorage('Pausable', version);
+            pausableExtension.setStorage(pausableStorage.getStorage());
+
+            pausableExtension.setImpl(new TraitImpl(`Pausable`, 'Contract', additionalMethods));
+            pausableExtension.addContractMethod(new Method(
+                brushName,
+                true,
+                true,
+                `#[ink(message)]${security ? `\n\t\t#[${brushName}::modifiers(${security === 'ownable' ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}`,
+                'change_state',
                 [],
-                [new Import(`${brushName}::contracts::pausable::*`)],
-                new Storage(
-                    (version < 'v2.2.0' ? 'PausableStorage' : null),
-                    `\t#[${version < 'v2.2.0' ? 'PausableStorageField' : 'storage_field'}]`,
-                    'pausable',
-                    `${version < 'v2.2.0' ? 'PausableData' : 'pausable::Data'}`),
-                new TraitImpl(`Pausable`, 'Contract', additionalMethods),
-                [],
-                [],
-                [new Method(
-                    brushName,
-                    true,
-                    true,
-                    `#[ink(message)]${security ? `\n\t\t#[${brushName}::modifiers(${security === 'ownable' ? 'only_owner' : 'only_role(MANAGER)'})]` : ''}`,
-                    'change_state',
-                    [],
-                    `Result<(), ${standardName.toUpperCase()}Error>`,
-                    `if self.paused() {
+                `Result<(), ${standardName.toUpperCase()}Error>`,
+                `if self.paused() {
                 self._unpause()
             } else {
                 self._pause()
             }`
-                    )]
-            );
+            ));
+
+            return pausableExtension.getExtension();
         case 'Metadata':
-            constructorArgs = [];
-            constructorActions = [];
-            let inkImports = []
+            let metadataExtension = new ExtensionBuilder();
+
+            metadataExtension.setName('Metadata');
+            metadataExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::metadata::*`));
+
+            let metadataStorage = new StorageBuilder();
+            metadataStorage.constructDefaultStorage('Metadata', version, standardName);
+            metadataExtension.setStorage(metadataStorage.getStorage());
+
+            metadataExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Metadata`, 'Contract', additionalMethods));
 
             if(standardName === 'psp22') {
-                constructorArgs.push('name: Option<String>');
-                constructorArgs.push('symbol: Option<String>');
-                constructorArgs.push('decimal: u8');
+                metadataExtension.addConstructorArg('name: Option<String>');
+                metadataExtension.addConstructorArg('symbol: Option<String>');
+                metadataExtension.addConstructorArg('decimal: u8');
 
-                constructorActions.push('_instance.metadata.name = name;');
-                constructorActions.push('_instance.metadata.symbol = symbol;');
-                constructorActions.push('_instance.metadata.decimals = decimal;');
+                metadataExtension.addConstructorAction('_instance.metadata.name = name;');
+                metadataExtension.addConstructorAction('_instance.metadata.symbol = symbol;');
+                metadataExtension.addConstructorAction('_instance.metadata.decimals = decimal;');
             }
 
             if(version < 'v2.1.0' && (standardName === 'psp37' || standardName === 'psp35' || standardName === 'psp1155')) {
-                constructorArgs.push('uri: Option<String>');
-                constructorActions.push('_instance.metadata.uri = uri;');
+                metadataExtension.addConstructorArg('uri: Option<String>');
+                metadataExtension.addConstructorAction('_instance.metadata.uri = uri;');
             }
 
             if(standardName === 'psp34') {
-                constructorActions.push('let collection_id = _instance.collection_id();');
-                constructorActions.push('_instance._set_attribute(collection_id.clone(), String::from("name").into_bytes(), String::from("MyPSP34").into_bytes());');
-                constructorActions.push('_instance._set_attribute(collection_id, String::from("symbol").into_bytes(), String::from("MPSP").into_bytes());');
+                metadataExtension.addConstructorAction('let collection_id = _instance.collection_id();');
+                metadataExtension.addConstructorAction('_instance._set_attribute(collection_id.clone(), String::from("name").into_bytes(), String::from("MyPSP34").into_bytes());');
+                metadataExtension.addConstructorAction('_instance._set_attribute(collection_id, String::from("symbol").into_bytes(), String::from("MPSP").into_bytes());');
             }
 
-            return new Extension(
-                'Metadata',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::metadata::*`)],
-                new Storage(
-                    (version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataStorage` : null),
-                    `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataStorageField` : 'storage_field'}]`,
-                    'metadata',
-                    `${version < 'v2.2.0' ? `${standardName.toUpperCase()}MetadataData` : 'metadata::Data'}`),
-                new TraitImpl(`${standardName.toUpperCase()}Metadata`, 'Contract', additionalMethods),
-                constructorArgs,
-                constructorActions,
-                []
-            );
+            return metadataExtension.getExtension();
         case 'FlashMint':
-            return new Extension(
-                'Flashmint',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::flashmint::*`)],
-                null,
-                new TraitImpl(`FlashLender`, 'Contract', additionalMethods),
-                [],
-                [],
-                []
-            );
-        case 'Wrapper':
-            return new Extension(
-                'Wrapper',
-                [],
-                [new Import(`${brushName}::contracts::${standardName}::extensions::wrapper::*`)],
-                new Storage(
-                    (version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperStorage` : null),
-                    `\t#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperStorageField`: 'storage_field'}]`,
-                    'wrapper',
-                    `${version < 'v2.2.0' ? `${standardName.toUpperCase()}WrapperData` : 'wrapper::Data'}`),
-                new TraitImpl(`${standardName.toUpperCase()}Wrapper`, 'Contract', additionalMethods),
-                [],
-                [],
-                []
-            );
-        case 'Capped':
-            let contractMethodsCapped = [];
+            let flashMintExtension = new ExtensionBuilder();
 
-            contractMethodsCapped.push(new Method(
+            flashMintExtension.setName('FlashMint');
+            flashMintExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::flashmint::*`));
+            flashMintExtension.setImpl(new TraitImpl(`FlashLender`, 'Contract', additionalMethods))
+
+            return flashMintExtension.getExtension();
+        case 'Wrapper':
+            let wrapperExtension = new ExtensionBuilder();
+
+            wrapperExtension.setName('Wrapper');
+            wrapperExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::wrapper::*`));
+
+            let wrapperStorage = new StorageBuilder();
+            wrapperStorage.constructDefaultStorage('Wrapper', version, standardName);
+            wrapperExtension.setStorage(wrapperStorage.getStorage());
+
+            wrapperExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Wrapper`, 'Contract', additionalMethods));
+
+            return wrapperExtension.getExtension();
+        case 'Capped':
+            let cappedExtension = new ExtensionBuilder();
+
+            let cappedStorage = new StorageBuilder();
+            cappedStorage.setName('cap');
+            cappedStorage.setType('Balance');
+
+            cappedExtension.setStorage(cappedStorage.getStorage());
+
+            cappedExtension.setName('Capped');
+            cappedExtension.addContractMethod(new Method(
                 brushName,
                 true,
                 false,
@@ -326,8 +318,7 @@ export function generateExtension(extensionName, standardName, version, security
                 'Balance',
                 `self.cap`
             ));
-
-            contractMethodsCapped.push(new Method(
+            cappedExtension.addContractMethod(new Method(
                 brushName,
                 false,
                 true,
@@ -342,15 +333,6 @@ export function generateExtension(extensionName, standardName, version, security
             Ok(())`
             ));
 
-            return new Extension(
-                'Capped',
-                [],
-                [],
-                new Storage(null, null, 'cap', 'Balance'),
-                null,
-                ['cap: Balance'],
-                ['assert!(_instance._init_cap(cap).is_ok());'],
-                contractMethodsCapped
-            );
+            return cappedExtension.getExtension();
     }
 }

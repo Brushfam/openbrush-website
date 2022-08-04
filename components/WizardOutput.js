@@ -3,7 +3,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import {useEffect, useState} from "react";
 import wizardOutput from "./../styles/WizardOutput.module.scss";
 import wizard from "../styles/Wizard.module.scss";
-import {Contract, Import, Method, Storage, TraitImpl} from "../data/generators/types";
+import {Contract, ContractBuilder, Import, Method, Storage, StorageBuilder, TraitImpl} from "../data/generators/types";
 import {getExtensions} from "../data/generators/extensions";
 
 const generateCargoTomlWithVersion = (
@@ -171,18 +171,33 @@ export const generateLib = (output, version='v2.2.0') => {
 
     const standardName = output.type !== 'psp37' ? output.type : (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
     let {extensions, usesStandardExtensions} = getExtensions(output, version, standardName, brushName);
-    let additionalImpls = [];
-    let constructorArgs = [];
-    let constructorActions = [];
-    let inkImports = [];
-    let brushImports = [];
+
+    let contract = new ContractBuilder();
+
+    contract.setStandardName(standardName);
+    contract.setBrushName(brushName);
+    contract.setVersion(version);
+    contract.setImpl(new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', []));
+
+    const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state;
+    let storage = new StorageBuilder();
+    storage.setDerive(`${version < 'v2.2.0' ? standardName.toUpperCase() : ''}Storage`);
+    storage.setField(`#[${version < 'v2.2.0' ? standardName.toUpperCase() + 'StorageField' : 'storage_field'}]`);
+    storage.setName(standardName);
+    storage.setType((version < 'v2.2.0' ? `${standardName.toUpperCase()}Data`: `${standardName}::Data`) + ((isEnumerable && version >'v2.0.0') ? (version < 'v2.2.0' ? '<EnumerableBalances>' : '<Balances>') : ''));
+
+    contract.setStorage(storage.getStorage());
+
+    extensions.map(e => {
+        contract.addExtension(e);
+    });
 
     const isPausable = output.currentControlsState.find(x => x.name === 'Pausable')?.state;
     const isCapped = output.currentControlsState.find(x => x.name === 'Capped')?.state;
 
     if(isCapped || isPausable) {
-        brushImports.push(new Import(`${brushName}::contracts::${standardName}::${version < 'v2.2.0' ? standardName.toUpperCase() : ''}${version < 'v1.6.0'? 'Internal' : 'Transfer'}`));
-        additionalImpls.push(new TraitImpl(`${version < 'v2.2.0' ? standardName.toUpperCase() : ''}${version < 'v1.6.0'? 'Internal' : 'Transfer'}`, 'Contract', [new Method(
+        contract.addBrushImport(new Import(`${brushName}::contracts::${standardName}::${version < 'v2.2.0' ? standardName.toUpperCase() : ''}${version < 'v1.6.0'? 'Internal' : 'Transfer'}`));
+        contract.addAdditionalImpl(new TraitImpl(`${version < 'v2.2.0' ? standardName.toUpperCase() : ''}${version < 'v1.6.0'? 'Internal' : 'Transfer'}`, 'Contract', [new Method(
             brushName,
             false,
             true,
@@ -198,43 +213,27 @@ export const generateLib = (output, version='v2.2.0') => {
     }
 
     if(standardName === 'psp22') {
-        constructorArgs.push('initial_supply: Balance');
-        constructorActions.push(`_instance._mint(_instance.env().caller(), initial_supply).expect("Should mint"); `);
+        contract.addConstructorArg('initial_supply: Balance');
+        contract.addConstructorAction(`_instance._mint(_instance.env().caller(), initial_supply).expect("Should mint"); `);
     }
 
     if(isCapped || output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        inkImports.push(new Import('ink_prelude::string::String'));
+        contract.addInkImport(new Import('ink_prelude::string::String'));
     }
 
     if(output.security && output.type === 'psp37' && (output.currentControlsState.find(x => x.name === 'Mintable')?.state || output.currentControlsState.find(x => x.name === 'Burnable')?.state)) {
-        inkImports.push(new Import('ink_prelude::vec::Vec'));
+        contract.addInkImport(new Import('ink_prelude::vec::Vec'));
     }
 
-    if(version > 'v1.3.0') inkImports.push(new Import('ink_storage::traits::SpreadAllocate'));
+    if(version > 'v1.3.0') contract.addInkImport(new Import('ink_storage::traits::SpreadAllocate'));
 
     if(!usesStandardExtensions) {
-        brushImports.push(new Import(`${brushName}::contracts::${standardName}::*`))
+        contract.addBrushImport(new Import(`${brushName}::contracts::${standardName}::*`))
     }
 
-    if(version > 'v2.1.0')brushImports.push(new Import(`${brushName}::traits::Storage`));
+    if(version > 'v2.1.0')contract.addBrushImport(new Import(`${brushName}::traits::Storage`));
 
-    return new Contract(
-        version,
-        brushName,
-        standardName,
-        inkImports,
-        brushImports,
-        new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', []),
-        additionalImpls,
-        new Storage(
-            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Storage` : 'Storage'}`,
-            `#[${version < 'v2.2.0' ? `${standardName.toUpperCase()}StorageField` : 'storage_field'}]`,
-            standardName,
-            `${version < 'v2.2.0' ? `${standardName.toUpperCase()}Data` : `${standardName}::Data`}${version >= 'v2.1.0'  && output.currentControlsState.find(x => x.name === 'Enumerable')?.state ? (version === 'v2.1.0' ? '<EnumerableBalances>' : '<enumerable::Balances>') : ''}`),
-        extensions,
-        constructorArgs,
-        constructorActions
-    ).toString();
+    return contract.getContract().toString();
 }
 
 const WizardOutput = ({data}) => {

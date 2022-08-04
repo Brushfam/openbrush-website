@@ -101,7 +101,7 @@ const Wizard = () => {
                                 let tmp_state = [...controlsState];
                                 tmp_state[token_i].version = e.target.value;
 
-                                if(e.target.value < 'v2.2.0') {
+                                if(e.target.value < 'v2.1.0') {
                                     tmp_state[token_i].notShowAccessControlEnumerable = true;
                                     if(tmp_state[token_i].security === 'access_control_enumerable') {
                                         tmp_state[token_i].security = 'none';
