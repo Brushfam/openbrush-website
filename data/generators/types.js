@@ -5,6 +5,10 @@ export class ContractBuilder {
         this.#contract = new Contract();
     }
 
+    setContractName(name) {
+        this.#contract.contractName = name;
+    }
+
     setVersion(version) {
         this.#contract.version = version;
     }
@@ -150,6 +154,7 @@ export class Contract {
         this.extensions = [];
         this.constructorArgs = [];
         this.constructorActions = [];
+        this.contractName = "";
     }
 
     collectInkImports(){
@@ -248,13 +253,13 @@ pub mod my_${this.standardName} {
     
     #[ink(storage)]
     #[derive(Default${this.version === 'v1.3.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
-    pub struct Contract {
+    pub struct ${this.contractName} {
     ${this.collectStorageFields()}
     }${this.extensions.find(e => (e.name === 'AccessControl' || e.name === 'AccessControlEnumerable')) !== undefined ? '\n\n\tconst MANAGER: RoleType = ink_lang::selector_id!("MANAGER");' : ''}
     
     ${this.collectTraitImpls()}${this.collectAdditionalImpls()}
     
-    impl Contract {
+    impl ${this.contractName} {
         #[ink(constructor)]
         pub fn new(${this.collectConstructorArgs()}) -> Self {
             ${this.version === 'v1.3.0' ?
@@ -302,15 +307,17 @@ export class Import {
 
 export class TraitImpl {
     traitName = "";
+    structName = "";
     methods = [];
 
-    constructor(trait_name, struct_name, methods) {
-        this.traitName = trait_name;
+    constructor(traitName, structName, methods) {
+        this.traitName = traitName;
+        this.structName = structName;
         this.methods = methods;
     }
 
     toString() {
-        return `impl ${this.traitName} for Contract {${this.methods.length ? `\n${this.methods.map(m => m.toString()).join("\n")}\n\t`: ""}}`;
+        return `impl ${this.traitName} for ${this.structName} {${this.methods.length ? `\n${this.methods.map(m => m.toString()).join("\n")}\n\t`: ""}}`;
     }
 }
 

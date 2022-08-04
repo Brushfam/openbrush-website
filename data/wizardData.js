@@ -8,7 +8,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP22',
+                        initState: 'Contract',
                         tooltip: ''
                     },
                     {
@@ -77,7 +77,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP37',
+                        initState: 'Contract',
                         tooltip: ''
                     },
                     {
@@ -134,7 +134,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP34',
+                        initState: 'Contract',
                         tooltip: ''
                     },
                     {

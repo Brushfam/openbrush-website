@@ -168,16 +168,18 @@ export const generateCargoToml = (output, version='v2.2.0') => {
 }
 export const generateLib = (output, version='v2.2.0') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
+    const contractName = output.currentControlsState.find(x => x.name === 'Name')?.state;
 
     const standardName = output.type !== 'psp37' ? output.type : (version < 'v2.1.0' ? 'psp1155' : (version <= 'v2.2.0' ? 'psp35' : 'psp37'));
-    let {extensions, usesStandardExtensions} = getExtensions(output, version, standardName, brushName);
+    let {extensions, usesStandardExtensions} = getExtensions(output, version, standardName, brushName, contractName);
 
     let contract = new ContractBuilder();
 
+    contract.setContractName(contractName);
     contract.setStandardName(standardName);
     contract.setBrushName(brushName);
     contract.setVersion(version);
-    contract.setImpl(new TraitImpl(`${standardName.toUpperCase()}`, 'Contract', []));
+    contract.setImpl(new TraitImpl(`${standardName.toUpperCase()}`, contractName, []));
 
     const isEnumerable = output.currentControlsState.find(x => x.name === 'Enumerable')?.state;
     let storage = new StorageBuilder();

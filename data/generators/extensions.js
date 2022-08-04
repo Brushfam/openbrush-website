@@ -1,81 +1,81 @@
-import {Extension, ExtensionBuilder, Import, Method, Storage, StorageBuilder, TraitImpl} from "./types";
+import {ExtensionBuilder, Import, Method, StorageBuilder, TraitImpl} from "./types";
 
-export function getExtensions(output, version, standardName, brushName) {
+export function getExtensions(output, version, standardName, brushName, contractName) {
     let extensions = [];
     let usesStandardExtensions = false;
 
     // Ownable extension
     if(output.security === 'ownable') {
-        extensions.push(generateExtension('ownable', standardName, version, output.security,[]));
+        extensions.push(generateExtension('ownable', standardName, contractName, version, output.security,[]));
     }
     // AccessControl extension
     if(output.security === 'access_control') {
-        extensions.push(generateExtension('access_control', standardName, version, output.security,[]));
+        extensions.push(generateExtension('access_control', standardName, contractName, version, output.security,[]));
     }
     // AccessControlEnumerable extension
     if(output.security === 'access_control_enumerable') {
 
         let extension = new ExtensionBuilder();
         extension.addBrushImport(new Import(`${brushName}::contracts::access_control::only_role`));
-        extension.setImpl(new TraitImpl('AccessControl', 'Contract', []));
+        extension.setImpl(new TraitImpl('AccessControl', contractName, []));
 
         extensions.push(extension.getExtension());
-        extensions.push(generateExtension('access_control_enumerable', standardName, version, output.security,[]));
+        extensions.push(generateExtension('access_control_enumerable', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
 
     // Batch extension
     if(output.currentControlsState.find(x => x.name === 'Batch')?.state) {
-        extensions.push(generateExtension('Batch', standardName, version, output.security,[]));
+        extensions.push(generateExtension('Batch', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
     // Burnable extension
     if(output.currentControlsState.find(x => x.name === 'Burnable')?.state) {
-        extensions.push(generateExtension('Burnable', standardName, version, output.security, []));
+        extensions.push(generateExtension('Burnable', standardName, contractName, version, output.security, []));
 
         usesStandardExtensions = true;
     }
     // Mintable extension
     if(output.currentControlsState.find(x => x.name === 'Mintable')?.state) {
-        extensions.push(generateExtension('Mintable', standardName, version, output.security, []));
+        extensions.push(generateExtension('Mintable', standardName, contractName, version, output.security, []));
 
         usesStandardExtensions = true;
     }
     // Enumerable extension psp34 > v1.5.0
     if(output.currentControlsState.find(x => x.name === 'Enumerable')?.state) {
-        extensions.push(generateExtension('Enumerable', standardName, version, output.security, []));
+        extensions.push(generateExtension('Enumerable', standardName, contractName, version, output.security, []));
 
         usesStandardExtensions = true;
     }
     // Pausable extension
     if(output.currentControlsState.find(x => x.name === 'Pausable')?.state) {
-        extensions.push(generateExtension('Pausable', standardName, version, output.security,[]));
+        extensions.push(generateExtension('Pausable', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
     // Metadata extension
     if(output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        extensions.push(generateExtension('Metadata', standardName, version, output.security,[]));
+        extensions.push(generateExtension('Metadata', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
     // Flashmint extension
     if(output.currentControlsState.find(x => x.name === 'FlashMint')?.state) {
-        extensions.push(generateExtension('FlashMint', standardName, version, output.security,[]));
+        extensions.push(generateExtension('FlashMint', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
     // Wrapper extension
     if(output.currentControlsState.find(x => x.name ==='Wrapper')?.state) {
-        extensions.push(generateExtension('Wrapper', standardName, version, output.security,[]));
+        extensions.push(generateExtension('Wrapper', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
     // Capped extension
     if(output.currentControlsState.find(x => x.name === 'Capped')?.state) {
-        extensions.push(generateExtension('Capped', standardName, version, output.security,[]));
+        extensions.push(generateExtension('Capped', standardName, contractName, version, output.security,[]));
 
         usesStandardExtensions = true;
     }
@@ -83,7 +83,7 @@ export function getExtensions(output, version, standardName, brushName) {
     return {extensions, usesStandardExtensions};
 }
 
-export function generateExtension(extensionName, standardName, version, security, additionalMethods) {
+export function generateExtension(extensionName, standardName, contractName, version, security, additionalMethods) {
     const brushName = (version < 'v2.0.0') ? 'brush' : 'openbrush';
 
     switch(extensionName){
@@ -91,7 +91,7 @@ export function generateExtension(extensionName, standardName, version, security
             let batchExtension = new ExtensionBuilder();
             batchExtension.setName('Batch');
             batchExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::batch::*`));
-            batchExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Batch`, 'Contract', additionalMethods));
+            batchExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Batch`, contractName, additionalMethods));
 
             return batchExtension.getExtension();
         case 'Burnable':
@@ -118,7 +118,7 @@ export function generateExtension(extensionName, standardName, version, security
                 ));
             }
 
-            burnableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Burnable`, 'Contract', additionalMethods));
+            burnableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Burnable`, contractName, additionalMethods));
 
             return burnableExtension.getExtension();
         case 'Mintable':
@@ -145,7 +145,7 @@ export function generateExtension(extensionName, standardName, version, security
                 ));
             }
 
-            mintableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Mintable`, 'Contract', additionalMethods));
+            mintableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Mintable`, contractName, additionalMethods));
 
             if(standardName === 'psp34'){
                 mintableExtension.addConstructorAction('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");');
@@ -161,7 +161,7 @@ export function generateExtension(extensionName, standardName, version, security
             ownableStorage.constructDefaultStorage('Ownable', version);
             ownableExtension.setStorage(ownableStorage.getStorage());
 
-            ownableExtension.setImpl(new TraitImpl(`Ownable`, 'Contract', additionalMethods));
+            ownableExtension.setImpl(new TraitImpl(`Ownable`, contractName, additionalMethods));
             ownableExtension.addConstructorAction('_instance._init_with_owner(_instance.env().caller());');
 
             return ownableExtension.getExtension()
@@ -177,7 +177,7 @@ export function generateExtension(extensionName, standardName, version, security
             accessControlStorage.setName('access');
             accessControlExtension.setStorage(accessControlStorage.getStorage());
 
-            accessControlExtension.setImpl(new TraitImpl(`AccessControl`, 'Contract', additionalMethods));
+            accessControlExtension.setImpl(new TraitImpl(`AccessControl`, contractName, additionalMethods));
             accessControlExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());');
             accessControlExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");');
 
@@ -197,7 +197,7 @@ export function generateExtension(extensionName, standardName, version, security
 
             accessControlEnumerableExtension.setStorage(accessControlEnumerableStorage.getStorage());
 
-            accessControlEnumerableExtension.setImpl(new TraitImpl(`AccessControlEnumerable`, 'Contract', additionalMethods));
+            accessControlEnumerableExtension.setImpl(new TraitImpl(`AccessControlEnumerable`, contractName, additionalMethods));
             accessControlEnumerableExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());');
             accessControlEnumerableExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");');
 
@@ -213,7 +213,7 @@ export function generateExtension(extensionName, standardName, version, security
                 enumerableExtension.setStorage(enumerableStorage.getStorage());
             }
 
-            enumerableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Enumerable`, 'Contract', additionalMethods));
+            enumerableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Enumerable`, contractName, additionalMethods));
 
             return enumerableExtension.getExtension();
         case 'Pausable':
@@ -226,7 +226,7 @@ export function generateExtension(extensionName, standardName, version, security
             pausableStorage.constructDefaultStorage('Pausable', version);
             pausableExtension.setStorage(pausableStorage.getStorage());
 
-            pausableExtension.setImpl(new TraitImpl(`Pausable`, 'Contract', additionalMethods));
+            pausableExtension.setImpl(new TraitImpl(`Pausable`, contractName, additionalMethods));
             pausableExtension.addContractMethod(new Method(
                 brushName,
                 true,
@@ -253,7 +253,7 @@ export function generateExtension(extensionName, standardName, version, security
             metadataStorage.constructDefaultStorage('Metadata', version, standardName);
             metadataExtension.setStorage(metadataStorage.getStorage());
 
-            metadataExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Metadata`, 'Contract', additionalMethods));
+            metadataExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Metadata`, contractName, additionalMethods));
 
             if(standardName === 'psp22') {
                 metadataExtension.addConstructorArg('name: Option<String>');
@@ -282,7 +282,7 @@ export function generateExtension(extensionName, standardName, version, security
 
             flashMintExtension.setName('FlashMint');
             flashMintExtension.addBrushImport(new Import(`${brushName}::contracts::${standardName}::extensions::flashmint::*`));
-            flashMintExtension.setImpl(new TraitImpl(`FlashLender`, 'Contract', additionalMethods))
+            flashMintExtension.setImpl(new TraitImpl(`FlashLender`, contractName, additionalMethods))
 
             return flashMintExtension.getExtension();
         case 'Wrapper':
@@ -295,7 +295,7 @@ export function generateExtension(extensionName, standardName, version, security
             wrapperStorage.constructDefaultStorage('Wrapper', version, standardName);
             wrapperExtension.setStorage(wrapperStorage.getStorage());
 
-            wrapperExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Wrapper`, 'Contract', additionalMethods));
+            wrapperExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Wrapper`, contractName, additionalMethods));
 
             return wrapperExtension.getExtension();
         case 'Capped':
