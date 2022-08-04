@@ -64,4 +64,9 @@ export const partnersList = [
     src: '/img/partners/astar.svg',
     link: 'https://astar.network/'
   },
+  {
+    alt: 'Substrate Builders Program',
+    src: '/img/partners/substrate+building+program.svg',
+    link: 'https://substrate.io/ecosystem/substrate-builders-program/'
+  }
 ]

@@ -19,8 +19,8 @@
             max-width: 1070px;
             display: flex;
             grid-column-gap: 24px;
-            grid-row-gap: 94px;
-            justify-content: center;
+            grid-row-gap: 54px;
+            //justify-content: center;
             flex-wrap: wrap;
             margin-top: 62px;
             @include md-down {
