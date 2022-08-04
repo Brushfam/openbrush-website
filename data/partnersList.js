@@ -66,7 +66,7 @@ export const partnersList = [
   },
   {
     alt: 'Substrate Builders Program',
-    src: '/img/partners/substrate+building+program.svg',
+    src: '/img/partners/substrate_building_program.svg',
     link: 'https://substrate.io/ecosystem/substrate-builders-program/'
   }
 ]
