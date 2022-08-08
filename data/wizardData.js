@@ -8,7 +8,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP22',
+                        initState: 'Contract',
                         tooltip: ''
                     },
                     {
@@ -69,7 +69,7 @@ export const wizardConfig = [
         ],
     },
     {
-        name: 'psp1155',
+        name: 'psp37',
         controls: [
             {
                 sectionName: 'Constructor',
@@ -77,7 +77,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP1155',
+                        initState: 'Contract',
                         tooltip: ''
                     },
                     {
@@ -92,22 +92,34 @@ export const wizardConfig = [
                 sectionName: 'Extensions',
                 optionList: [
                     {
+                        name: 'Batch',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP37`] that allows you batch transfering tokens'
+                    },
+                    {
                         name: 'Metadata',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Metadata for [`PSP1155`]'
+                        tooltip: 'Metadata for [`PSP37`]'
                     },
                     {
                         name: 'Mintable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP1155`] that allows minting of new tokens'
+                        tooltip: 'Extension of [`PSP37`] that allows minting of new tokens'
                     },
                     {
                         name: 'Burnable',
                         type: 'checkbox',
                         initState: false,
-                        tooltip: 'Extension of [`PSP1155`] that allows token holders to destroy their tokens'
+                        tooltip: 'Extension of [`PSP37`] that allows token holders to destroy their tokens'
+                    },
+                    {
+                        name: 'Enumerable',
+                        type: 'checkbox',
+                        initState: false,
+                        tooltip: 'Extension of [`PSP37`] that allows you to iterate over tokens'
                     }
                 ]
             }
@@ -122,7 +134,7 @@ export const wizardConfig = [
                     {
                         name: 'Name',
                         type: 'text',
-                        initState: 'MyPSP34',
+                        initState: 'Contract',
                         tooltip: ''
                     },
                     {
@@ -161,6 +173,7 @@ export const wizardConfig = [
                         tooltip: 'Extension of [`PSP34`] that allows to iterate over all NFTs'
                     }
                 ]
+
             }
         ],
     },

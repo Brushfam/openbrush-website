@@ -6,13 +6,14 @@ import Link from "next/link";
 import { docsLink, demoLink } from "../data/headerNavigation";
 import header from "../styles/Header.module.scss";
 import WizardSaveProject from "./WizardSaveProject";
+import {isVisible} from "../data/utils";
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
   const [config, setConfig] = useState(wizardConfig);
   const [controlsState, setControlsState] = useState([]);
 
-  const [isControlsClosed, setControlsClofsed] = useState(false)
+  const [isControlsClosed, setControlsClosed] = useState(false)
 
   useEffect(() => {
     let currentState_tmp = [];
@@ -20,13 +21,14 @@ const Wizard = () => {
       currentState_tmp.push({
         type: token.name,
         currentControlsState: [],
+        notShowAccessControlEnumerable: false,
       });
       token.controls.forEach((controlSection) => {
         controlSection.optionList.forEach((control) => {
-          currentState_tmp[index].currentControlsState.push({
-            name: control.name,
-            state: control.initState,
-          });
+            currentState_tmp[index].currentControlsState.push({
+                name: control.name,
+                state: control.initState,
+            });
         });
       });
     });
@@ -99,10 +101,21 @@ const Wizard = () => {
                                 let tmp_state = [...controlsState];
                                 tmp_state[token_i].version = e.target.value;
 
+                                if(e.target.value < 'v2.1.0') {
+                                    tmp_state[token_i].notShowAccessControlEnumerable = true;
+                                    if(tmp_state[token_i].security === 'access_control_enumerable') {
+                                        tmp_state[token_i].security = 'none';
+                                    }
+                                } else {
+                                    tmp_state[token_i].notShowAccessControlEnumerable = false;
+                                }
+
                                 setControlsState(tmp_state);
                             }}
-                            defaultValue={'v2.0.0'}
+                            defaultValue={'v2.2.0'}
                         >
+                            <option value='v2.2.0'>v2.2.0</option>
+                            <option value='v2.1.0'>v2.1.0</option>`
                             <option value='v2.0.0'>v2.0.0</option>
                             <option value='v1.7.0'>v1.7.0</option>
                             <option value='v1.6.0'>v1.6.0</option>
@@ -118,7 +131,12 @@ const Wizard = () => {
                         </div>
                         <div className={wizard.settingsInputs}>
                           {item.optionList.map((option, count) => {
-
+                            let tmp_state = [...controlsState];
+                            if (!isVisible(token.name, (tmp_state[token_i]?.version ? tmp_state[token_i].version : 'v2.2.0'), option.name)) {
+                                let pos = controlsState[token_i]?.currentControlsState.map(function (e) { return e.name; }).indexOf(option.name);
+                                controlsState[token_i].currentControlsState[pos].state = false;
+                                return '';
+                            }
                             if (option.name === 'Symbol' || option.name === 'URI') {
                               let pos = controlsState[token_i]?.currentControlsState.map(function (e) { return e.name; }).indexOf('Metadata');
                               if (controlsState[token_i]?.currentControlsState[pos]?.state === false) {
@@ -235,6 +253,10 @@ const Wizard = () => {
                                     <option value='none'>None</option>
                                     <option value='ownable'>Ownable</option>
                                     <option value='access_control'>Access Control</option>
+
+                                    <option value='access_control_enumerable' style={{
+                                        display: controlsState[token_i]?.notShowAccessControlEnumerable ? "none" : "block"
+                                    }}>Access Control Enumerable</option>
                                 </select>
                             </div>
                         </div>
