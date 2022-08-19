@@ -7,9 +7,10 @@
     padding: 70px 0 140px;
     position: relative;
     border: $outline-width solid $outline-color;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    flex-direction: column;
+    justify-content: center;
+    flex-direction: row;
     margin-top: -2px;
     text-align: center;
     @include tablet-portrait-down {
@@ -19,9 +20,11 @@
     .logoWrapper{
       max-width: 1070px;
       display: flex;
+      padding-left: 70px;
+      padding-bottom: 60px;
       grid-column-gap: 64px;
       grid-row-gap: 54px;
-      justify-content: space-between;
+      //justify-content: space-between;
       flex-wrap: wrap;
       margin-top: 62px;
       @include md-down {
