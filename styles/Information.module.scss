@@ -115,39 +115,4 @@
     //}
   }
 
-
-
-  &Decor {
-    position: absolute;
-    left: -$outline-width;
-    top: -$outline-width;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: $decor-triangle-width $decor-triangle-width 0 0;
-    border-color: $primary-bg-color transparent transparent transparent;
-    line-height: 0px;
-    _border-color: $primary-bg-color;
-    _filter: progid:DXImageTransform.Microsoft.Chroma(color='#000000');
-    z-index: 1;
-    @include md-down {
-      border-width: $decor-triangle-width-mobile $decor-triangle-width-mobile 0 0;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      height: $outline-width;
-      background-color: $outline-color;
-      transform-origin: left bottom;
-      width: calc(#{$decor-triangle-width} * #{$sqrt-2});
-      @include md-down {
-        width: calc(#{$decor-triangle-width-mobile} * #{$sqrt-2});
-      }
-      left: 1px;
-      top: 0px;
-      transform: rotate(-45deg);
-    }
-  }
-
 }
