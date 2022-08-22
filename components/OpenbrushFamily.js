@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const OpenbrushFamily = ({title, data}) => {
     return (
-        <div className={obFam.obFamContainer}>
+        <div className={obFam.obFamContainer} id='obFam'>
             <h3 className='primaryHeadline'>{title}</h3>
             <div className={obFam.logoWrapper}>
                 {data && data.map((item, i) => {

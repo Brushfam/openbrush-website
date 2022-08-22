@@ -6,7 +6,7 @@ export const twitterLink = 'https://twitter.com/supercolony_vs';
 export const linkedinLink ='https://www.linkedin.com/company/super-colony/';
 export const discordLink = 'https://discord.com/channels/933724833630531585/933725040434892940';
 export const telegramLink = 'https://t.me/openbrush';
-export const polkadotBarLink = 'https://t.me/supercolony_polkadot';
+export const openBrushFamily = 'https://openbrush.io/#obFam';
 
 
 export const headerSocials = [
@@ -45,8 +45,8 @@ export const headerNavigation = [
     newTab: true,
   },
   {
-    label: 'Polkadot Bar 🔥',
-    link: polkadotBarLink,
+    label: 'OpenBrush Family',
+    link: openBrushFamily,
     newTab: true,
   },
   /*
