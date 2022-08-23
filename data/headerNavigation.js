@@ -8,6 +8,10 @@ export const discordLink = 'https://discord.com/channels/933724833630531585/9337
 export const telegramLink = 'https://t.me/openbrush';
 export const openBrushFamily = 'https://openbrush.io/#obFam';
 
+const handleClickOBFam = event => {
+  event.preventDefault();
+  document.getElementById('obFam')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 export const headerSocials = [
   /*
@@ -48,6 +52,7 @@ export const headerNavigation = [
     label: 'OpenBrush Family',
     link: openBrushFamily,
     newTab: true,
+    eventType: handleClickOBFam,
   },
   /*
   {

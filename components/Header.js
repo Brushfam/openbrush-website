@@ -25,6 +25,7 @@ const Header = ({ nav }) => {
                         <a
 									className = "commonText"
 									target = {nav.newTab ? '_blank' : undefined}
+                                    onClick={nav.eventType}
 								>{nav.label}</a>
                       </Link>
                     </li>
