@@ -158,12 +158,14 @@ export class Contract {
     }
 
     collectInkImports(){
+        if(this.inkImports.length === 0 && (!this.extensions || this.extensions.filter(e => (e.inkImports && e.inkImports.length)).length === 0))return '';
+
         return `// imports from ink!\n${this.inkImports.map(i => ('\t' + i.toString())).join("\n")}${
             (this.inkImports.length && this.extensions && this.extensions
                 .filter(e => (e.inkImports && e.inkImports.length)).length) ? '\n': ''}${
             this.extensions ? this.extensions
                 .filter(e => (e.inkImports && e.inkImports.length))
-                .map(e => (`\t${e.collectInkImports()}`)).join("\n") : ""}`;
+                .map(e => (`\t${e.collectInkImports()}`)).join("\n") + '\n': ""}`;
     }
 
     collectBrushImports() {
@@ -173,7 +175,7 @@ export class Contract {
             this.extensions ? this.extensions
                 .filter(e => (e.brushImports && e.brushImports.length))
                 .map(e => `\t${e.collectBrushImports()}`)
-                .join("\n") : ""}`;
+                .join("\n") + '\n' : ""}`;
     }
 
     collectStorageDerives() {
@@ -224,12 +226,12 @@ export class Contract {
 
     collectConstructorActions() {
         return `${
-            this.constructorActions?.length ? '\n\t\t\t' + (this.version === 'v1.3.0' ? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
+            this.constructorActions?.length ? '\n\t\t\t' + ((this.version === 'v1.3.0' || this.version > 'v2.2.0' )? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
                 .filter(e => e.constructorActions?.length).length ?
                 `\n${this.extensions
                     .filter(e => e.constructorActions?.length)
                     .map(e => `${e.constructorActions
-                        .map(a => `${this.version === 'v1.3.0' ? '' : '\t'}\t\t\t${a}`)
+                        .map(a => `${this.version === 'v1.3.0' || this.version > 'v2.2.0' ? '' : '\t'}\t\t\t${a}`)
                         .join("\n")}`)
                     .join("\n")}` : ""}`;
     }
@@ -248,28 +250,27 @@ export class Contract {
 #[${this.brushName}::contract]
 pub mod my_${this.standardName} {
     ${this.collectInkImports()}
-    
     ${this.collectBrushImports()}
-    
     #[ink(storage)]
-    #[derive(Default${this.version === 'v1.3.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
+    #[derive(Default${this.version === 'v1.3.0' || this.version > 'v2.2.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
     pub struct ${this.contractName} {
     ${this.collectStorageFields()}
-    }${this.extensions.find(e => (e.name === 'AccessControl' || e.name === 'AccessControlEnumerable')) !== undefined ? '\n\n\tconst MANAGER: RoleType = ink_lang::selector_id!("MANAGER");' : ''}
+    }${this.extensions.find(e => (e.name === 'AccessControl' || e.name === 'AccessControlEnumerable')) !== undefined ? `\n\n\tconst MANAGER: RoleType = ink${this.version < 'v3.0.0-beta' ? '_lang' : ''}::selector_id!("MANAGER");` : ''}
     
     ${this.collectTraitImpls()}${this.collectAdditionalImpls()}
     
     impl ${this.contractName} {
         #[ink(constructor)]
         pub fn new(${this.collectConstructorArgs()}) -> Self {
-            ${this.version === 'v1.3.0' ?
+            ${(this.version === 'v1.3.0' || this.version > 'v2.2.0') ?
             'let mut _instance = Self::default();' :
-            'ink_lang::codegen::initialize_contract(|_instance: &mut Contract|{'}${this.collectConstructorActions()}${
-            this.version > 'v1.3.0' ? '\n\t\t\t})' : '\n\t\t\t_instance'}
+            `ink${this.version < 'v3.0.0-beta' ? '_lang' : ''}::codegen::initialize_contract(|_instance: &mut Contract|{`}${this.collectConstructorActions()}${
+            (this.version > 'v1.3.0' && this.version <= 'v2.2.0') ? '\n\t\t\t})' : '\n\t\t\t_instance'}
         }${this.collectContractMethods()}
     }
 }`;
     }
+
 }
 
 export class Extension {

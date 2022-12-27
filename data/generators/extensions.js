@@ -141,7 +141,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
                     'mint',
                     args,
                     `Result<(), ${standardName.toUpperCase()}Error>`,
-                    `self._mint${standardName !== 'psp22' ? '_to' : ''}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`
+                    `self._mint${standardName !== 'psp22' ? '_to' : version < 'v3.0.0-beta' ? '' : '_to'}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`
                 ));
             }
 
@@ -155,7 +155,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
         case 'ownable':
             let ownableExtension = new ExtensionBuilder();
             ownableExtension.setName('Ownable');
-            ownableExtension.addInkImport(new Import(`${brushName}::contracts::ownable::*`));
+            ownableExtension.addBrushImport(new Import(`${brushName}::contracts::ownable::*`));
 
             let ownableStorage = new StorageBuilder();
             ownableStorage.constructDefaultStorage('Ownable', version);
@@ -272,8 +272,8 @@ export function generateExtension(extensionName, standardName, contractName, ver
 
             if(standardName === 'psp34') {
                 metadataExtension.addConstructorAction('let collection_id = _instance.collection_id();');
-                metadataExtension.addConstructorAction('_instance._set_attribute(collection_id.clone(), String::from("name").into_bytes(), String::from("MyPSP34").into_bytes());');
-                metadataExtension.addConstructorAction('_instance._set_attribute(collection_id, String::from("symbol").into_bytes(), String::from("MPSP").into_bytes());');
+                metadataExtension.addConstructorAction(`_instance._set_attribute(collection_id.clone(), String::from("name")${ version <= 'v2.2.0' ? '.into_bytes()' : ''}, String::from("MyPSP34")${ version <= 'v2.2.0' ? '.into_bytes()' : ''});`);
+                metadataExtension.addConstructorAction(`_instance._set_attribute(collection_id, String::from("symbol")${ version <= 'v2.2.0' ? '.into_bytes()' : ''}, String::from("MPSP")${ version <= 'v2.2.0' ? '.into_bytes()' : ''});`);
             }
 
             return metadataExtension.getExtension();

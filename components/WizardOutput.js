@@ -23,13 +23,16 @@ edition = "${edition}"
 authors = ["The best developer ever"]
 
 [dependencies]
-ink_primitives = { ${inkVersionString}, default-features = false }
+
+${version <= 'v2.2.0'? `ink_primitives = { ${inkVersionString}, default-features = false }
 ink_metadata = { ${inkVersionString}, default-features = false, features = ["derive"], optional = true }
 ink_env = { ${inkVersionString}, default-features = false }
 ink_storage = { ${inkVersionString}, default-features = false }
 ink_lang = { ${inkVersionString}, default-features = false }
 ink_prelude = { ${inkVersionString}, default-features = false }
-ink_engine = { ${inkVersionString}, default-features = false, optional = true }
+ink_engine = { ${inkVersionString}, default-features = false, optional = true }` : `ink = { ${version === 'v3.0.0-beta' ?
+        `git = "https://github.com/paritytech/ink", commit = "4655a8b4413cb50cbc38d1b7c173ad426ab06cde"` :
+        `${inkVersionString}`}, default-features = false}`}
 
 scale = { package = "parity-scale-codec", version = "${scaleVersion}", default-features = false, features = ["derive"] }
 scale-info = { version = "${scaleInfoVersion}", default-features = false, features = ["derive"], optional = true }
@@ -48,12 +51,12 @@ crate-type = [
 [features]
 default = ["std"]
 std = [
-    "ink_primitives/std",
+    ${version <'v3.0.0-beta' ? `"ink_primitives/std",
     "ink_metadata",
     "ink_metadata/std",
     "ink_env/std",
     "ink_storage/std",
-    "ink_lang/std",
+    "ink_lang/std",` : `"ink/std",`}
     "scale/std",
     "scale-info",
     "scale-info/std",
@@ -124,10 +127,18 @@ const versionInfo = {
         scaleInfoVersion: '2',
         brushDeclaration:
             (features) => `openbrush = { version = "~2.2.0", default-features = false, features = [${features}] }`,
+    },
+    'v3.0.0-beta': {
+        edition: '2021',
+        inkVersion: '~4.0.0-beta',
+        scaleVersion: '3',
+        scaleInfoVersion: '2.3',
+        brushDeclaration:
+            (features) => `openbrush = { tag = "3.0.0-beta", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`,
     }
 }
 
-export const generateCargoToml = (output, version='v2.2.0') => {
+export const generateCargoToml = (output, version='v3.0.0-beta') => {
     const versionInfoElement = versionInfo[version];
 
     switch (output.type) {
@@ -166,7 +177,7 @@ export const generateCargoToml = (output, version='v2.2.0') => {
             );
     }
 }
-export const generateLib = (output, version='v2.2.0') => {
+export const generateLib = (output, version='v3.0.0-beta') => {
     const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush';
     const contractName = output.currentControlsState.find(x => x.name === 'Name')?.state;
 
@@ -216,18 +227,21 @@ export const generateLib = (output, version='v2.2.0') => {
 
     if(standardName === 'psp22') {
         contract.addConstructorArg('initial_supply: Balance');
-        contract.addConstructorAction(`_instance._mint(_instance.env().caller(), initial_supply).expect("Should mint"); `);
+        contract.addConstructorAction(`_instance._mint${version <= 'v2.0.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `);
     }
 
     if(isCapped || output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        contract.addInkImport(new Import('ink_prelude::string::String'));
+        if(version < 'v3.0.0-beta')contract.addInkImport(new Import(`ink${version < 'v3.0.0-beta' ? '_' : '::'}prelude::string::String`));
+        else{
+            contract.addBrushImport(new Import(`${brushName}::traits::String`));
+        }
     }
 
     if(output.security && output.type === 'psp37' && (output.currentControlsState.find(x => x.name === 'Mintable')?.state || output.currentControlsState.find(x => x.name === 'Burnable')?.state)) {
-        contract.addInkImport(new Import('ink_prelude::vec::Vec'));
+        contract.addInkImport(new Import(`ink${version < 'v3.0.0-beta' ? '_' : '::'}prelude::vec::Vec`));
     }
 
-    if(version > 'v1.3.0') contract.addInkImport(new Import('ink_storage::traits::SpreadAllocate'));
+    if(version > 'v1.3.0' && version < 'v3.0.0-beta') contract.addInkImport(new Import(`ink${version < 'v3.0.0-beta' ? '_' : '::'}storage::traits::SpreadAllocate`));
 
     if(!usesStandardExtensions) {
         contract.addBrushImport(new Import(`${brushName}::contracts::${standardName}::*`))
