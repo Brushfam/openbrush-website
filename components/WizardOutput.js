@@ -24,7 +24,7 @@ authors = ["The best developer ever"]
 
 [dependencies]
 
-${version <= 'v2.2.0'? `ink_primitives = { ${inkVersionString}, default-features = false }
+${version < 'v3.0.0-beta'? `ink_primitives = { ${inkVersionString}, default-features = false }
 ink_metadata = { ${inkVersionString}, default-features = false, features = ["derive"], optional = true }
 ink_env = { ${inkVersionString}, default-features = false }
 ink_storage = { ${inkVersionString}, default-features = false }
@@ -128,6 +128,14 @@ const versionInfo = {
         brushDeclaration:
             (features) => `openbrush = { version = "~2.2.0", default-features = false, features = [${features}] }`,
     },
+    'v2.3.0': {
+        edition: '2021',
+        inkVersion: '~3.4.0',
+        scaleVersion: '3',
+        scaleInfoVersion: '2',
+        brushDeclaration:
+            (features) => `openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`,
+    },
     'v3.0.0-beta': {
         edition: '2021',
         inkVersion: '~4.0.0-beta',
@@ -227,11 +235,11 @@ export const generateLib = (output, version='v3.0.0-beta') => {
 
     if(standardName === 'psp22') {
         contract.addConstructorArg('initial_supply: Balance');
-        contract.addConstructorAction(`_instance._mint${version <= 'v2.0.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `);
+        contract.addConstructorAction(`_instance._mint${version < 'v2.3.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `);
     }
 
     if(isCapped || output.currentControlsState.find(x => x.name === 'Metadata')?.state) {
-        if(version < 'v3.0.0-beta')contract.addInkImport(new Import(`ink${version < 'v3.0.0-beta' ? '_' : '::'}prelude::string::String`));
+        if(version < 'v2.3.0')contract.addInkImport(new Import(`ink${version < 'v3.0.0-beta' ? '_' : '::'}prelude::string::String`));
         else{
             contract.addBrushImport(new Import(`${brushName}::traits::String`));
         }

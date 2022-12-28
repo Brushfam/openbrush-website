@@ -141,7 +141,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
                     'mint',
                     args,
                     `Result<(), ${standardName.toUpperCase()}Error>`,
-                    `self._mint${standardName !== 'psp22' ? '_to' : version < 'v3.0.0-beta' ? '' : '_to'}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`
+                    `self._mint${standardName !== 'psp22' ? '_to' : version < 'v2.3.0' ? '' : '_to'}(account, ${standardName === 'psp22' ? 'amount' : (standardName === 'psp34' ? 'id' : 'ids_amounts')})`
                 ));
             }
 

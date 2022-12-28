@@ -252,7 +252,7 @@ pub mod my_${this.standardName} {
     ${this.collectInkImports()}
     ${this.collectBrushImports()}
     #[ink(storage)]
-    #[derive(Default${this.version === 'v1.3.0' || this.version > 'v2.2.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
+    #[derive(Default${this.version === 'v1.3.0' || this.version > 'v2.3.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
     pub struct ${this.contractName} {
     ${this.collectStorageFields()}
     }${this.extensions.find(e => (e.name === 'AccessControl' || e.name === 'AccessControlEnumerable')) !== undefined ? `\n\n\tconst MANAGER: RoleType = ink${this.version < 'v3.0.0-beta' ? '_lang' : ''}::selector_id!("MANAGER");` : ''}
