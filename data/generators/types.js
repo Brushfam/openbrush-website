@@ -226,12 +226,12 @@ export class Contract {
 
     collectConstructorActions() {
         return `${
-            this.constructorActions?.length ? '\n\t\t\t' + ((this.version === 'v1.3.0' || this.version > 'v2.2.0' )? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
+            this.constructorActions?.length ? '\n\t\t\t' + ((this.version === 'v1.3.0' || this.version > 'v2.3.0' )? '' : '\t') + this.constructorActions.join("\n\t\t\t\t") : ''}${this.extensions && this.extensions
                 .filter(e => e.constructorActions?.length).length ?
                 `\n${this.extensions
                     .filter(e => e.constructorActions?.length)
                     .map(e => `${e.constructorActions
-                        .map(a => `${this.version === 'v1.3.0' || this.version > 'v2.2.0' ? '' : '\t'}\t\t\t${a}`)
+                        .map(a => `${this.version === 'v1.3.0' || this.version > 'v2.3.0' ? '' : '\t'}\t\t\t${a}`)
                         .join("\n")}`)
                     .join("\n")}` : ""}`;
     }
@@ -262,10 +262,10 @@ pub mod my_${this.standardName} {
     impl ${this.contractName} {
         #[ink(constructor)]
         pub fn new(${this.collectConstructorArgs()}) -> Self {
-            ${(this.version === 'v1.3.0' || this.version > 'v2.2.0') ?
+            ${(this.version === 'v1.3.0' || this.version > 'v2.3.0') ?
             'let mut _instance = Self::default();' :
             `ink${this.version < 'v3.0.0-beta' ? '_lang' : ''}::codegen::initialize_contract(|_instance: &mut Contract|{`}${this.collectConstructorActions()}${
-            (this.version > 'v1.3.0' && this.version <= 'v2.2.0') ? '\n\t\t\t})' : '\n\t\t\t_instance'}
+            (this.version > 'v1.3.0' && this.version < 'v3.0.0-beta') ? '\n\t\t\t})' : '\n\t\t\t_instance'}
         }${this.collectContractMethods()}
     }
 }`;
