@@ -1,17 +1,17 @@
-export const docsLink = 'https://docs.openbrush.io/';
-export const demoLink = 'https://www.crowdcast.io/e/substrate-seminar-2/10';
-export const githubLink = 'https://github.com/Supercolony-net/openbrush-contracts';
-export const elementLink = 'https://matrix.to/#/!utTuYglskDvqRRMQta:matrix.org?via=matrix.org';
-export const twitterLink = 'https://twitter.com/supercolony_vs';
-export const linkedinLink ='https://www.linkedin.com/company/super-colony/';
-export const discordLink = 'https://discord.com/channels/933724833630531585/933725040434892940';
-export const telegramLink = 'https://t.me/openbrush';
-export const openBrushFamily = 'https://openbrush.io/#obFam';
+export const docsLink = 'https://docs.openbrush.io/'
+export const demoLink = 'https://www.crowdcast.io/e/substrate-seminar-2/10'
+export const githubLink = 'https://github.com/Supercolony-net/openbrush-contracts'
+export const elementLink = 'https://matrix.to/#/!utTuYglskDvqRRMQta:matrix.org?via=matrix.org'
+export const twitterLink = 'https://twitter.com/supercolony_vs'
+export const linkedinLink = 'https://www.linkedin.com/company/super-colony/'
+export const discordLink = 'https://discord.com/channels/933724833630531585/933725040434892940'
+export const telegramLink = 'https://t.me/openbrush'
+export const openBrushFamily = 'https://openbrush.io/#obFam'
 
-const handleClickOBFam = event => {
-  event.preventDefault();
-  document.getElementById('obFam')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
+const handleClickOBFam = (event) => {
+  event.preventDefault()
+  document.getElementById('obFam')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 export const headerSocials = [
   /*
@@ -26,7 +26,7 @@ export const headerSocials = [
   */
   {
     label: 'Element',
-    link: elementLink,
+    link: elementLink
   },
   {
     label: 'Telegram',
@@ -35,7 +35,7 @@ export const headerSocials = [
   {
     label: 'Discord',
     link: discordLink
-  },
+  }
 ]
 
 export const headerNavigation = [
@@ -46,14 +46,14 @@ export const headerNavigation = [
   {
     label: 'GitHub',
     link: githubLink,
-    newTab: true,
+    newTab: true
   },
   {
     label: 'OpenBrush Family',
     link: openBrushFamily,
     newTab: true,
-    eventType: handleClickOBFam,
-  },
+    eventType: handleClickOBFam
+  }
   /*
   {
     label: 'Contact us',
