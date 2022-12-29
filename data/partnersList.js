@@ -32,7 +32,7 @@ export const partnersList = [
   {
     alt: 'alliance',
     src: '/img/partners/allianceblock.svg',
-    link: 'https://allianceblock.io/',
+    link: 'https://allianceblock.io/'
   },
   // {
   //   alt: 'logo',
