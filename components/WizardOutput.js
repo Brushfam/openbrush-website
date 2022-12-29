@@ -6,6 +6,37 @@ import wizard from "../styles/Wizard.module.scss";
 import {Contract, ContractBuilder, Import, Method, Storage, StorageBuilder, TraitImpl} from "../data/generators/types";
 import {getExtensions} from "../data/generators/extensions";
 
+const generateInkDeclaration = (version, inkVersion) => {
+    let inkVersionString = '';
+
+    if(version < 'v1.7.0' || version === 'v3.0.0-beta') {
+        inkVersionString = `tag = "${inkVersion}", git = "https://github.com/paritytech/ink"`;
+        if(version === 'v3.0.0-beta') {
+            inkVersionString += `, commit = "4655a8b4413cb50cbc38d1b7c173ad426ab06cde"`;
+        }
+    }
+    else {
+        inkVersionString = `version = "${inkVersion}"`;
+    }
+
+    let inkDeclaration = '';
+
+    if (version < 'v3.0.0-beta') {
+        inkDeclaration = `ink_primitives = { ${inkVersionString}, default-features = false }
+ink_metadata = { ${inkVersionString}, default-features = false, features = ["derive"], optional = true }
+ink_env = { ${inkVersionString}, default-features = false }
+ink_storage = { ${inkVersionString}, default-features = false }
+ink_lang = { ${inkVersionString}, default-features = false }
+ink_prelude = { ${inkVersionString}, default-features = false }
+ink_engine = { ${inkVersionString}, default-features = false, optional = true }`;
+    }
+    else {
+        inkDeclaration = `ink = { ${inkVersionString}, default-features = false }`;
+    }
+
+    return inkDeclaration;
+}
+
 const generateCargoTomlWithVersion = (
     version,
     name,
@@ -15,7 +46,8 @@ const generateCargoTomlWithVersion = (
     scaleInfoVersion,
     brushDeclaration
 ) => {
-    const inkVersionString = `${version < 'v1.7.0' ? `tag = "${inkVersion}", git = "https://github.com/paritytech/ink"` : `version = "${inkVersion}"` }`;
+    let inkDeclaration = generateInkDeclaration(version, inkVersion);
+
     return `[package]
 name = "${name}"
 version = "1.0.0"
@@ -24,15 +56,7 @@ authors = ["The best developer ever"]
 
 [dependencies]
 
-${version < 'v3.0.0-beta'? `ink_primitives = { ${inkVersionString}, default-features = false }
-ink_metadata = { ${inkVersionString}, default-features = false, features = ["derive"], optional = true }
-ink_env = { ${inkVersionString}, default-features = false }
-ink_storage = { ${inkVersionString}, default-features = false }
-ink_lang = { ${inkVersionString}, default-features = false }
-ink_prelude = { ${inkVersionString}, default-features = false }
-ink_engine = { ${inkVersionString}, default-features = false, optional = true }` : `ink = { ${version === 'v3.0.0-beta' ?
-        `git = "https://github.com/paritytech/ink", commit = "4655a8b4413cb50cbc38d1b7c173ad426ab06cde"` :
-        `${inkVersionString}`}, default-features = false}`}
+${inkDeclaration}
 
 scale = { package = "parity-scale-codec", version = "${scaleVersion}", default-features = false, features = ["derive"] }
 scale-info = { version = "${scaleInfoVersion}", default-features = false, features = ["derive"], optional = true }
@@ -63,7 +87,7 @@ std = [
 
     "${version >= 'v2.0.0' ? 'openbrush' : 'brush'}/std",
 ]
-ink-as-dependency = [] ${version == 'v1.3.0' ? '\n' +
+ink-as-dependency = [] ${version === 'v1.3.0' ? '\n' +
         '[profile.dev]\n' +
         'overflow-checks = false\n' +
         '\n' +
