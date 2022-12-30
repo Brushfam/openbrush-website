@@ -7,18 +7,20 @@ import { Contract, ContractBuilder, Import, Method, Storage, StorageBuilder, Tra
 import { getExtensions } from '../data/generators/extensions'
 
 const generateInkDeclaration = (version, inkVersion) => {
-  let inkVersionString = ''
+  let inkVersionString
 
   if (version < 'v1.7.0' || version === 'v3.0.0-beta') {
-    inkVersionString = `tag = "${inkVersion}", git = "https://github.com/paritytech/ink"`
+    inkVersionString = `git = "https://github.com/paritytech/ink"`
     if (version === 'v3.0.0-beta') {
       inkVersionString += `, commit = "4655a8b4413cb50cbc38d1b7c173ad426ab06cde"`
+    } else {
+      inkVersionString += `, tag = "${inkVersion}"`
     }
   } else {
     inkVersionString = `version = "${inkVersion}"`
   }
 
-  let inkDeclaration = ''
+  let inkDeclaration
 
   if (version < 'v3.0.0-beta') {
     inkDeclaration = `ink_primitives = { ${inkVersionString}, default-features = false }
