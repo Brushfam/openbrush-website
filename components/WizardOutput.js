@@ -12,7 +12,7 @@ const generateInkDeclaration = (version, inkVersion) => {
   if (version < 'v1.7.0' || version === 'v3.0.0-beta') {
     inkVersionString = `git = "https://github.com/paritytech/ink"`
     if (version === 'v3.0.0-beta') {
-      inkVersionString += `, commit = "4655a8b4413cb50cbc38d1b7c173ad426ab06cde"`
+      inkVersionString += `, rev = "4655a8b4413cb50cbc38d1b7c173ad426ab06cde"`
     } else {
       inkVersionString += `, tag = "${inkVersion}"`
     }
