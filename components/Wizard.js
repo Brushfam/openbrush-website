@@ -36,7 +36,7 @@ const Wizard = () => {
   }, [config])
 
   return (
-    <div className={wizard.componentContainer} id="wizard" title={"Openbrush wizard"}>
+    <div className={wizard.componentContainer} id="wizard">
       <h2 className="primaryHeadline">How to use: </h2>
       <div className={wizard.scrollWrapper}>
         <div className={wizard.wizardWrapper}>

@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const FundedBy = ({ title, data }) => {
   return (
-    <div className={ModStyle.partnersContainer} title={"Openbrush funded by web3 foundation and AllianceBlock"}>
+    <div className={ModStyle.partnersContainer}>
       <h2 className="primaryHeadline">{title}</h2>
       <div className={ModStyle.logoWrapper}>
         {data &&

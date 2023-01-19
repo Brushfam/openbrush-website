@@ -4,7 +4,7 @@ import { githubLink, linkedinLink, twitterLink } from '../data/headerNavigation'
 
 const Footer = ({ nav }) => {
   return (
-    <footer className={`${footer['footer']} footer`} title={"OpenBrush community"}>
+    <footer className={`${footer['footer']} footer`}>
       <div className={footer.footerContainer}>
         <div className={footer.socials}>
           <Link href={twitterLink}>
