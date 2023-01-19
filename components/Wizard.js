@@ -10,7 +10,7 @@ import { isVisible } from '../data/utils'
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0)
-  const [config, setConfig] = useState(wizardConfig)
+  const [config] = useState(wizardConfig)
   const [controlsState, setControlsState] = useState([])
 
   const [isControlsClosed, setControlsClosed] = useState(false)
@@ -36,7 +36,7 @@ const Wizard = () => {
   }, [config])
 
   return (
-    <div className={wizard.componentContainer} id="wizard">
+    <div className={wizard.componentContainer} id="wizard" title={"Openbrush wizard"}>
       <h2 className="primaryHeadline">How to use: </h2>
       <div className={wizard.scrollWrapper}>
         <div className={wizard.wizardWrapper}>

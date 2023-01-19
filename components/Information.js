@@ -18,9 +18,9 @@ const Information = () => {
           <h3>Useful extensions with custom logic:</h3>
           <h3>Useful macro which simplifies development:</h3>
 
-          <img src="/img/logo1.svg" alt="illustration" />
-          <img src="/img/logo2.svg" alt="illustration" />
-          <img src="/img/logo3.svg" alt="illustration" />
+          <img src="/img/logo1.svg" alt="PSP illustration" />
+          <img src="/img/logo2.svg" alt="PSP extensions illustration" />
+          <img src="/img/logo3.svg" alt="openbrush macro illustration" />
 
           <ul>
             <li>
@@ -67,7 +67,7 @@ const Information = () => {
             </Link>
             :
           </h3>
-          <img src="/img/logo1.svg" alt="illustration" />
+          <img src="/img/logo1.svg" alt="PSP illustration" />
           <ul>
             <li>
               <span>PSP22: Fungible Token</span>
@@ -83,7 +83,7 @@ const Information = () => {
 
         <div className={info.contentUnit}>
           <h3>Useful extensions with custom logic:</h3>
-          <img src="/img/logo2.svg" alt="illustration" />
+          <img src="/img/logo2.svg" alt="PSP extensions illustration" />
           <ul>
             <li>
               <span>Ownable, Roles</span>
@@ -99,7 +99,7 @@ const Information = () => {
 
         <div className={info.contentUnit}>
           <h3>Useful macro which simplifies development:</h3>
-          <img src="/img/logo3.svg" alt="illustration" />
+          <img src="/img/logo3.svg" alt="openbrush macro illustration" />
           <ul>
             <li>
               <span>Function modifiers</span>

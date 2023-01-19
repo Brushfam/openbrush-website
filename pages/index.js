@@ -2,41 +2,30 @@ import Head from 'next/head'
 import Banner from './../components/Banner'
 import Partners from '../components/Partners'
 import FundedBy from '../components/FundedBy'
-import FAQSwitcher from '../components/FAQSwitcher'
-import SingleTestimonial from '../components/SingleTestimonial'
 
 import { partnersList } from '../data/partnersList';
 import { fundedByList } from '../data/fundedByList';
 import { openbrushFamilyList} from "../data/openbrushFamilyList";
-import { faq } from '../data/faq';
-import { testimonials } from '../data/testimonials';
 import Wizard from "../components/Wizard";
 
 import Prism from 'prismjs'
 import { useEffect } from 'react'
-import { WHAT_IS_OPEN_BRUSH } from '../data/code'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import Information from "../components/Information";
 import OpenbrushFamily from "../components/OpenbrushFamily";
 
 
 export default function Home() {
-  const code = `fn what_is (open: Brush) {
-    "OpenBrush provides security products to build, automate, and operate decentralized applications. We also protect leading organizations by performing security audits on their systems and products."
-  }`;
-
   useEffect(() => {
     Prism.highlightAll()
   }, [])
 
   return (
     <div>
-        {/* TODO: make reusable Head component */}
         <Head>
           <title>Openbrush</title>
           <meta name="keywords" content="openbrush"/>
           <meta name="description" content="openbrush"/>
-            <meta name="google-site-verification" content="AniwPaa8GCsl_rUlPjd-Po35bxQNLuNPLFYbSohmrhc" />
+          <meta name="google-site-verification" content="AniwPaa8GCsl_rUlPjd-Po35bxQNLuNPLFYbSohmrhc" />
         </Head>
 
         <Banner title={['Smart contracts library for',
@@ -52,8 +41,6 @@ export default function Home() {
         <Partners title="The world’s leading projects trust OpenBrush" data={partnersList} />
 
         <FundedBy title="Funded by:" data={fundedByList} />
-
-        {/* <FAQSwitcher data={faq} /> */}
 
         <Wizard />
 

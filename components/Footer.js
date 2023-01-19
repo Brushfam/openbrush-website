@@ -4,7 +4,7 @@ import { githubLink, linkedinLink, twitterLink } from '../data/headerNavigation'
 
 const Footer = ({ nav }) => {
   return (
-    <footer className={`${footer['footer']} footer`}>
+    <footer className={`${footer['footer']} footer`} title={"OpenBrush community"}>
       <div className={footer.footerContainer}>
         <div className={footer.socials}>
           <Link href={twitterLink}>
@@ -30,7 +30,7 @@ const Footer = ({ nav }) => {
         <p className={footer.createdBy}>
           created by
           <a href="https://www.supercolony.net" target="_blank">
-            <img src="/img/new-supercolony.svg" className={footer.supercolony} />
+            <img src="/img/new-supercolony.svg" className={footer.supercolony}  alt={"Supercolony logo"}/>
           </a>
         </p>
       </div>

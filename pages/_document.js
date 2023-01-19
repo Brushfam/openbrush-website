@@ -8,7 +8,7 @@ class MyDocument extends Document {
           <link href="/fonts/fonts.css" rel="stylesheet" />
           <link rel="shortcut icon" href="favicons/icon.svg" />
           <meta name="description" content="Smart contract library for Polkadot on Rust" />
-          <meta name="keywords" content="polkadot, ink, rust, smart contract" />
+          <meta name="keywords" content="Brushfam, Polkadot, ink, rust, smart contract, WASM, web3, ink audit" />
         </Head>
         <body>
           <Main />
