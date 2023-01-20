@@ -30,7 +30,7 @@ const Footer = ({ nav }) => {
         <p className={footer.createdBy}>
           created by
           <a href="https://www.supercolony.net" target="_blank">
-            <img src="/img/new-supercolony.svg" className={footer.supercolony} />
+            <img src="/img/new-supercolony.svg" className={footer.supercolony}  alt={"Supercolony logo"}/>
           </a>
         </p>
       </div>

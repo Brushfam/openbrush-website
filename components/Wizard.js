@@ -10,7 +10,7 @@ import { isVisible } from '../data/utils'
 
 const Wizard = () => {
   const [activeOptionIndex, setActiveOptionIndex] = useState(0)
-  const [config, setConfig] = useState(wizardConfig)
+  const [config] = useState(wizardConfig)
   const [controlsState, setControlsState] = useState([])
 
   const [isControlsClosed, setControlsClosed] = useState(false)

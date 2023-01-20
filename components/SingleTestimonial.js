@@ -5,7 +5,6 @@ const SingleTestimonial = ({ testimonial }) => {
     <div className={singleTestimonial.testimonial}>
       <div className={singleTestimonial.testimonialContainer}>
         <div className={singleTestimonial.innerContainer}>
-          {/* TODO: customize syntax highlighter in appropriate way*/}
           <div className={singleTestimonial.codeQuote}>
             <pre className="language-rust">
               <code className="language-rust">{testimonial.code}</code>

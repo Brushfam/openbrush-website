@@ -51,7 +51,7 @@ export const footerNavigation = [
       },
       {
         label: 'Github',
-        link: 'https://github.com/Supercolony-net/openbrush-contracts'
+        link: 'https://github.com/727-Ventures/openbrush-contracts'
       },
       {
         label: 'Logo Kit',
