@@ -42,13 +42,6 @@ export default function Banner({ title, illustration }) {
         </div>
       </div>
 
-      <p className={banner.createdBy}>
-        created by
-        <a href="https://www.supercolony.net" target="_blank">
-          <img src="/img/new-supercolony.svg" className={banner.supercolonyImg} alt={"Supercolony logo"}/>
-        </a>
-      </p>
-
       <div className={banner.bannerContainerDecorWrapper}>
         <div className={banner.leftBottom} />
         <div className={banner.rightBottom}>

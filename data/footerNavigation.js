@@ -30,7 +30,7 @@ export const footerNavigation = [
     links: [
       {
         label: 'Docs',
-        link: 'https://supercolony-net.github.io/openbrush-contracts/'
+        link: 'https://docs.openbrush.io/'
       },
       {
         label: 'Community Forum',

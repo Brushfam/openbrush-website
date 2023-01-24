@@ -20,19 +20,12 @@ const Footer = ({ nav }) => {
           <Link href={githubLink}>
             <a className={`${footer['link']} ${footer['GitHub']}`}>GitHub</a>
           </Link>
-          <Link href={'https://www.supercolony.net'}>
+          <Link href={'https://www.brushfam.io'}>
             <a className={`${footer.link} ${footer.Website}`} target="_blank">
-              Supercolony
+              Brushfam
             </a>
           </Link>
         </div>
-        <p>Copyright © 2021 OpenBrush, Supercolony.net</p>
-        <p className={footer.createdBy}>
-          created by
-          <a href="https://www.supercolony.net" target="_blank">
-            <img src="/img/new-supercolony.svg" className={footer.supercolony}  alt={"Supercolony logo"}/>
-          </a>
-        </p>
       </div>
     </footer>
   )
