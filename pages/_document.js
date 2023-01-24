@@ -4,7 +4,6 @@ import StructuredData from "../components/StructuredData";
 const structuredData = {
     '@context': "https://schema.org",
     '@type': "WebSite",
-    copyrightNotice: "Copyright © 2021 OpenBrush, Supercolony.net",
     copyrightYear: "2021",
     dateCreated: "2021-09-13",
     description: "OpenBrush is a library for smart contract development on ink! It provides standard contracts (based on PSP), as well as useful contracts and macros to help you build ink! smart contracts.",
