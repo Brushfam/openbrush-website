@@ -1,9 +1,9 @@
 export const partnersList = [
-  {
-    alt: 'logo',
-    src: '/img/partners/logo6.svg',
-    link: 'https://applicature.com/'
-  },
+  // {
+  //   alt: 'logo',
+  //   src: '/img/partners/logo6.svg',
+  //   link: 'https://applicature.com/'
+  // },
   {
     alt: 'web3',
     src: '/img/partners/web3.svg',
