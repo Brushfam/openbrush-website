@@ -156,10 +156,18 @@ const versionInfo = {
     scaleInfoVersion: '2.3',
     brushDeclaration: (features) =>
       `openbrush = { tag = "3.0.0-beta", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`
+  },
+  'v3.0.0-beta.1': {
+    edition: '2021',
+    inkVersion: '~4.0.0-rc',
+    scaleVersion: '3',
+    scaleInfoVersion: '2.3',
+    brushDeclaration: (features) =>
+        `openbrush = { tag = "3.0.0-beta.1", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`
   }
 }
 
-export const generateCargoToml = (output, version = 'v3.0.0-beta') => {
+export const generateCargoToml = (output, version = 'v3.0.0-beta.1') => {
   const versionInfoElement = versionInfo[version]
 
   switch (output.type) {
