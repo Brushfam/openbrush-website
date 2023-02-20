@@ -22,7 +22,7 @@ const generateInkDeclaration = (version, inkVersion) => {
 
   let inkDeclaration
 
-  if (version < 'v3.0.0-beta') {
+  if (version < 'v3.0.0-beta' && version < 'v3.0.0') {
     inkDeclaration = `ink_primitives = { ${inkVersionString}, default-features = false }
 ink_metadata = { ${inkVersionString}, default-features = false, features = ["derive"], optional = true }
 ink_env = { ${inkVersionString}, default-features = false }
@@ -68,7 +68,7 @@ crate-type = [
 default = ["std"]
 std = [
     ${
-      version < 'v3.0.0-beta'
+      version < 'v3.0.0-beta' && version < 'v3.0.0'
         ? `"ink_primitives/std",
     "ink_metadata",
     "ink_metadata/std",
@@ -164,10 +164,18 @@ const versionInfo = {
     scaleInfoVersion: '2.3',
     brushDeclaration: (features) =>
         `openbrush = { tag = "3.0.0-beta.1", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`
+  },
+  'v3.0.0': {
+    edition: '2021',
+    inkVersion: '~4.0.0',
+    scaleVersion: '3',
+    scaleInfoVersion: '2.3',
+    brushDeclaration: (features) =>
+        `openbrush = { tag = "3.0.0", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`
   }
 }
 
-export const generateCargoToml = (output, version = 'v3.0.0-beta.1') => {
+export const generateCargoToml = (output, version = 'v3.0.0') => {
   const versionInfoElement = versionInfo[version]
 
   switch (output.type) {
