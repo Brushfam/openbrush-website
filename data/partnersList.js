@@ -10,11 +10,6 @@ export const partnersList = [
     link: 'https://web3.foundation/'
   },
   {
-    alt: 'alliance',
-    src: '/img/partners/allianceblock.svg',
-    link: 'https://allianceblock.io/'
-  },
-  {
     alt: 'astar',
     src: '/img/partners/astar.svg',
     link: 'https://astar.network/'
