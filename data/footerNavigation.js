@@ -51,7 +51,7 @@ export const footerNavigation = [
       },
       {
         label: 'Github',
-        link: 'https://github.com/727-Ventures/openbrush-contracts'
+        link: 'https://github.com/Brushfam/openbrush-contracts'
       },
       {
         label: 'Logo Kit',
