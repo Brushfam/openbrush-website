@@ -268,7 +268,7 @@ export class Contract {
 
   toString() {
     return `#![cfg_attr(not(feature = "std"), no_std, no_main)]
-   ${this.version < 'v4.0.0' ? `#![feature(const_fn_trait_bound)]` : ''}
+${this.version < 'v4.0.0' ? `#![feature(min_specilization)]` : ''}
         
 ${this.version >= 'v4.0.0' ? `#[openbrush::implementation(${this.extensions.map(e => this.standardName.toUpperCase() + e.name)})]` : ''}
 #[${this.brushName}::contract]
