@@ -267,13 +267,16 @@ export class Contract {
   }
 
   toString() {
-    return `#![cfg_attr(not(feature = "std"), no_std)]
-#![feature(min_specialization)]
+    return `#![cfg_attr(not(feature = "std"), no_std, no_main)]
+   ${this.version < 'v4.0.0' ? `#![feature(const_fn_trait_bound)]` : ''}
         
+${this.version >= 'v4.0.0' ? `#[openbrush::implementation(${this.extensions.map(e => this.standardName.toUpperCase() + e.name)})]` : ''}
 #[${this.brushName}::contract]
 pub mod my_${this.standardName} {
-    ${this.collectInkImports()}
+    ${this.version < 'v4.0.0' ? `${this.collectInkImports()}
     ${this.collectBrushImports()}
+    ` : 'use openbrush::traits::Storage;' +
+        '\n'}
     #[ink(storage)]
     #[derive(Default${this.version === 'v1.3.0' || this.version > 'v2.3.0' ? '' : ', SpreadAllocate'}${this.collectStorageDerives()})]
     pub struct ${this.contractName} {
@@ -283,9 +286,9 @@ pub mod my_${this.standardName} {
         ? `\n\n\tconst MANAGER: RoleType = ink${this.version < 'v3.0.0-beta' ? '_lang' : ''}::selector_id!("MANAGER");`
         : ''
     }
-    
+    ${this.version < 'v4.0.0' ? `
     ${this.collectTraitImpls()}${this.collectAdditionalImpls()}
-     
+    ` : ''}
     impl ${this.contractName} {
         #[ink(constructor)]
         pub fn new(${this.collectConstructorArgs()}) -> Self {

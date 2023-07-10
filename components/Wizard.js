@@ -109,6 +109,7 @@ const Wizard = () => {
                       }}
                       defaultValue={'v3.0.0'}
                     >
+                      <option value="v4.0.0">v4.0.0</option>
                       <option value="v3.0.0">v3.0.0</option>
                       <option value="v3.0.0-beta.1">v3.0.0-beta.1</option>
                       <option value="v3.0.0-beta">v3.0.0-beta</option>

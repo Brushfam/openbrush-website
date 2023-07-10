@@ -172,10 +172,18 @@ const versionInfo = {
     scaleInfoVersion: '2.3',
     brushDeclaration: (features) =>
         `openbrush = { tag = "3.0.0", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`
+  },
+  'v4.0.0': {
+    edition: '2021',
+    inkVersion: '4.1.0',
+    scaleVersion: '3',
+    scaleInfoVersion: '2.6',
+    brushDeclaration: (features) =>
+        `openbrush = { tag = "4.0.0", git = "https://github.com/brushfam/openbrush-contracts", default-features = false, features = [${features}] }`
   }
 }
 
-export const generateCargoToml = (output, version = 'v3.0.0') => {
+export const generateCargoToml = (output, version = 'v4.0.0') => {
   const versionInfoElement = versionInfo[version]
 
   switch (output.type) {
@@ -223,7 +231,7 @@ export const generateCargoToml = (output, version = 'v3.0.0') => {
       )
   }
 }
-export const generateLib = (output, version = 'v3.0.0-beta') => {
+export const generateLib = (output, version = 'v4.0.0') => {
   const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush'
   const contractName = output.currentControlsState.find((x) => x.name === 'Name')?.state
 
