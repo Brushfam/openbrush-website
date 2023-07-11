@@ -296,9 +296,14 @@ export const generateLib = (output, version = 'v4.0.0') => {
 
   if (standardName === 'psp22') {
     contract.addConstructorArg('initial_supply: Balance')
-    contract.addConstructorAction(
-      `_instance._mint${version < 'v2.3.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `
-    )
+    if (version < 'v4.0.0')
+      contract.addConstructorAction(
+        `_instance._mint${version < 'v2.3.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `
+      )
+    else
+      contract.addConstructorAction(
+          `psp22::Internal::_mint(&mut _instance, Self::env().caller(), initial_supply).expect("Should mint"); `
+      )
   }
 
   if (isCapped || output.currentControlsState.find((x) => x.name === 'Metadata')?.state) {

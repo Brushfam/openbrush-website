@@ -270,7 +270,7 @@ export class Contract {
     return `#![cfg_attr(not(feature = "std"), no_std, no_main)]
 ${this.version < 'v4.0.0' ? `#![feature(min_specilization)]` : ''}
         
-${this.version >= 'v4.0.0' ? `#[openbrush::implementation(${this.extensions.map(e => this.standardName.toUpperCase() + e.name)})]` : ''}
+${this.version >= 'v4.0.0' ? `#[openbrush::implementation(${this.standardName.toUpperCase() + (this.extensions.length ? ', ' : '')}${this.extensions.map(e => this.standardName.toUpperCase() + e.name)})]` : ''}
 #[${this.brushName}::contract]
 pub mod my_${this.standardName} {
     ${this.version < 'v4.0.0' ? `${this.collectInkImports()}
