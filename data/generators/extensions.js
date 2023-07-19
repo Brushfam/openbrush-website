@@ -115,7 +115,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
             'burn',
             args,
             `Result<(), ${standardName.toUpperCase()}Error>`,
-              ( version < 'v4.0.0'
+              ( version < 'v4.0.0-beta'
                 ?  `self._burn_from(account, ${standardName === 'psp22' ? 'amount' : standardName === 'psp34' ? 'id' : 'ids_amounts'})`
                 : `${standardName}::Internal::_burn_from(self, account, ${standardName === 'psp22' ? 'amount' : standardName === 'psp34' ? 'id' : 'ids_amounts'})`
               )
@@ -158,7 +158,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
       mintableExtension.setImpl(new TraitImpl(`${standardName.toUpperCase()}Mintable`, contractName, additionalMethods))
 
       if (standardName === 'psp34') {
-        if (version < 'v4.0.0') mintableExtension.addConstructorAction('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");')
+        if (version < 'v4.0.0-beta') mintableExtension.addConstructorAction('_instance._mint_to(_instance.env().caller(), Id::U8(1)).expect("Can mint");')
         else mintableExtension.addConstructorAction('psp34::Internal::_mint_to(&mut _instance, Self::env().caller(), Id::U8(1)).expect("Can mint");')
       }
 
@@ -173,7 +173,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
       ownableExtension.setStorage(ownableStorage.getStorage())
 
       ownableExtension.setImpl(new TraitImpl(`Ownable`, contractName, additionalMethods))
-      if (version < 'v4.0.0') ownableExtension.addConstructorAction('_instance._init_with_owner(_instance.env().caller());')
+      if (version < 'v4.0.0-beta') ownableExtension.addConstructorAction('_instance._init_with_owner(_instance.env().caller());')
       else ownableExtension.addConstructorAction('ownable::Internal::_init_with_owner(&mut _instance Self::env().caller());')
 
       return ownableExtension.getExtension()
@@ -190,9 +190,9 @@ export function generateExtension(extensionName, standardName, contractName, ver
       accessControlExtension.setStorage(accessControlStorage.getStorage())
 
       accessControlExtension.setImpl(new TraitImpl(`AccessControl`, contractName, additionalMethods))
-      if (version < 'v4.0.0') accessControlExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());')
+      if (version < 'v4.0.0-beta') accessControlExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());')
       else accessControlExtension.addConstructorAction('access_control::Internal::_init_with_admin(&mut _instance, Self::env().caller());')
-      if (version < 'v4.0.0') accessControlExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");')
+      if (version < 'v4.0.0-beta') accessControlExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");')
       else accessControlExtension.addConstructorAction('AccessControl::grant_role(&mut _instance, MANAGER).expect("Should grant MANAGER role");')
 
       return accessControlExtension.getExtension()
@@ -212,9 +212,9 @@ export function generateExtension(extensionName, standardName, contractName, ver
 
       accessControlEnumerableExtension.setImpl(new TraitImpl(`AccessControlEnumerable`, contractName, additionalMethods))
       // accessControlEnumerableExtension.addConstructorAction('_instance._init_with_admin(_instance.env().caller());')
-      if (version < 'v4.0.0') accessControlEnumerableExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");')
+      if (version < 'v4.0.0-beta') accessControlEnumerableExtension.addConstructorAction('_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");')
       else accessControlEnumerableExtension.addConstructorAction('AccessContol::grant_role(&mut _instance, MANAGER, Some(Self::env().caller())).expect("Should grant MANAGER role");')
-      if (version < 'v4.0.0') accessControlEnumerableExtension.addConstructorAction(
+      if (version < 'v4.0.0-beta') accessControlEnumerableExtension.addConstructorAction(
         '_instance.grant_role(MANAGER, _instance.env().caller()).expect("Should grant MANAGER role");'
       )
       else accessControlEnumerableExtension.addConstructorAction(
@@ -282,11 +282,11 @@ export function generateExtension(extensionName, standardName, contractName, ver
         metadataExtension.addConstructorArg('symbol: Option<String>')
         metadataExtension.addConstructorArg('decimal: u8')
 
-        if (version < 'v4.0.0') metadataExtension.addConstructorAction('_instance.metadata.name = name;')
+        if (version < 'v4.0.0-beta') metadataExtension.addConstructorAction('_instance.metadata.name = name;')
         else metadataExtension.addConstructorAction('_instance.metadata.name.set(&name);')
-        if (version < 'v4.0.0') metadataExtension.addConstructorAction('_instance.metadata.symbol = symbol;')
+        if (version < 'v4.0.0-beta') metadataExtension.addConstructorAction('_instance.metadata.symbol = symbol;')
         else metadataExtension.addConstructorAction('_instance.metadata.symbol.set(&symbol);')
-        if (version < 'v4.0.0') metadataExtension.addConstructorAction('_instance.metadata.decimals = decimal;')
+        if (version < 'v4.0.0-beta') metadataExtension.addConstructorAction('_instance.metadata.decimals = decimal;')
         else metadataExtension.addConstructorAction('_instance.metadata.decimals.set(&decimal);')
       }
 
@@ -297,7 +297,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
 
       if (standardName === 'psp34') {
         metadataExtension.addConstructorAction('let collection_id = _instance.collection_id();')
-        if (version < 'v4.0.0') metadataExtension.addConstructorAction(
+        if (version < 'v4.0.0-beta') metadataExtension.addConstructorAction(
           `_instance._set_attribute(collection_id.clone(), String::from("name")${
             version <= 'v2.2.0' ? '.into_bytes()' : ''
           }, String::from("MyPSP34")${version <= 'v2.2.0' ? '.into_bytes()' : ''});`
@@ -306,7 +306,7 @@ export function generateExtension(extensionName, standardName, contractName, ver
             `metadata::Internal::_set_attribute(&mut _instance, collection_id.clone(), String::from("name"), String::from("MyPSP34"));`
             )
 
-        if (version < 'v4.0.0') metadataExtension.addConstructorAction(
+        if (version < 'v4.0.0-beta') metadataExtension.addConstructorAction(
           `_instance._set_attribute(collection_id, String::from("symbol")${version <= 'v2.2.0' ? '.into_bytes()' : ''}, String::from("MPSP")${
             version <= 'v2.2.0' ? '.into_bytes()' : ''
           });`

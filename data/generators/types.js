@@ -268,12 +268,12 @@ export class Contract {
 
   toString() {
     return `#![cfg_attr(not(feature = "std"), no_std, no_main)]
-${this.version < 'v4.0.0' ? `#![feature(min_specilization)]` : ''}
+${this.version < 'v4.0.0-beta' ? `#![feature(min_specilization)]` : ''}
         
-${this.version >= 'v4.0.0' ? `#[openbrush::implementation(${this.standardName.toUpperCase() + (this.extensions.length ? ', ' : '')}${this.extensions.map(e => this.standardName.toUpperCase() + e.name)})]` : ''}
+${this.version >= 'v4.0.0-beta' ? `#[openbrush::implementation(${this.standardName.toUpperCase() + (this.extensions.length ? ', ' : '')}${this.extensions.map(e => this.standardName.toUpperCase() + e.name)})]` : ''}
 #[${this.brushName}::contract]
 pub mod my_${this.standardName} {
-    ${this.version < 'v4.0.0' ? `${this.collectInkImports()}
+    ${this.version < 'v4.0.0-beta' ? `${this.collectInkImports()}
     ${this.collectBrushImports()}
     ` : 'use openbrush::traits::Storage;' +
         '\n'}
@@ -286,7 +286,7 @@ pub mod my_${this.standardName} {
         ? `\n\n\tconst MANAGER: RoleType = ink${this.version < 'v3.0.0-beta' ? '_lang' : ''}::selector_id!("MANAGER");`
         : ''
     }
-    ${this.version < 'v4.0.0' ? `
+    ${this.version < 'v4.0.0-beta' ? `
     ${this.collectTraitImpls()}${this.collectAdditionalImpls()}
     ` : ''}
     impl ${this.contractName} {
