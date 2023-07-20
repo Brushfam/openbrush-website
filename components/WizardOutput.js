@@ -59,10 +59,10 @@ ${brushDeclaration}
 [lib]
 name = "${name}"
 path = "lib.rs"
-crate-type = [
-    # Used for normal contract Wasm blobs.
-    "cdylib",
-]
+${version < 'v4.0.0-beta' ? `crate-type = [
+  # Used for normal contract Wasm blobs.
+  "cdylib",
+]` :""}
 
 [features]
 default = ["std"]
@@ -172,10 +172,18 @@ const versionInfo = {
     scaleInfoVersion: '2.3',
     brushDeclaration: (features) =>
         `openbrush = { tag = "3.0.0", git = "https://github.com/727-Ventures/openbrush-contracts", default-features = false, features = [${features}] }`
+  },
+  'v4.0.0-beta': {
+    edition: '2021',
+    inkVersion: '4.2.1',
+    scaleVersion: '3',
+    scaleInfoVersion: '2.6',
+    brushDeclaration: (features) =>
+        `openbrush = { tag = "v4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [${features}] }`
   }
 }
 
-export const generateCargoToml = (output, version = 'v3.0.0') => {
+export const generateCargoToml = (output, version = 'v4.0.0-beta') => {
   const versionInfoElement = versionInfo[version]
 
   switch (output.type) {
@@ -223,7 +231,7 @@ export const generateCargoToml = (output, version = 'v3.0.0') => {
       )
   }
 }
-export const generateLib = (output, version = 'v3.0.0-beta') => {
+export const generateLib = (output, version = 'v4.0.0-beta') => {
   const brushName = version >= 'v2.0.0' ? 'openbrush' : 'brush'
   const contractName = output.currentControlsState.find((x) => x.name === 'Name')?.state
 
@@ -288,9 +296,14 @@ export const generateLib = (output, version = 'v3.0.0-beta') => {
 
   if (standardName === 'psp22') {
     contract.addConstructorArg('initial_supply: Balance')
-    contract.addConstructorAction(
-      `_instance._mint${version < 'v2.3.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `
-    )
+    if (version < 'v4.0.0-beta')
+      contract.addConstructorAction(
+        `_instance._mint${version < 'v2.3.0' ? '' : '_to'}(_instance.env().caller(), initial_supply).expect("Should mint"); `
+      )
+    else
+      contract.addConstructorAction(
+          `psp22::Internal::_mint(&mut _instance, Self::env().caller(), initial_supply).expect("Should mint"); `
+      )
   }
 
   if (isCapped || output.currentControlsState.find((x) => x.name === 'Metadata')?.state) {
