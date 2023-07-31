@@ -302,7 +302,7 @@ export const generateLib = (output, version = 'v4.0.0-beta') => {
       )
     else
       contract.addConstructorAction(
-          `psp22::Internal::_mint(&mut _instance, Self::env().caller(), initial_supply).expect("Should mint"); `
+          `psp22::Internal::_mint_to(&mut _instance, Self::env().caller(), initial_supply).expect("Should mint"); `
       )
   }
 
