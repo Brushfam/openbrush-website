@@ -179,7 +179,7 @@ const versionInfo = {
     scaleVersion: '3',
     scaleInfoVersion: '2.6',
     brushDeclaration: (features) =>
-        `openbrush = { tag = "v4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [${features}] }`
+        `openbrush = { tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [${features}] }`
   }
 }
 
@@ -302,7 +302,7 @@ export const generateLib = (output, version = 'v4.0.0-beta') => {
       )
     else
       contract.addConstructorAction(
-          `psp22::Internal::_mint(&mut _instance, Self::env().caller(), initial_supply).expect("Should mint"); `
+          `psp22::Internal::_mint_to(&mut _instance, Self::env().caller(), initial_supply).expect("Should mint"); `
       )
   }
 
