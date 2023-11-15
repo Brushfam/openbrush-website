@@ -94,7 +94,7 @@ const versionInfo = {
     scaleVersion: '2.1',
     scaleInfoVersion: '1.0.0',
     brushDeclaration: (features) =>
-      `brush = { tag = "v1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
+      `brush = { tag = "1.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
   },
   'v1.5.0': {
     edition: '2021',
@@ -102,7 +102,7 @@ const versionInfo = {
     scaleVersion: '3.0',
     scaleInfoVersion: '2.0.0',
     brushDeclaration: (features) =>
-      `brush = { tag = "v1.5.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
+      `brush = { tag = "1.5.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
   },
   'v1.6.0': {
     edition: '2021',
@@ -110,7 +110,7 @@ const versionInfo = {
     scaleVersion: '3.0',
     scaleInfoVersion: '2.0.0',
     brushDeclaration: (features) =>
-      `brush = { tag = "v1.6.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
+      `brush = { tag = "1.6.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
   },
   'v1.7.0': {
     edition: '2021',
@@ -147,7 +147,7 @@ const versionInfo = {
     scaleVersion: '3',
     scaleInfoVersion: '2',
     brushDeclaration: (features) =>
-      `openbrush = { tag = "v2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
+      `openbrush = { tag = "2.3.0", git = "https://github.com/Supercolony-net/openbrush-contracts", default-features = false, features = [${features}] }`
   },
   'v3.0.0-beta': {
     edition: '2021',
@@ -179,7 +179,7 @@ const versionInfo = {
     scaleVersion: '3',
     scaleInfoVersion: '2.6',
     brushDeclaration: (features) =>
-        `openbrush = { tag = "v4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [${features}] }`
+        `openbrush = { tag = "4.0.0-beta", git = "https://github.com/Brushfam/openbrush-contracts", default-features = false, features = [${features}] }`
   }
 }
 
